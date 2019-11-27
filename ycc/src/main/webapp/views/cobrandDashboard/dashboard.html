@@ -1,0 +1,625 @@
+<div id='container1' class="" ng-hide="showDashboard">
+	<div id="dashboard-label-errorPanel" isnotinv
+		ng-show="labelPropertyErrorMsg!=null" class="panel-body error">
+		{{labelPropertyErrorMsg}}</div>
+
+	<div isnotinv ng-show="labelPropertyErrorMsg==null" id="dashboard"
+		class="container-fluid-custom base-background"
+		data-ng-init="initDashboard();">
+		<div class="container-fluid">
+			<div isyodlee id="dashboard-cobrand-loadingPanel" align="center"
+				ng-show="(cobrandList.length<1) && CLErrorMsg==null && selectedCobrand!=undefined">
+				<img alt="Loading" src="images/loading.gif"> <br /> <br />
+			</div>
+			<div iscobrand id="dashboard-cobrand-t1-loadingPanel" align="center"
+				ng-show="cobrandName==undefined && CLErrorMsg==null">
+				<img alt="Loading" src="images/loading.gif"> <br /> <br />
+			</div>
+
+			<div id="dashboard-cobrandList-errorPanel" ng-show="CLErrorMsg!=null"
+				class="panel-body error">{{CLErrorMsg}}</div>
+			`
+			<div
+				ng-show="CLErrorMsg==null && (cobrandList.length>0 || cobrandName!=undefined)"
+				class="row container-fluid-custom">
+				<div id="search-widget"
+					class="col-md-12 col-xs-12 col-sm-12 col-lg-12" class=""
+					style="padding-right: 0; position: relative; float: right; width: 20%; margin: 0 30px 20px 0;">
+					<form action="" autocomplete="off" id="quickSearch">
+						<input id="search" type="text" search ng-model="query"
+							placeholder="{{staticLabels.display_name_label}}"
+							style="margin-right: 0;">
+					</form>
+
+					<ul id="search-query" ng-show="searchResult" class="search_result"
+						mb-scrollbar="scrollbar('vertical', true)">
+						<li align="center" ng-show="loading"><img
+							style="margin: auto; display: block;" alt="Loading"
+							class="margin-bottom-6" src="images/loader.gif" /></li>
+
+						<li ng-if="no_match==true">{{NoMatch}}</li>
+
+						<li ng-if="no_match==false"
+							ng-repeat="name in siteNames | filter:query track by name.id">
+
+							<a id="sw-search-result" href=""
+							ng-click="toggle(); getSiteDetailById(name.id,$event);"
+							data-direction='bottom' data-id="dashboard"
+							onclick="ga('send','pageview','/search')"> <img
+								src="{{name.favicon}}" /> <span>
+									<div class="site_name">{{name.siteName}} - {{name.id}}</div>
+									<div class="site_base_url">{{name.baseUrl}}</div>
+							</span>
+						</a>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
+					<div class="col-md-6 col-xs-6 col-sm-6 col-lg-6">
+						<div id="dashboard-cobrandList-label" isyodlee
+							class="label col-md-2 col-xs-2 col-sm-2 col-lg-2 text-left">{{staticLabels.cobrand_Label}}</div>
+						<div id="dashboard-cobrand-dropdown" isyodlee
+							ng-show="cobrandList.length>0"
+							class="col-md-10 col-xs-10 col-sm-10 col-lg-10">
+							<md-input-container style="width:100%">
+							<div class='filter-dropdown' layout='row' ng-click="selclicked()">
+								<md-select ng-model="cob.selectedCobrand"
+									data-md-container-class='mySelect' aria-label="Select"
+									ng-change="refreshStats(cob.selectedCobrand,'ngchange');"
+									onclick=" ga('send','pageview','/dashCobSelect')"
+									class="dropdown_brand_select sel"> <md-select-header
+									class="device-select-header">
+								<form>
+									<input ng-model="searchTerm"
+										ng-keyup='$event.keyCode == 13 && deviceIdSubmit($event)'
+										ng-keydown='$event.stopPropagation($event)' type="search"
+										class="header-searchbox md-text" />
+								</form>
+								</md-select-header> <md-optgroup
+									ng-repeat="(key,items) in cobrandList | filter: searchTerm | groupBy:'channel' ">
+								<label class="label_brand_select" ng-if="key != 'undefined'">{{key}}</label>
+								<md-option class="option_brand_select" ng-value="item"
+									ng-repeat="item in items | filter: searchTerm"> <span
+									style="padding-left: 16px;" ng-if="key != 'undefined'">{{item.name}}
+									[{{item.id}}]</span> <span ng-if="key == 'undefined'">{{item.name}}
+									[{{item.id}}]</span> </md-option> </md-optgroup> </md-select>
+							</div>
+							</md-input-container>
+						</div>
+						<div iscobrand id="dashboard-subbrandList-label"
+							ng-show="subbrandList.length>0 || (cob.selectedCobrand.subbrands!=undefined && cob.selectedCobrand.subbrands.length>0)"
+							class="label col-md-2 col-xs-2 col-sm-2 col-lg-2 text-left">{{staticLabels.subbrand_Label}}</div>
+						<div iscobrand id="dashboard-subbrand-dropdown"
+							ng-show="subbrandList.length>0 || (cob.selectedCobrand.subbrands!=undefined && cob.selectedCobrand.subbrands.length>0)"
+							class="col-md-10 col-xs-10 col-sm-10 col-lg-10">
+							<md-input-container style="width:100%">
+							<div class='filter-dropdown' layout='row'
+								ng-click="selclickedSub()">
+								<md-select ng-model="cob.selectedCobrand" id="subbrandId"
+									data-md-container-class='mySelectSub' aria-label="Select"
+									ng-change="refreshStats(cob.selectedCobrand,'ngchange');"
+									onclick=" ga('send','pageview','/dashSubSelect')"
+									class="dropdown_brand_select selSub"> <md-select-header
+									class="device-select-header">
+								<form>
+									<input ng-model="searchTerm"
+										ng-keyup='$event.keyCode == 13 && deviceIdSubmit($event)'
+										ng-keydown='$event.stopPropagation($event)' type="search"
+										class="header-searchbox md-text" />
+								</form>
+								</md-select-header> <md-optgroup
+									ng-repeat="(key,items) in subbrandList | filter: searchTerm | groupBy:'channel' ">
+								<label class="label_brand_select" ng-if="key != 'undefined'">{{key}}</label>
+								<md-option class="option_brand_select" ng-value="item"
+									ng-repeat="item in items | filter: searchTerm"> <span
+									style="padding-left: 16px;" ng-if="key != 'undefined'">{{item.name}}
+									[{{item.id}}]</span> <span ng-if="key == 'undefined'">{{item.name}}
+									[{{item.id}}]</span> </md-option> </md-optgroup> </md-select>
+							</div>
+							</md-input-container>
+						</div>
+					</div>
+					<div class="col-md-6 col-xs-6 col-sm-6 col-lg-6">
+						<div id="db-buttons"
+							class=" pull-right btn-group margin-bottom-14 margin-top-10"
+							data-toggle="radio-buttons">
+							<label class="text-capitalize btn btn-primary btn-pfm"
+								ng-class="{'active':newItemType=='REFRESH'}" ng-if="isPfm"
+								onclick=" ga('send','pageview','/dashRefresh')"
+								ng-init="pfm.newItemType=newItemType"> <input
+								type="radio" class="hidden" name="options" value="REFRESH"
+								ng-model="pfm.newItemType"
+								ng-click="pfmButton(pfm.newItemType);">
+								{{staticLabels.refreshes}}
+							</label> <label class="text-uppercase btn btn-primary btn-pfm"
+								ng-class="{'active':newItemType=='IAV'}" ng-if="cobrandIAVStat"
+								onclick=" ga('send','pageview','/dashIAV')"
+								ng-init="pfm.newItemType=newItemType"> <input
+								class="hidden" type="radio" name="options" value="IAV"
+								ng-model="pfm.newItemType"
+								ng-click="pfmButton(pfm.newItemType);">
+								{{staticLabels.iav}}
+							</label> <label isyodlee class="text-capitalize btn btn-primary btn-pfm"
+								ng-class="{'active':newItemType=='Add'}" ng-if="isSlmrCob"
+								onclick="ga('send','pageview','/dashAdd')"
+								ng-init="pfm.newItemType=newItemType"> <input
+								class="hidden" type="radio" name="options" value="Add"
+								ng-model="pfm.newItemType"
+								ng-click="pfmButton(pfm.newItemType);"> Add
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+			<!--Refresh Stats Ribbon-->
+
+			<div align="center" id="ribbon-loadingPanel"
+				ng-show="loadedCobrand && displayLoading  && overallRefreshLatencyStats==null && ORSErrorMsg == null"
+				class="container-fluid m-t60">
+				<img alt="Loading" src="images/loading.gif"> <br />
+			</div>
+			<div id="dashboard-errorPanel-1"
+				ng-show="ORSErrorMsg!=null && TopVolumeErrorMsg!=null && TopFailureErrorMsg!=null && HRSErrorMsg!=null"
+				class="panel-body m-t60 error "></div>
+			<br />
+		</div>
+
+		<div class="container-fluid "
+			ng-show="(overallRefreshLatencyStats!=null && ORSErrorMsg==null) ||(overallRefreshLatencyStats==null && ORSErrorMsg!=null)">
+			<div id="ribbon-errorPanel" ng-show="ORSErrorMsg!=null"
+				class="panel-body error">{{ORSErrorMsg}}</div>
+			<div ng-show="ORSErrorMsg==null" class="row">
+				<table class="ribbon-contents"
+					style="width: 100%; position: relative;">
+					<tbody style="background: #f9fafa;">
+						<tr>
+							<td id="ribbon-totalPanel"
+								class="row-border row green-box colour-white ftbold ribbon-totalPanel ribbon-padding"
+								style="width: 22%;">
+								<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7"
+									style="padding: 0">
+									<div id="ribbon-totalsection"
+										class="pd-t10 ribbon-totalsection">{{overall_total.toLocaleString()}}</div>
+									<div id="ribbon-totallabel"
+										class="ft13 pd-t10 ribbon-totallabel">{{staticLabels.refresh_stats}}</div>
+								</div>
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 ft14 pd-t10"
+									style="padding-right: 0; padding-left: 0;">
+									<select id="ribbon-dropdown"
+										class="ribbonDropDown dropdown-caret-ribbon ribbon-dropdown"
+										ng-model="selectedOverallRefreshSnapShotTimeSlot"
+										ng-change="overallRefreshStatistics();"
+										onclick=" ga('send','pageview','/dashSnapshot')">
+										<option ng-repeat="option in dropDownForOverallRefreshStats"
+											value="{{option.value}}">{{option.display}}</option>
+									</select>
+								</div>
+							</td>
+							<td id="ribbon-successPanel"
+								class="row row-border ribbon-contents ribbon-section ribbon-padding"
+								style="width: {{ribbonWidth}}">
+								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+									style="padding: 0">
+									<div id="ribbon-successsection"
+										class="ft-green-22 ribbon-perc-section"
+										style="color: #77716f;">{{overall_success}}%</div>
+									<div id="ribbon-successlabel"
+										class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.success_Label}}</div>
+								</div>
+							</td>
+							<td ng-if="newItemType=='Add'" id="ribbon-pSuccessPanel"
+								class="row row-border ribbon-contents ribbon-section ribbon-padding"
+								style="width: {{ribbonWidth}}">
+								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+									style="padding: 0">
+									<div id="ribbon-pSuccesssection"
+										class="ft-green-22 ribbon-perc-section"
+										style="color: #77716f;">{{overall_pSuccess}}%</div>
+									<div id="ribbon-pSuccesslabel"
+										class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.pSuccess_Label}}</div>
+								</div>
+							</td>
+							<td id="ribbon-technicalPanel"
+								class="row row-border ribbon-contents ribbon-section ribbon-padding"
+								style="width: {{ribbonWidth}}">
+								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+									style="padding: 0">
+									<div id="ribbon-techsection"
+										class="ft-green-22 ribbon-perc-section"
+										style="color: #77716f;">{{overall_technical}}%</div>
+									<div id="ribbon-techlabel"
+										class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.technical_failure_Label}}</div>
+								</div>
+							</td>
+							<td id="ribbon-sitePanel"
+								class="row row-border ribbon-contents ribbon-section ribbon-padding"
+								style="width: {{ribbonWidth}}">
+								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+									style="padding: 0">
+									<div id="ribbon-sitesection"
+										class="ft-green-22 ribbon-perc-section"
+										style="color: #77716f;">{{overall_site}}%</div>
+									<div id="ribbon-sitelabel"
+										class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.site_failure_Label}}</div>
+								</div>
+							</td>
+							<td id="ribbon-uarPanel"
+								class="row row-border ribbon-contents ribbon-section ribbon-padding"
+								style="width: {{ribbonWidth}}">
+								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+									style="padding: 0">
+									<div id="ribbon-uarsection"
+										class="ft-green-22 ribbon-perc-section"
+										style="color: #77716f;">{{overall_uar}}%</div>
+									<div id="ribbon-uarlabel"
+										class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.uar_failure_Label}}</div>
+								</div>
+							</td>
+							<td id="ribbon-latencyPanel" ng-if="homeCobrand"
+								class="row row-border ribbon-contents ribbon-section ribbon-padding"
+								style="width: {{ribbonWidth}}">
+								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+									style="padding: 0">
+									<div id="ribbon-latencysection"
+										class="ft-green-22 ribbon-perc-section"
+										style="color: #77716f;">{{overall_latency}} Sec</div>
+									<div id="ribbon-latencylabel"
+										class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.avg_latency_label}}</div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td ng-if="newItemType=='Add'"></td>
+							<td colspan="3">
+								<table ng-class="{'row-border' : showErrorCode}" class="errCode">
+									<thead style="background: #f9fafa;"
+										ng-class="{'bgWht' : showErrorCode}">
+										<tr>
+											<th></th>
+											<th>
+												<div class="errBox" ng-click="dataForErrorCodeDash()"
+													onclick=" ga('send','pageview','/dashErrorCodeSnapshot')">
+													<i class="fa fa-angle-down errIcon" style=""
+														ng-class="{'fa-angle-up': showErrorCode, 'fa-angle-down': !showErrorCode}"></i>
+												</div>
+											</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody ng-if="errorCodeErrorMsg && showErrorCode">
+										<tr>
+											<td colspan="3" class="bgWht" valign="top">
+												<div id="ribbon-errorCodePanel"
+													ng-show="errorCodeErrorMsg!=null" class="panel-body error">
+													{{errorCodeErrorMsg}}</div>
+											</td>
+										</tr>
+									</tbody>
+									<tbody ng-if="showLoadingForErrorCode">
+										<tr ng-if="showLoadingForErrorCode">
+											<td colspan="3" class="bgWht" style="float: center;"><div
+													class="panel-body error">
+													<img ng-if="showLoadingForErrorCode" alt="Loading"
+														src="images/loading.gif">
+												</div></td>
+										</tr>
+									</tbody>
+									<tbody ng-if="showErrorCode && errorCodeErrorMsg == null">
+
+										<tr>
+
+											<td class="bgWht" valign="top">
+												<table style="width: 100%;">
+													<tbody class="bgWht">
+														<tr ng-repeat="errT in techErr">
+															<td class="codeType"><span>{{errT.techErrCode}}</span>
+															</td>
+															<td class="codeRate">
+																<div class="progress">
+																	<div class="progress-bar active" role="progressbar"
+																		aria-valuenow="{{errT.techErrRate}}" aria-valuemin="0"
+																		aria-valuemax="100" style="width: {{errT.techErrRate">
+																	</div>
+																	<span class="progress-value">
+																		{{errT.techErrRate}}% </span>
+																</div>
+															</td>
+														</tr>
+														<tr ng-if="techErrSort.length > 4">
+															<td style="padding: 13px 7px 11px 8px">OTHER :
+																{{total_techRate | number : 2}}%</td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+											<td class="bgWht" valign="top">
+												<table style="width: 100%;">
+													<tbody class="bgWht">
+														<tr ng-repeat="errS in siteErr">
+															<td class="codeType"><span>{{errS.siteErrCode}}</span>
+															</td>
+															<td class="codeRate">
+																<div class="progress">
+																	<div class="progress-bar active" role="progressbar"
+																		aria-valuenow="{{errS.siteErrRate}}" aria-valuemin="0"
+																		aria-valuemax="100" style="width: {{errS.siteErrRate">
+																	</div>
+																	<span class="progress-value">{{errS.siteErrRate}}%
+																	</span>
+																</div>
+															</td>
+														</tr>
+														<tr ng-if="siteErrSort.length > 4">
+															<td style="padding: 13px 7px 11px 8px">OTHER :
+																{{total_siteRate | number : 2}}%</td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+											<td class="bgWht" valign="top">
+												<table style="width: 100%;">
+													<tbody class="bgWht">
+														<tr ng-repeat="errU in uarErr">
+															<td class="codeType"><span>{{errU.uarErrCode}}</span>
+															</td>
+															<td class="codeRate">
+																<div class="progress">
+																	<div class="progress-bar active" role="progressbar"
+																		aria-valuenow="{{errU.uarErrRate}}" aria-valuemin="0"
+																		aria-valuemax="100" style="width: {{errU.uarErrRate">
+																	</div>
+																	<span class="progress-value">
+																		{{errU.uarErrRate}}% </span>
+																</div>
+															</td>
+														</tr>
+														<tr ng-if="uarErrSort.length > 4">
+															<td style="padding: 13px 7px 11px 8px">OTHER :
+																{{total_uarRate | number : 2}}%</td>
+														</tr>
+													</tbody>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+
+							</td>
+							<td></td>
+
+						</tr>
+
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+
+		<div id="top-volume-panel" class="container-fluid m-t22"
+			ng-show="show">
+			<div class="row">
+				<div class="panel panel-default panel-top-charts">
+					<div id="top-volume-heading"
+						class="panel-heading panel-custom ft16 refresh-account-trend">{{staticLabels.site_stats_volume_Label}}{{selectedOverallRefreshSnapShotTimeSlot.replace('P',
+						'').replace('T', '')}}r</div>
+					<div class="panel-body">
+						<div ng-show="displayTopLoading==false && TopVolumeErrorMsg==null"
+							id="top-volume-time" class="div-dropdown">
+							<span class="last-refresh">{{staticLabels.last_refresh_time}}
+								{{topVolumeslastupdated|dateConverter}}</span>
+						</div>
+						<div id="top-volume-loadingPanel" align="center" class="loading"
+							ng-show="displayTopLoading">
+							<img class="loadingIcon" alt="Loading" src="images/loading.gif">
+						</div>
+						<div id="top-volume-errorPanel" ng-show="TopVolumeErrorMsg!=null"
+							class="panel-body error">{{TopVolumeErrorMsg}}</div>
+						<div ng-show="displayTopLoading==false && TopVolumeErrorMsg==null"
+							style="min-width: 98%; max-width: 1200px;"
+							id="top_volumes_refresh_stats_db"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="top-volume-latency-panel" isyodlee
+			class="container-fluid m-t22" ng-show="show">
+			<div class="row">
+				<div class="panel panel-default panel-top-charts">
+					<div id="top-volume-latency-heading"
+						class="panel-heading panel-custom ft16 refresh-account-trend">{{staticLabels.site_stats_volume_perf_Label}}{{selectedOverallRefreshSnapShotTimeSlot.replace('P',
+						'').replace('T', '')}}r</div>
+					<div class="panel-body">
+						<div
+							ng-show="displayTopLatencyLoading==false && TopVolumeErrorMsg==null"
+							id="top-volume-latency-time" class="div-dropdown">
+							<span class="last-refresh">{{staticLabels.last_refresh_time}}
+								{{topVolumeslastupdated|dateConverter}}</span>
+						</div>
+						<div id="top-volume-loadingPanel" align="center" class="loading"
+							ng-show="displayTopLatencyLoading">
+							<img class="loadingIcon" alt="Loading" src="images/loading.gif">
+						</div>
+						<div id="top-volume-errorPanel" ng-show="TopVolumeErrorMsg!=null"
+							class="panel-body error">{{TopVolumeErrorMsg}}</div>
+						<div
+							ng-show="displayTopLatencyLoading==false && TopVolumeErrorMsg==null"
+							style="min-width: 98%; max-width: 1200px;"
+							id="top_volumes_latency_stats_db"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="top-failure-panel" class="container-fluid m-t22"
+			ng-show="show">
+			<div class="row">
+				<div class="panel panel-default panel-top-charts">
+					<div id="top-failure-heading"
+						class="panel-heading panel-custom ft16 refresh-account-trend">{{staticLabels.site_stats_failure_Label}}{{selectedOverallRefreshSnapShotTimeSlot.replace('P',
+						'').replace('T', '')}}r</div>
+					<div class="panel-body">
+						<div
+							ng-show="displayTopFailureLoading==false && TopFailureErrorMsg==null"
+							id="top-failure-time" class="div-dropdown">
+							<span class="last-refresh">{{staticLabels.last_refresh_time}}
+								{{topFailureslastupdated|dateConverter}}</span>
+						</div>
+						<div id="top-failure-loadingPanel" align="center" class="loading"
+							ng-show="displayTopFailureLoading">
+							<img class="loadingIcon" alt="Loading" src="images/loading.gif">
+						</div>
+						<div id="top-failure-errorPanel"
+							ng-show="TopFailureErrorMsg!=null" class="panel-body error">{{TopFailureErrorMsg}}</div>
+						<div
+							ng-show="displayTopFailureLoading==false && TopFailureErrorMsg==null"
+							style="min-width: 98%; max-width: 1200px;"
+							id="top_failures_refresh_stats_db"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="top-failure-latency-panel" isyodlee
+			class="container-fluid m-t22" ng-show="show">
+			<div class="row">
+				<div class="panel panel-default panel-top-charts">
+					<div id="top-failure-latency-heading"
+						class="panel-heading panel-custom ft16 refresh-account-trend">{{staticLabels.site_stats_failure_perf_Label}}{{selectedOverallRefreshSnapShotTimeSlot.replace('P',
+						'').replace('T', '')}}r</div>
+					<div class="panel-body">
+						<div
+							ng-show="displayTopFailureLatencyLoading==false && TopFailureErrorMsg==null"
+							id="top-failure-latency-time" class="div-dropdown">
+							<span class="last-refresh">{{staticLabels.last_refresh_time}}
+								{{topFailureslastupdated|dateConverter}}</span>
+						</div>
+						<div id="top-failure-latency-loadingPanel" align="center"
+							class="loading" ng-show="displayTopFailureLatencyLoading">
+							<img class="loadingIcon" alt="Loading" src="images/loading.gif">
+						</div>
+						<div id="top-failure-errorPanel"
+							ng-show="TopFailureErrorMsg!=null" class="panel-body error">{{TopFailureErrorMsg}}</div>
+						<div
+							ng-show="displayTopFailureLatencyLoading==false && TopFailureErrorMsg==null"
+							style="min-width: 98%; max-width: 1200px;"
+							id="top_failures_latency_stats_db"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="dashboard-hs-panel" class="container-fluid" ng-show="show">
+			<div class="row">
+				<div class="panel panel-default panel-historic-charts">
+					<div id="dashboard-hs-heading"
+						class="panel-heading panel-custom ft16 refresh-account-trend">{{staticLabels.refresh_trends_historic}}</div>
+					<div class="panel-body">
+						<div class="div-dropdown">
+							<span ng-show="historicRefreshStatslastUpdated!=null"
+								id="dashboard-hs-time" class="last-refresh">{{staticLabels.last_refresh_time}}
+								{{historicRefreshStatslastUpdated|dateConverter}}</span> <span
+								class="refreshTrendDropDown">{{staticLabels.refresh_trend_Label}}
+								<select id="dashboard-hs-dropdown"
+								class="borderLessDropDown dropdown-caret"
+								ng-model="selectedHistoricRefreshTrendTimeSlot"
+								ng-change="historicRefreshStatistics();">
+									<option ng-repeat="option in dropDownForHistoricStats"
+										value="{{option.value}}"><b>{{option.name}}</b></option>
+							</select>
+							</span>
+						</div>
+						<div align="center" id="dashboard-hs-loadingPanel"
+							ng-show="historyRefreshStats==null && HRSErrorMsg==null"
+							class="loading">
+							<img class="loadingIcon" alt="Loading" src="images/loading.gif">
+						</div>
+						<div id="dashboard-hs-errorPanel" ng-show="HRSErrorMsg!=null"
+							class="panel-body error">{{HRSErrorMsg}}</div>
+						<div ng-show="historyRefreshStats!=null && HRSErrorMsg==null"
+							style="min-width: 97%;" id="overall_historic_refresh_stats_db"></div>
+					</div>
+				</div>
+			</div>
+			<div id="dashboard-hl-panel" isyodlee
+				class="container-fluid-custom row" ng-show="show">
+				<div class="col-md-6 container-col-refresh-time">
+					<div class="panel panel-default panel-historic-charts">
+						<div id="dashboard-hl-heading"
+							class="panel-heading panel-custom ft16 refresh-account-trend">{{staticLabels.avg_latency_trend_Label}}</div>
+						<div class="panel-body">
+							<div class="div-dropdown">
+								<span ng-show="historicLatencyStatslastupdated!=null"
+									id="dashboard-hl-time" class="last-refresh">{{staticLabels.last_refresh_time}}
+									{{historicLatencyStatslastupdated|dateConverter}}</span> <span
+									class="refreshTrendDropDown">{{staticLabels.refresh_trend_Label}}
+									<select id="dashboard-hl-dropdown"
+									class="borderLessDropDown dropdown-caret"
+									ng-model="selectedHistoricLatencyTrendTimeSlot"
+									ng-change="historicLatencyStatistics();"
+									onclick=" ga('send','pageview','/dashRefreshTrend')">
+										<option ng-repeat="option in dropDownForHistoricStats"
+											value="{{option.value}}"><b>{{option.name}}</b></option>
+								</select>
+								</span>
+							</div>
+							<div align="center" id="dashboard-hl-loadingPanel"
+								class="loading"
+								ng-show="historyLatencyStats==null && HLErrorMsg==null">
+								<img class="loadingIcon" alt="Loading" src="images/loading.gif">
+							</div>
+							<div id="dashboard-hl-errorPanel" ng-show="HLErrorMsg!=null"
+								class="panel-body error">{{HLErrorMsg}}</div>
+							<div ng-show="historyLatencyStats!=null && HLErrorMsg==null"
+								id="overall_historic_latency_stats_db" style="min-width: 48%;"></div>
+						</div>
+					</div>
+				</div>
+				<div id="dashboard-hlb-panel"
+					class="col-md-6 container-col-refresh-breakup">
+					<div class="panel panel-default panel-historic-charts">
+						<div id="dashboard-hlb-heading"
+							class="panel-heading panel-custom ft16 refresh-account-trend">{{staticLabels.latency_breakup_trends_Label}}</div>
+						<div class="panel-body">
+							<div class="div-dropdown">
+								<span ng-show="historicLatencyBreakDownlastupdated!=null"
+									id="dashboard-hlb-time" class="last-refresh">{{staticLabels.last_refresh_time}}
+									{{historicLatencyBreakDownlastupdated|dateConverter}}</span> <span
+									class="refreshTrendDropDown">{{staticLabels.refresh_trend_Label}}
+									<select id="dashboard-hlb-dropdown"
+									class="borderLessDropDown dropdown-caret"
+									ng-model="selectedHistoricLatencyBreakDownTimeSlot"
+									onclick=" ga('send','pageview','/dashRefreshTimeBreakUp')"
+									ng-change="historicLatencyBreakDownStatistics();">
+										<option ng-repeat="option in dropDownForOverallRefreshStats"
+											value="{{option.value}}"><b>{{option.name}}</b></option>
+								</select>
+								</span>
+							</div>
+							<div align="center" id="dashboard-hlb-loadingPanel"
+								class="loading"
+								ng-show="historyRefreshLatencyBreakDownStats==null && HLBErrorMsg==null">
+								<img class="loadingIcon" alt="Loading" src="images/loading.gif">
+							</div>
+							<div id="dashboard-hlb-errorPanel" ng-show="HLBErrorMsg!=null"
+								class="panel-body error">{{HLBErrorMsg}}</div>
+							<div
+								ng-show="historyRefreshLatencyBreakDownStats!=null && HLBErrorMsg==null"
+								id="overall_historic_latency_breakdown_refresh_stats_db"
+								style="min-width: 48%;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<pageslide ps-side='bottom' ps-open="checked"
+	style="overflow:auto; padding-bottom:40px;">
+<div style="padding-top: 45px">
+	<span ng-click="toggle();" class="close_button">X Close</span>
+	<div ng-include src="sidebar.location"></div>
+</div>
+</pageslide>

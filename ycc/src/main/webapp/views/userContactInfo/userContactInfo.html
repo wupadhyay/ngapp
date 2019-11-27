@@ -1,0 +1,750 @@
+<div id='container4' class="container-fluid base-background"
+	data-ng-init="initUserManagement();">
+	<div class="m-t30"></div>
+
+	<div class="loader"
+		ng-show="(contactInfoSearchErrorMsg==null&& initUser == false && labelPropertyErrorMsg == null )"
+		align="center">
+		<img alt="Loading" src="images/loading.gif">
+	</div>
+
+	<div id="userlabel-label-errorPanel"
+		ng-show="labelPropertyErrorMsg!=null" class="panel-body error"
+		aria-hidden="true">{{labelPropertyErrorMsg}}</div>
+	<div isnotinv ng-show="labelPropertyErrorMsg==null"
+		ng-if="initUser||contactInfoSearchErrorMsg!=null"
+		class="container-fluid-custom base-background" id="userMngtMain">
+		<div id="userInfo-createContact"
+			class="panel panel-default margin-15 pull-left" style="width: 98%;">
+			<div ng-if="createUserInfoMessage"
+				class="alert alert-success text-center">
+				<strong>{{createUserInfoMessage}} </strong>
+			</div>
+			<div class="alert alert-danger text-center"
+				ng-show="createUserInfoErrorMessage !=null">
+				{{createUserInfoErrorMessage}}</div>
+			<div class="panel-tab"
+				ng-click="isCollapsedCreateUserInfo = !isCollapsedCreateUserInfo"
+				ng-class="{'panel-heading panel-heading-custom ft16': !isCollapsedCreateUserInfo, 'panel-heading panel-heading-custom1 ft16': isCollapsedCreateUserInfo}">
+				<i class="pull-left fa"
+					ng-class="{'fa-play fa-rotate-90': !isCollapsedCreateUserInfo, 'fa-play': isCollapsedCreateUserInfo}"></i>
+				<span id="sm-results-labelPanel" class="site-search">Create
+					User Contact</span>
+			</div>
+
+			<div ng-show="!showNotificationDetailsDiv"
+				class="panel-body panel-h1 site-search-results-section"
+				uib-collapse="isCollapsedCreateUserInfo">
+				<form id="userConttactInfofrom" name="userContactInfofrom"
+					novalidate>
+					<ul class="formmenu width-100 pull-left">
+						<li class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4"><label
+							for="Salutation" class="ng-binding">Salutation</label> <select
+							name="salutation" ng-model="formData.salutation"
+							class="select-field form-control width-100">
+								<option value="" class="" selected="">Select salutation</option>
+								<option value="{{salutation.name}}"
+									ng-repeat="salutation in salutationDropDown">
+									{{salutation.name}}</option>
+						</select></li>
+						<li class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4"><label
+							for="First Name" class="required ng-binding">First Name</label> <input
+							class="form-control ng-pristine
+                       ng-dirty ng-valid ng-empty ng-invalid-required ng-valid-pattern ng-touched"
+							type="text" name="FirstName" id="FirstName"
+							placeholder="First Name" ng-model="formData.firstName"
+							ng-maxlength="50" aria-invalid="false" style="" required>
+							<span class="validationerror ng-hide"
+							ng-show="userContactInfofrom.$submitted&&userContactInfofrom.
+                      FirstName.$error.required"
+							aria-hidden="true">Enter First Name</span> <span
+							class="validationerror ng-hide"
+							ng-show="userContactInfofrom.$submitted
+                      &&userContactInfofrom.FirstName.$error.maxlength"
+							aria-hidden="true">Length should be less than 50 </span></li>
+						<li class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4"><label
+							for="Last Name" class="required ng-binding">Last Name</label> <input
+							class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched"
+							ng-maxlength="50" type="text" name="LastName" id="LastName"
+							ng-model="formData.lastName" placeholder="Last Name"
+							aria-invalid="false" required> <span
+							class="validationerror ng-hide"
+							ng-show="userContactInfofrom.$submitted&&userContactInfofrom.LastName.$error.required"
+							aria-hidden="true"> Enter Last Name </span> <span
+							class="validationerror ng-hide"
+							ng-show="userContactInfofrom.$submitted
+                      &&userContactInfofrom.LastName.$error.maxlength"
+							aria-hidden="true"> Length should be less than 50 </span> <span
+							class="validationerror ng-hide"
+							ng-show="userContactInfofrom.$submitted&&userContactInfofrom.LastName.$error.pattern"
+							aria-hidden="true">Special characters or Numbers are not
+								allowed</span></li>
+					</ul>
+					<ul class="formmenu width-100 pull-left">
+						<li class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4"><label
+							for="UserName" class="ng-binding">Username</label> <input
+							class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched"
+							type="text" name="Username" ng-maxlength="20" id="Username"
+							ng-model="formData.username" placeholder="Username"
+							aria-invalid="false" style=""> <span
+							class="validationerror ng-hide"
+							ng-show="userContactInfofrom.$submitted
+                        &&!userContactInfofrom.Username.$valid"
+							aria-hidden="true"> Length should be less than 20 </span></li>
+						<li class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4"><label
+							for="Email" class="required ng-binding">Email</label> <input
+							class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched"
+							type="text" name="Email" id="Email"
+							ng-pattern="/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/"
+							ng-model="formData.email" placeholder="Email"
+							aria-invalid="false" required> <span
+							class="validationerror ng-hide"
+							ng-show="userContactInfofrom.$submitted&&userContactInfofrom.Email.$error.required"
+							aria-hidden="true">Specify email</span> <span
+							class="validationerror ng-hide"
+							ng-show="userContactInfofrom.$submitted&&userContactInfofrom.Email.$error.pattern"
+							aria-hidden="true">Specified email is invalid</span></li>
+						</li>
+						<li class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4"><label
+							for="Phone Number" class="ng-binding">Phone Number</label> <input
+							class="form-control ng-pristine ng-valid ng-empty  ng-touched"
+							type="text" name="PhoneNumber" id="PhoneNumber"
+							ng-model="formData.phoneNumber" placeholder="Phone Number"
+							ng-pattern="/^[0-9/(/)-]*$/" ng-maxlength="15" ng-minlength="6"
+							aria-invalid="false" style=""> <span
+							class="validationerror ng-hide"
+							ng-show="userContactInfofrom.$submitted&&!userContactInfofrom.PhoneNumber.$valid"
+							aria-hidden="true">Specified phone is invalid</span></li>
+					</ul>
+
+					<ul class="formmenu width-100 pull-left"
+						class="ng-dirty ng-valid-parse"novalidate">
+						<li class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4"><label
+							class="required ng-binding">Environment</label> <select
+							ng-model="formData.environment"
+							class="select-field form-control width-100"
+							ng-change="changeEnvironment(formData.environment,formData)">
+								<option value="" class="" selected="selected">Select
+									environment</option>
+								<option value="{{environment.name}}"
+									ng-repeat="environment in environmentsDropDown">
+									{{environment.name}}</option>
+						</select> <span class="validationerror"
+							ng-show="userContactInfofrom.$submitted&&(formData.environment===undefined)"
+							aria-hidden="true">Environment is mandatory</span></li>
+
+								<li class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4"><label
+									for="Cobrand" class="required ng-binding">Cobrand</label>
+
+									<div id="rolesDivCreate"
+									class="width-100 pull-left">								
+										<md-autocomplete class="normalAuto" ng-disabled="formData.environment==undefined" md-selected-item="formData.cobrandSelected" md-search-text="searchText" 
+										md-items="item in getMatches(searchText)" md-item-text="item.display" placeholder="Search cobrands" md-no-cache="true">
+											<md-item-template>
+												<span> {{item.display}}</span>
+											</md-item-template>
+											<md-not-found>
+												No matches found.
+											</md-not-found>
+										</md-autocomplete>
+                                    </div>
+									<span class="validationerror"
+									ng-show="userContactInfofrom.$submitted&&(formData.cobrandSelected===undefined)"
+									aria-hidden="true">Cobrand is mandatory</span>
+								  </li>	
+
+
+						<li
+							class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4 selec2img">
+							<label class="required ng-binding">TimeZone</label> <ui-select
+								ng-model="formData.timeZone" theme="select2"
+								tagging="tagHandler" style="
+                    width: 100%;">
+							<ui-select-match placeholder="Select a timeZone in the list">{{$select.selected.name}}</ui-select-match>
+							<ui-select-choices
+								repeat="item in timezonelist|filter:$select.search">
+							<div ng-bind-html=" item.name | highlight: $select.search"></div>
+
+							</ui-select-choices> </ui-select> <span class="validationerror"
+							ng-show="userContactInfofrom.$submitted&&(formData.timeZone===undefined)"
+							aria-hidden="true">TimeZone is mandatory</span>
+						</li>
+
+
+					</ul>
+					<ul class="formmenu width-100 pull-left">
+						<li class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4"><label
+							for="Roles" class="required ng-binding">Roles</label>
+							<div id="rolesDivCreate"
+								class="rolesMultiselect width-100 pull-left">
+								<div class="width-100 pull-left" name="Roles"
+									ng-dropdown-multiselect="" options="rolesDropDown"
+									selected-model="formData.rolesModelCreate" checkboxes="true"
+									extra-settings="rolessettings"></div>
+
+							</div>
+							<div class="validationerror"
+								ng-show="userContactInfofrom.$submitted
+                      &&formData.rolesModelCreate.length===0"
+								aria-hidden="true">Role is mandatory</div></li>
+						<li class="pull-left col-md-4 col-lg-4 col-sm-4 col-xs-4"><label
+							for="YCCUserDetail" class="ng-binding">YCC User</label> <input
+							type="checkbox" id="ycc_check_box" ng-model="formData.YCCUser"><br>
+							<div class="pull-left">
+								<input ng-show="formData.YCCUser"
+									class="form-control ng-pristine
+                          ng-valid ng-empty ng-valid-pattern ng-touched"
+									ng-model="formData.memId" type="text" name="MemId" id="MemId"
+									"
+                           placeholder="Enter MemId"
+									ng-pattern="/^[0-9]*$/" aria-invalid="false" style="">
+
+							</div> <span class="validationerror"
+							ng-show="userContactInfofrom.$submitted
+                      &&userContactInfofrom.MemId.$error.pattern"
+							aria-hidden="true">enter only digits</span></li>
+					</ul>
+					<ul class="formmenu width-100 pull-left">
+						<li class="pull-right col-xs-2 col-sm-2 col-md-2 col-lg-2">
+							<button class="btn-primary col-md-1 pull-left ng-binding"
+								type="submit"
+								style="display: block; width: 42%; margin-right: 10px;"
+								ng-click="saveUserInfo(formData,userContactInfofrom)">
+								Add</button>
+							<button class="btn-primary col-md-1 pull-left ng-binding"
+								type="reset" style="display: block; width: 42%;"
+								ng-click="reset(userContactInfofrom);clearErrorMessages();">
+								Reset</button>
+						</li>
+					</ul>
+				</form>
+			</div>
+		</div>
+
+		<div id="userSearch" class="margin-15 notiSearchPanel pull-right">
+			<div style="text-align: center;">{{msg}}</div>
+			<ul class="col-md-12 col-sm-12 pull-right pad-0">
+				<li id="searchBox">
+					<form autocomplete="off" name="searchForm" style="height: 100%">
+						<input id="" type="text" placeholder="Search for first name..."
+							class="notiSearch"
+							ng-keypress="checkIfEnterKeyWasPressed($event,formSearch)"
+							ng-model="formSearch.quickUserSerachQuery"> <span
+							class="search_icon"
+							ng-click="advSearch();$event.stopPropagation();"> <img
+							src="images/advSearch.png" style="width: 80%" />
+						</span>
+						<div id="advSearchBox" ng-show="advSearchBox" class="searchUser">
+							<div id="searchField">
+								<div class="form-group width-100 pull-left">
+									<div class="searchField pull-left margin-right-10">
+										<label for="Notification1 Type" class="ng-binding">Environment</label>
+										<select ng-model="formSearch.selectedEnv"
+											class="select-field form-control width-100"
+											ng-change="changeEnvironment(formSearch.selectedEnv,formSearch)">
+											<option value="" selected="selected">Select
+												environment</option>
+											<option value=" {{environment.name}}"
+												ng-repeat="environment in environmentsDropDown">
+												{{environment.name}}</option>
+										</select>
+									</div>
+
+									<div class="searchField pull-left selec2img margin-right-10">
+
+										<label class="ng-binding">Cobrand</label>
+									
+										<md-autocomplete class="normalAuto" ng-disabled="formSearch.selectedEnv==undefined" md-selected-item="formSearch.cobrandSelectedSearch" md-search-text="formSearch.searchText" 
+										md-items="item in getMatches(formSearch.searchText)" md-item-text="item.display" placeholder="Search cobrands" md-no-cache="true">
+											<md-item-template>
+												<span> {{item.display}}</span>
+											</md-item-template>
+											<md-not-found>
+												No matches found.
+											</md-not-found>
+										</md-autocomplete>
+
+									</div>
+
+
+									<div
+										class="searchField pull-left margin-right-10 rolesMultiselect searchMulti  pull-left seachUsersRoles"
+										style="width: 31%">
+										<label for="Roles" class="ng-binding">Roles</label>
+										<div class="width-10 pull-left" ng-dropdown-multiselect=""
+											options="rolesDropDown" style="float: left; width: 100%;"
+											selected-model="formSearch.rolesModelSearch"
+											checkboxes="true" extra-settings="rolessettings" events="">
+										</div>
+									</div>
+								</div>
+								<div class="form-group width-100 pull-left">
+									<div class="searchField pull-left margin-right-10">
+										<label for="First Name" class="ng-binding">First Name</label>
+										<input
+											class="form-control btm_border ng-pristine ng-untouched ng-valid ng-empty"
+											type="text" name="First Name" ng-model="formSearch.firstName"
+											placeholder="First Name" aria-invalid="false">
+									</div>
+									<div class="searchField pull-left margin-right-10">
+										<label for="Last Name" class="ng-binding">Last Name</label> <input
+											class="form-control btm_border ng-pristine ng-untouched ng-valid ng-empty"
+											type="text" name="Last Name" ng-model="formSearch.lastName"
+											placeholder="Last Name" aria-invalid="false">
+									</div>
+									<div class="searchField   pull-left margin-right-0">
+										<label for="Email" class="ng-binding">Email</label> <input
+											class="form-control btm_border ng-pristine 
+                               ng-untouched ng-valid ng-empty"
+											type="text" name="Email" ng-model="formSearch.email"
+											placeholder="Email" aria-invalid="false">
+									</div>
+								</div>
+								<div class="form-group width-100 pull-left">
+									<div class="searchField pull-left margin-right-10">
+										<label for="UserName" class="ng-binding">User Name</label> <input
+											class="form-control btm_border ng-pristine ng-untouched ng-valid ng-empty"
+											type="text" name="UserName" ng-model="formSearch.userName"
+											placeholder="user Name" aria-invalid="false">
+									</div>
+
+
+
+									<div class="searchField pull-left margin-right-10">
+										<label for="User Type" class="ng-binding">User Type</label> <select
+											ng-model="formSearch.selectedUserType"
+											class="select-field form-control width-100">
+											<option value="" selected="selected">select user
+												type</option>
+											<option value=" {{user.name}}"
+												ng-repeat="user in userTypeDropDowm">{{user.name}}
+											</option>
+										</select>
+									</div>
+
+
+									<div class="searchField pull-left">
+										<div
+											class="btn blue-gradient btn-rounded btn-sm my-0 adv_search_btn"
+											ng-click="searchUsers(formSearch)" role="button" tabindex="0">Search</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</li>
+			</ul>
+		</div>
+		<div id="userList" class="panel panel-default margin-15 pull-left"
+			style="width: 98%;">
+			<button ng-show="false" class="btn btn-primary"
+					id="ExportButton" fileName ="userList"
+					ng-json-export-excel data="excelResults"
+					report-fields="{userName: 'Username', 
+             salutation: 'salutation', firstName: 'FirstName',  lastName: 'Last Name',
+              email: 'Email', 'phone': 'Phone Number','timezone':'Time Zone',
+              cobrandId:'Cobrand Id',roles:'Roles','isYcc':'YCC User*',environment:'Environment',memId:'Mem Id'}">
+					<i class="fa fa-download" style="margin-right: 5px"></i>Export
+				</button>
+
+
+			<button ng-disabled="excelResults.length <= 0"
+					ng-click="fetchAllUserData(formSearch);" class="btn btn-primary"
+					style="float: right; margin-right: 12px; margin-bottom: 10px;margin-top: 15px;" ><span>{{exportButtonText}}</span>
+					<i class="fa fa-download" style="margin-right: 5px"></i>
+			</button>	
+			<div class="panel-tab" ng-click="showUserListDiv = !showUserListDiv"
+				ng-class="{'panel-heading panel-heading-custom ft16': !showUserListDiv, 'panel-heading panel-heading-custom1 ft16': showUserListDiv}">
+				<i class="pull-left fa"
+					ng-class="{'fa-play fa-rotate-90': !showUserListDiv, 'fa-play': showUserListDiv}"></i>
+				<span id="sm-results-labelPanel" class="site-search">User
+					List</span>
+				
+			</div>
+			<div ng-show="searchUserLoading"
+				id="userLoading-cobrand-t1-loadingPanel" align="center">
+				<img alt="Loading" src="images/loading.gif"> <br> <br>
+			</div>
+			<div class="alert alert-danger text-center"
+				ng-show="contactInfoSearchErrorMsg !=null && users == null">
+				{{contactInfoSearchErrorMsg}}</div>
+			<div class="alert alert-danger text-center"
+				ng-show="userContactInfoEditErrorMsg !=null" uib-collapse="showUserListDiv">
+				{{userContactInfoEditErrorMsg}}</div>
+
+			<div class="alert alert-success text-center"
+				ng-show="userContactInfoEditSucessMsg !=null" uib-collapse="showUserListDiv">
+				{{userContactInfoEditSucessMsg}}</div>
+
+			<div ng-show="!showUserListDiv"
+				class="panel-body panel-h1 site-search-results-section margin-bottom-14"
+				uib-collapse="showUserListDiv" style="margin-top: -12px;">
+				<table class="table table-responsive" ng-show="users.length>0">
+					<thead id="vn-userList-table-header" class="table-label">
+						<tr class="table-header">
+							<th id="vn-header-username" class="table-header"
+								style="width: 8%;"><a href=""
+								ng-click="setOrderProperty('environment')">
+									{{staticLabels.enviroment_label}}<span
+									ng-show="orderProperty == '-environment'"><i
+										class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+									ng-show="orderProperty == 'environment'"><i
+										class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+							</a></th>
+							<th id="vn-header-username" class="table-header"
+								style="width: 7%;"><a href=""
+								ng-click="setOrderProperty('userName')">
+									{{staticLabels.userName}}<span
+									ng-show="orderProperty == '-userName'"><i
+										class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+									ng-show="orderProperty == 'userName'"><i
+										class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+							</a></th>
+							<th id="vn-header-fName" class="table-header" style="width: 7%;">
+								<a href="" ng-click="setOrderProperty('firstName')">
+									{{staticLabels.fName}}<span
+									ng-show="orderProperty == '-firstName'"><i
+										class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+									ng-show="orderProperty == 'firstName'"><i
+										class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+							</a>
+							</th>
+							<th id="vn-header-lName" class="table-header" style="width: 7%;">
+								<a href="" ng-click="setOrderProperty('lastName')">
+									{{staticLabels.lName}}<span
+									ng-show="orderProperty == '-lastName'"><i
+										class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+									ng-show="orderProperty == 'lastName'"><i
+										class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+							</a>
+							</th>
+							<th id="vn-header-timeZone" class="table-header"
+								style="width: 10%;"><a href=""
+								ng-click="setOrderProperty('timezone.name')"> TimeZone <span
+									ng-show="orderProperty == '-timezone.name'"><i
+										class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+									ng-show="orderProperty == 'timezone.name'"><i
+										class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+							</a></th>
+							<th id="vn-header-mail" class="table-header" style="width: 10%;">
+								<a href="" ng-click="setOrderProperty('email')">
+									{{staticLabels.email}} <span
+									ng-show="orderProperty == '-email'"><i
+										class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+									ng-show="orderProperty == 'email'"><i
+										class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+							</a>
+							</th>
+							<th id="vn-header-phno" class="table-header" style="width: 10%;">
+								<a href=""> {{staticLabels.phone}} </a>
+							</th>
+							<th id="vn-header-roles" class="table-header" style="width: 10%;">{{staticLabels.roles}}</th>
+							<th id="vn-header-cobrand" class="table-header"
+								style="width: 7%;"><a href=""
+								ng-click="setOrderProperty('cobrandId')">
+									{{staticLabels.cobrand_Label}} <span
+									ng-show="orderProperty == '-cobrandId'"><i
+										class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+									ng-show="orderProperty == 'cobrandId'"><i
+										class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+							</a></th>
+							<th id="vn-header-usercheck" class="table-header"
+								style="width: 7%;"><a href=""
+								ng-click="setOrderProperty('isYcc')">
+									{{staticLabels.ycc_user}} <span
+									ng-show="orderProperty == '-isYcc'"><i
+										class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+									ng-show="orderProperty == 'isYcc'"><i
+										class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+							</a></th>
+							<th id="vn-header-actions" class="table-header"
+								style="width: 6%;">{{staticLabels.actions}}</th>
+
+						</tr>
+					</thead>
+					<tbody id="vn-userList-table-results" class="table-contents">
+						<tr ng-repeat="(key,data) in users | orderBy:orderProperty"
+							ng-init="data.editMode=false;">
+							<td class="item-type" id="vn-results-environment">{{data.environment}}</td>
+							<td id="vn-results-username">{{data.userName}}</td>
+							<td id="vn-results-fName">{{data.firstName}}</td>
+							<td id="vn-results-lName">{{data.lastName}}</td>
+							<!-- <td id="vn-results-timeZone" style="width: 11%;">{{data.timezone}} hello</td> -->
+							<td class="editdropdown"
+								style="position: relative; overflow: inherit;"><span
+								ng-if="!data.editMode&&data.timezone.Id!=null">{{data.timezone.name}}</span>
+								<div ng-if="data.editMode" style="position: relative;">
+									<ui-select ng-model="data.timezone" theme="select2"
+										tagging="tagHandler" class="selec2img" style="width:100%;">
+									<ui-select-match placeholder="Select">{{$select.selected.name}}</ui-select-match>
+									<ui-select-choices
+										repeat="item in timezonelist|filter:$select.search">
+									<div ng-bind-html=" item.name | highlight: $select.search"></div>
+									</ui-select-choices> </ui-select>
+								</div></td>
+							<td id="vn-results-mail"><span ng-if="!data.editMode">{{data.email}}</span>
+								<input type="text" class="editFieldBox" ng-if="data.editMode"
+								ng-model="data.email" data-ng-required /></td>
+							<td id="vn-results-phno"><span ng-if="!data.editMode">{{data.phone}}</span>
+								<input type="text" class="editFieldBox" ng-if="data.editMode"
+								ng-model="data.phone" data-ng-required /></td>
+							<td id="vn-results-roles" class="seachRolesResults"
+								style="width: 6%; overflow: unset;">
+								<div ng-if="!data.editMode">
+									<div>{{data.roles.length}}</div>
+									<span style="position: relative;"
+										ng-init="this.showUpdatesPopover=false;" class="hover-icon"
+										ng-mouseover="this.showUpdatesPopover=true;"
+										ng-mouseleave="this.showUpdatesPopover=false;">...
+										<div class="popover userListDiv bottom bgPopover"
+											ng-class="{showDetailsPopup:this.showUpdatesPopover}"
+											ng-show="this.showUpdatesPopover">
+											<span class="padding-right:10px;"
+												ng-repeat="value in data.roles"><div>{{value}}</div></span>
+										</div>
+									</span>
+								</div>
+
+
+								<div class="rolesMultiselect editButtonRole"
+									ng-if="data.editMode">
+									<div ng-dropdown-multiselect="" options="rolesDropDown"
+										selected-model="rolesModel" checkboxes="true"
+										extra-settings="rolessettings" events="rolesUpdateEvents"></div>
+								</div>
+							</td>
+							<td id="vn-results-cobrand">{{data.cobrandId}}</td>
+							<td id="vn-results-usercheck">{{data.isYcc}}</td>
+							<td id="vn-results-actions"><span class="fa fa-pencil"
+								role="button" type="submit" ng-if="!data.editMode"
+								ng-class="{'disabled': editing==true}"
+								ng-click="data.editMode = true; editCheckUserInfo(data);"></span>
+								<span style="margin-left: 10px;" class="fa fa-trash-o"
+								role="button" type="submit" ng-if="!data.editMode"
+								ng-click="deleteUserInfo(data);data.editMode=false;"></span> <span
+								class="fa fa-save" role="button" type="submit"
+								ng-if="data.editMode "
+								ng-click="editUserInfo(data);data.editMode=false;"></span> <span
+								style="margin-left: 10px;" class="fa fa-remove" role="button"
+								type="submit" ng-if="data.editMode"
+								ng-click="cancel(data);data.editMode=false;"></span></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="11">
+								<div class="pull-right">
+									<ul class="pagination">
+										<li class="cursor-pointer" id="sm-pagination-first"
+											ng-class="{disabled:pager.currentPage === 1}"><a
+											ng-click="setPage(1)">{{staticLabels.label_first}}</a></li> &nbsp;
+										<li class="cursor-pointer" id="sm-paginate-backward"
+											ng-class="{disabled:pager.currentPage === 1}"><a
+											ng-click="setPage(pager.currentPage - 1)"><i
+												class="fa fa-play fa-rotate-180"></i></a></li>
+										<li class="cursor-pointer" id="sm-paginate"
+											ng-repeat="page in pager.pages"
+											ng-class="{active:pager.currentPage === page}"><a
+											ng-click="setPage(page)">{{page}}</a></li>
+										<li class="cursor-pointer" id="sm-paginate-forward"
+											ng-class="{disabled:pager.currentPage === pager.totalPages}">
+											<a ng-click="setPage(pager.currentPage + 1)"><i
+												class="fa fa-play"></i></a>
+										</li>
+										<li class="cursor-pointer" id="sm-pagination-last"
+											ng-class="{disabled:pager.currentPage === pager.totalPages}">
+											<a ng-click="setPage(pager.totalPages)">{{staticLabels.label_last}}</a>
+										</li>
+									</ul>
+								</div>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+		<div id="UserfileHistorydiv"
+			class="panel panel-default margin-15 pull-left" style="width: 98%;">
+			<div class="panel-tab panel-heading ft16 panel-heading-custom"
+				ng-click="showFileHistoryDiv = !showFileHistoryDiv"
+				ng-class="{'panel-heading panel-heading-custom ft16': !showFileHistoryDiv, 'panel-heading panel-heading-custom1 ft16': showFileHistoryDiv}"
+				role="button" tabindex="0" style="">
+				<i class="pull-left fa fa-play fa-rotate-90"
+					ng-class="{'fa-play fa-rotate-90': !showFileHistoryDiv, 'fa-play': showFileHistoryDiv}"
+					style=""></i> <span id="sm-results-labelPanel" class="site-search">Bulk
+					user upload</span>
+			</div>
+			<div ng-show="!showFileHistoryDiv"
+				class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+				<div class="pull-left width-100" style="width: 80%">
+					<form name="doc" id="formDoc" class="ng-pristine ng-valid"
+						style="float: left; width: 100%">
+						<div class="file-upload" style="width: 72%; float: left;">
+							<div class="file-select">
+								<div class="file-select-button" id="fileName">Choose File</div>
+								<div class="file-select-name" id="noFile">
+									<span style="width: 100%" ng-if="userUpload.uploadUser == undefined">No
+										File Choosen</span> <span style="width: 100%"
+										ng-if="userUpload.uploadUser != undefined">{{userUpload.uploadUser.filename}}</span>
+								</div>
+								<input id="fileUser"
+									class="pull-left inputfile ng-pristine ng-valid ng-isolate-scope ng-empty ng-touched"
+									type="file" ng-model="userUpload.uploadUser" ng-change="createUserBulk();"
+									name="file" base-sixty-four-input="" accept=".csv"
+									aria-invalid="false" style="">
+							</div>
+						</div>
+						<button class="btn-primary pull-left" type="button" name=""
+							ng-click="!doc.file.$invalid&&uploadFile(userUpload.uploadUser)"
+							style="padding: 8px 20px 8px;">Upload</button>
+						<span class="alert width-100 pull-left fileHistoryMsg"
+							ng-class="{'alert-danger': doc.file.$invalid }"
+							ng-if="doc.file.$error"> <span
+							ng-if="doc.file.$error.accept">
+								{{staticLabels.file_format_err_msg}}</span>
+
+						</span> <span class="alert width-100 pull-left fileHistoryMsg"
+							ng-class="{'alert-success': userUploadMsg&& !doc.file.$invalid }"
+							ng-if="userUploadMsg && !doc.file.$invalid">
+							{{userUploadMsg}} </span> <span
+							class="alert width-100 pull-left fileHistoryMsg"
+							ng-class="{'alert-danger': userUploadErrorMsg }"
+							ng-if="userUploadErrorMsg"> {{userUploadErrorMsg}} </span>
+					</form>
+
+
+				</div>
+			</div>
+			<div ng-show="searchUserLoading"
+				id="userLoading-cobrand-t1-loadingPanel" align="center"
+				aria-hidden="true" class="ng-hide">
+				<img alt="Loading" src="images/loading.gif"> <br> <br>
+			</div>
+
+			<div ng-show="!showFileHistoryDiv"
+				class="panel-body panel-h1 site-search-results-section margin-bottom-14 in collapse"
+				uib-collapse="showFileHistoryDiv"
+				style="margin-top: -12px; height: auto;" aria-expanded="true">
+				<table class="table table-responsive fileHistoryTable">
+					<thead id="vn-filehistoryList-table-header" class="table-label">
+						<tr class="table-header">
+							<th id="vn-header-created" class="table-header">
+								{{staticLabels.basic_created}}</th>
+							<th id="vn-header-total_rec" class="table-header">{{
+								staticLabels.total_records}}</th>
+							<th id="vn-header-success_rec" class="table-header">{{
+								staticLabels.success_records}}</th>
+							<th id="vn-header-failure_rec" class="table-header">
+								{{staticLabels.failure_records}}</th>
+							<th id="vn-header-failure_rec" class="table-header">
+								{{staticLabels.error_messages}}</th>
+
+						</tr>
+					</thead>
+
+					<tbody id="vn-filehistory-table-results" class="table-contents">
+						<tr ng-repeat="(key,data) in fileHistoryCurr">
+							<td id="vn-results-created">{{data.created|dateConverterNotification}}</td>
+							<td id="vn-results-total-records">{{data.totalRecords}}</td>
+							<td id="vn-results-success-rec">{{data.successRecords}}</td>
+							<td id="vn-results-failure-name-rec">{{data.failureRecords}}</td>
+							<td id="vn-results-failure-name-rec"><a
+								ng-hide="data.failureRecords===0" ng-json-export-excel
+								data="data.errorObj"
+								report-fields="{environment:'Environment',cobrandId: 'Cobrand ID', email: 'Email',errorMesages:'ErrorMessages'}">
+									<i class="fa fa-download"></i>
+							</a></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="5">
+								<div class="pull-right">
+									<ul class="pagination">
+										<li class="cursor-pointer" id="sm-pagination-first"
+											ng-class="{disabled:pagerFileHistory.currentPage === 1}"><a
+											ng-click="setPageFileHistory(1)">{{staticLabels.label_first}}</a></li>
+										&nbsp;
+										<li class="cursor-pointer" id="sm-paginate-backward"
+											ng-class="{disabled:pagerFileHistory.currentPage === 1}"><a
+											ng-click="setPageFileHistory(pagerFileHistory.currentPage - 1)"><i
+												class="fa fa-play fa-rotate-180"></i></a></li>
+										<li class="cursor-pointer" id="sm-paginate"
+											ng-repeat="page in pagerFileHistory.pages"
+											ng-class="{active:pagerFileHistory.currentPage === page}"><a
+											ng-click="setPageFileHistory(page)">{{page}}</a></li>
+										<li class="cursor-pointer" id="sm-paginate-forward"
+											ng-class="{disabled:pagerFileHistory.currentPage === pagerFileHistory.totalPages}">
+											<a
+											ng-click="setPageFileHistory(pagerFileHistory.currentPage + 1)"><i
+												class="fa fa-play"></i></a>
+										</li>
+										<li class="cursor-pointer" id="sm-pagination-last"
+											ng-class="{disabled:pagerFileHistory.currentPage === pagerFileHistory.totalPages}">
+											<a ng-click="setPageFileHistory(pagerFileHistory.totalPages)">{{staticLabels.label_last}}</a>
+										</li>
+									</ul>
+								</div>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	<div id="cobrandDiv"
+			class="panel panel-default margin-15 pull-left" style="width: 98%;">
+			<div class="panel-tab panel-heading ft16 panel-heading-custom"
+				ng-click="cobrandDiv = !cobrandDiv"
+				ng-class="{'panel-heading panel-heading-custom ft16': !cobrandDiv, 'panel-heading panel-heading-custom1 ft16': cobrandDiv}"
+				role="button" tabindex="0" style="">
+				<i class="pull-left fa fa-play fa-rotate-90"
+					ng-class="{'fa-play fa-rotate-90': !cobrandDiv, 'fa-play': cobrandDiv}"
+					style=""></i> <span id="sm-results-labelPanel" class="site-search">Cobrand Mapping</span>
+			</div>
+			<div ng-show="!cobrandDiv"
+				class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+				<div class="pull-left width-100" style="width: 80%">
+					<form name="doc" id="formCobMapping" class="ng-pristine ng-valid"
+						style="float: left; width: 100%">
+						<div class="file-cobMapping" style="width: 72%; float: left;">
+							<div class="file-select">
+								<div class="file-select-button" id="fileName">Choose File</div>
+								<div class="file-select-name" id="noFile">
+									<span style="width: 100%" ng-if="cobUpload.uploadMapping == undefined">No
+										File Choosen</span> <span style="width: 100%"
+										ng-show="cobUpload.uploadMapping != undefined">{{cobUpload.uploadMapping.filename}}</span>
+								</div>
+								<input id="fileCobrandMapping"
+									class="pull-left inputfile ng-pristine ng-valid ng-isolate-scope ng-empty ng-touched"
+									type="file" ng-model="cobUpload.uploadMapping" ng-change="createCobrandMapping();"
+									name="file" base-sixty-four-input="" accept=".csv"
+									aria-invalid="false" style="">
+							</div>
+						</div>
+						<button class="btn-primary pull-left" type="button" name=""
+							ng-click="!doc.file.$invalid&&uploadCobMapping(cobUpload.uploadMapping)"
+							style="padding: 8px 20px 8px;">Upload</button>
+						<span class="alert width-100 pull-left cobUploadMsg"
+							ng-class="{'alert-danger': doc.file.$invalid }"
+							ng-if="doc.file.$error"> <span
+							ng-if="doc.file.$error.accept">
+								{{staticLabels.file_format_err_msg}}</span>
+
+						</span> <span class="alert width-100 pull-left cobUploadMsg"
+							ng-class="{'alert-success': cobUploadMsg&& !doc.file.$invalid }"
+							ng-if="cobUploadMsg  && !doc.file.$invalid">
+							{{cobUploadMsg}} </span> <span
+							class="alert width-100 pull-left cobUploadMsg"
+							ng-class="{'alert-danger': cobUploadErrorMsg }"
+							ng-if="cobUploadErrorMsg"> {{cobUploadErrorMsg}} </span>
+					</form>
+
+
+				</div>
+			</div>
+			
+			
+		</div>
+	
+	</div>
+</div>

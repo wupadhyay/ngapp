@@ -1,0 +1,53 @@
+<div id='communicationDashboard' ng-hide="showDashboard">
+  <div id="notification-label-errorPanel"
+        ng-show="labelPropertyErrorMsg!=null" class="panel-body error">
+        {{labelPropertyErrorMsg}}</div>
+    <div ng-show="labelPropertyErrorMsg==null"
+        class="container-fluid-custom base-background"
+        data-ng-init="initCommunication();" id="notificationDashMain">
+        <div id="scrollDiv" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pad-t20 base-background">
+          <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 pos-fix">
+            <div id="navCol" class="list-group pull-left">
+              <ul id="communication-sidenav" class="nav-list pull-left pad-0 list-group-item width-100">
+                <li ng-repeat="item in sideLists" ui-sref="communicationDashboard.{{item.url}}" ui-sref-opts="{location: false}" ui-sref-active="selected" class="list-group-item width-100 pull-left" ng-class="{navSubList: item.name == 'Incidents' || item.name == 'Maintenances'}" ng-click="filterCommunicationType(item)">
+                    <div class="width-100 pull-left">
+                      <div class="nav-list-name pull-left">
+                        <span class="display-block">{{item.name}}</span>
+                        <span class="nav-list-txt" ng-if="item.name=='Incidents'">{{resolvedCount}} {{item.closedTagLabel}} {{staticLabels.closed_one_day_label}}</span>
+                        <span class="nav-list-txt" ng-if="item.name=='Maintenances'"> {{closedCount}} {{item.closedTagLabel}} {{staticLabels.closed_one_day_label}}</span>
+                        <span class="nav-list-txt" ng-if="item.name=='Site Alerts'"> {{isSiteAlertCount}} {{item.closedTagLabel}} {{staticLabels.closed_one_day_label}}</span>
+                      </div>
+                      <div class="nav-list-count pull-left text-right">
+                        <span class="display-block" ng-if="item.name=='Communications'"> {{ activeIncidents + activeMaintenances}}</span>
+                        <span class="display-block pos-rel" ng-if="item.name=='Incidents'"> {{activeIncidents}} 
+                          <i class="fa fa-circle dot" ng-if="showNewIndicatorInc"></i>
+                        </span>
+                        
+                        <span class="display-block pos-rel" ng-if="item.name=='Maintenances'"> {{activeMaintenances}}
+                          <i class="fa fa-circle dot" ng-if="showNewIndicatorMain" style="color:red"></i>
+                        </span>
+                        <span class="display-block pos-rel" ng-if="item.name=='Site Alerts'"> {{isActiveSiteAlert}}
+                          <i class="fa fa-circle dot" ng-if="showNewIndicatorSite" style="color:red"></i>
+                        </span>
+                        <span class="nav-list-txt" ng-if="item.name=='Incidents' || item.name=='Maintenances' || item.name=='Site Alerts'">Active</span>
+                      </div>
+                    </div>
+                </li>
+              </ul>
+
+              <ul id="dasboardLegend" class="dasboard_legend pull-left m-t5 pad-0" ng-if="$state.current.name=='communicationDashboard.communication'" > 
+                <li class="text-uppercase legend-title">{{staticLabels.notification_legend_label}}</li>
+                <li><span class="bg-active-inci legend-icon "></span>{{staticLabels.active_incidents_label}}</li>
+                <li><span class="bg-active-maintenance legend-icon"></span>{{staticLabels.active_maintenances_label}}</li>
+                <li><span class="bg-closed-inci legend-icon"></span>{{staticLabels.closed_incidents_label}}</li>
+                <li><span class="bg-closed-maintenance legend-icon"></span>{{staticLabels.closed_maintenances_label}}</li>
+              </ul>
+            </div>
+          </div>
+          <div id="col-right" class="col-xs-9 col-sm-9 col-md-9 col-lg-9 col-right pull-right pad-r0">
+            <div id="main-view" ui-view></div>
+            
+          </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,167 @@
+<fieldset class="text-capitalize">
+	<h1 class="fs-title">
+		<b>{{staticLabels.notification_customer_label}}</b>
+	</h1>
+	<div class="col-md-12 pad-0">
+		<div class="col-md-3 pad-0 col-filter">
+			<div id="" class="tabFilter">
+				<ul class="nav nav-pills">
+					<li class="txt-center"
+						ng-class="{active:isSet(1), disabled:disableChk}"><a href
+						ng-click="!disableChk && setTab(1,$event)">Group</a></li>
+					<li class="txt-center"
+						ng-class="{active:isSet(2), disabled:disableCSV}"><a href
+						ng-click="!disableCSV && setTab(2,$event)">Manual</a></li>
+				</ul>
+				<div class="m-t20">
+					<div class="btn-group env-chk">
+						<label class="btn btn-primary"> <input type="radio"
+							ng-model="formData.environment"
+							ng-change="envChecked(staticLabels.prod_label,formData.environment)"
+							value="{{staticLabels.prod_label}}" name="options" /> <span>Prod</span>
+						</label> <label class="btn btn-primary"> <input type="radio"
+							ng-model="formData.environment"
+							ng-change="envChecked(staticLabels.stag_label,formData.environment)"
+							name="options" /> <span>Stage</span>
+						</label>
+					</div>
+					<div class="tab-content m-t20">
+						<div ng-show="isSet(1)">
+							<div class="cat-filter"
+								ng-repeat="cat in categories track by $index"
+								ng-init="filter[cat]={} && summaryState = false">
+
+								<div class="width-100 pull-left cust_chkbox"
+									ng-class="{disabled:isCat[$index]}">
+									<label class="pull-left width-100"> <span
+										ng-if="cat=='dataCenter'">{{staticLabels.datacenter_label}}</span>
+										<span ng-if="cat=='productType'">{{staticLabels.product_type_label}}</span>
+										<span ng-if="cat=='backendGroup'">{{staticLabels.backend_grp_label}}</span>
+										<span ng-if="cat=='dataBase'">{{staticLabels.database_label}}</span>
+										<input type="checkbox" name="" ng-model="catTitle[$index]"
+										ng-change="catChked(cat,catTitle[$index],$index)"
+										ng-disabled="isCat[$index]"> <span class="pull-right">
+											<i class="fa fa-plus" ng-show="!catTitle[$index]"
+											aria-hidden="true"></i> <i class="fa fa-minus"
+											ng-show="catTitle[$index]" aria-hidden="true"></i>
+									</span>
+									</label>
+
+								</div>
+								<div class="width-100 pull-right"
+									ng-if="catTitle[$index] && !isCat[$index]">
+									<div class="itemDropdown">
+										<label class="searchItem width-100"> <input
+											class="width-100" type="text" ng-model="queryCatItem" name=""
+											placeholder="Search..."
+											ng-keypress="enterKeyWasPressed($event)">
+										</label>
+										<div class="catItemBox"
+											mb-scrollbar="scrollbar('vertical', true)">
+											<div class="chkBox catItem"
+												ng-repeat="value in getItems(cat, data) | filter: queryCatItem ">
+												<label class="width-100"> <input type="checkbox"
+													name="catItem" ng-model="filter[cat][value]"
+													ng-model="value"
+													ng-change="catDataChecked(cat,value,filter[cat][value],$index)">
+													{{value }}
+												</label>
+											</div>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+						<div ng-show="isSet(2)">
+							<textarea type="text" name="" class="input-custId form-control"
+								ng-model="formData.csvCobInput"
+								placeholder="Type Comma Separated Valid Customer Id's ..."
+								ng-keyup="csvCobData($event,formData.csvCobInput)"> </textarea>
+							<span class="validationerror" ng-show="errCobInput">Exceeded
+								1000 Cobrand Id's</span> <span id="cobInvalid" class="validationerror"
+								ng-if="cobIdInvalid.length > 0 && errCob"> [<span
+								ng-repeat="id in cobIdInvalid">{{id}} <span
+									ng-if="$index!=cobIdInvalid.length-1">,</span>
+							</span> Mismatched Id's excluded from the list]
+							</span> <span class="validationerror" ng-if="errCobReq">Valid
+								Customer ID is Required</span> <span class="btn-primary cust-apply"
+								ng-click="getCSVInput(formData)">Apply</span>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-9">
+			<div ng-if="filtered.length == 0 || !csvCobVal"
+				class="txt-center validationerror">{{staticLabels.no_data_label}}</div>
+
+			<div ng-if="filtered.length > 0 && csvCobVal"
+				class="width-100">
+				<input class="width-40 pull-right pad-5" type="text"
+					ng-model="filterCobModel" name="" placeholder="Search..."
+					ng-keypress="enterKeyWasPressed($event)">
+				<div class="constrained" style="height: 550px">
+				<table id="resTable"
+					class="table width-100 searchResult tbl txt-center pull-left"
+					infinite-scroll="loadMore()"
+					infinite-scroll-container='".constrained"'
+					infinite-scroll-distance="1" infinite-scroll-parent="true">
+					<thead>
+						<tr>
+							<th style="width: 26%"><button class="pull-left pad-5 m-r10 ft-size12 border-0"
+									ng-click="checkAll()">Check All</button>
+								<button class="pull-left pad-5 ft-size12 border-0"
+									ng-click="uncheckAll()">Uncheck All</button></th>
+							<th class="txt-center">Only Channel</th>
+							<th class="txt-center">Customer Id</th>
+							<th class="txt-center">Customer Name</th>
+							<th class="txt-center">Type</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr ng-repeat="data in filtered |  limitTo:numberToDisplay | filter:filterCobModel  as filtered ">
+							<td style="width: 26%"><input type="checkbox" ng-click="checkForChannel(data,$index);"
+								data-checklist-model="formData.filtered"
+								data-checklist-value="data"></td>
+							<td>
+								<span ng-if="data.type=='CHANNEL'">
+									<input type="checkbox" ng-click="checkForSingleChannel(data,$index);"	data-checklist-model="formData.filteredChannel"
+									data-checklist-value="data"	ng-disabled="!enableChkboxes" ng-class='{disabled:!enableChkboxes}'			
+									/>									
+								</span>
+								
+							</td>
+							<td>{{data.cobrandId}}</td>
+							<td>{{data.name}}</td>
+							<td>{{data.type}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			</div>
+		</div>
+	</div>
+	<div class="form-group width-100 pull-left m-t20">
+
+		<div class="col-md-2 pull-right pad-r0">
+			<button id="nextCustomer" class="btn btn-block btn-info"
+				ng-click="focusInvalid(notificationform);filtered.length > 0 &&saveNotificationDetail(formData,notificationform)">
+				{{staticLabels.next_label}} <i
+					ng-if="!showSpinner && $state.current.name=='notification.create.customer'"
+					class="fa fa-hand-o-right pull-right hand-icon m-r10"></i> <i
+					class="fa fa-circle-o-notch fa-spin"
+					ng-if=" $state.current.name=='notification.create.customer' && showSpinner"></i>
+			</button>
+		</div>
+		<div class="col-md-2 pull-right pad-r0">
+			<a ui-sref="notification.create.detail"
+				ui-sref-opts="{location:false}" class="btn btn-block btn-info"  ng-click="saveCustomerInfoData()">
+				<i class="fa fa-hand-o-left pull-left hand-icon"></i>
+				{{staticLabels.previous_label}}
+			</a>
+		</div>
+	</div>
+</fieldset>

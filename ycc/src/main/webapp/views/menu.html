@@ -1,0 +1,72 @@
+<div class="container-fluid-custom"
+	ng-controller="ApplicationController" data-ng-init="initializeData();">
+	<div class="m-t5"></div>
+	<ul class="navbar-fixed-top nav nav-pills menu box hr" ng-click="$event.stopPropagation();">
+		<li id="dashboard" ng-controller="DashboardController"
+			ui-sref-active="active-tab"><a ui-sref="dashboard"
+			ng-click="showMain();" onclick=" ga('send','pageview','/dashboard')"> <span class="menu-tab">{{staticLabels.dashboard_label_up}}</span>
+		</a>
+			<div class="menu-highlight"></div></li>
+		<li id="siteMetadata" ng-controller="SiteMetadataController"
+			ui-sref-active="active-tab"><a ui-sref="siteMetadata"
+			ng-click="showMain();" onclick=" ga('send','pageview','/siteinformation')"> <span class="menu-tab">{{staticLabels.site_info_label}}</span>
+		</a></li>
+		<li iscobrand id="notification1" ng-controller="CommunicationController" ui-sref-active="active-tab">
+		<a ui-sref="communicationDashboard" ng-click="showMain();" onclick=" ga('send','pageview','/notificationcenter')"> <span class="menu-tab">NOTIFICATION CENTER</span>
+			</a>
+		</li>
+
+		<li isyodlee isnotprimary id="notification2" ng-controller="CommunicationController"  ui-sref-active="active-tab"
+			><a ui-sref="communicationDashboard" ng-click="showMain();" onclick=" ga('send','pageview','/notificationcenter')"> <span class="menu-tab">NOTIFICATION CENTER</span>
+			</a>
+		</li> 
+
+		<li isyodlee isprimary id="notification3" 
+			ng-controller="NotificationController" ui-sref-active="active-tab"
+			class="dropdown"><a ui-sref="notification"
+			ng-click="showMain();" data-toggle="dropdown" class="dropdown-toggle">
+				<span class="menu-tab">NOTIFICATION CENTER</span><b class="caret"></b>
+		</a>
+			<ul class="dropdown-menu">
+				<li><a ui-sref="communicationDashboard" ui-sref-opts="{reload: true}" onclick="ga('send','pageview','/notificationdashboard')">Dashboard</a></li>
+				<li><a ui-sref="notification" ui-sref-opts="{reload: true}" onclick="ga('send','pageview','/notificationmanagement')">Management</a></li>
+			</ul></li> 
+
+		<li isyodlee isprimary id="contactManagement"
+			ng-controller="UserContactInfoController" ui-sref-active="active-tab"><a
+			ui-sref="userContactManagemnt" ng-click="showMain();"> <span
+				class="menu-tab">USER INFORMATION</span>
+		</a></li>
+
+	</ul>
+	<input type="hidden" id="memId" name="" ng-value="memberId"> <input
+		type="hidden" id="selCob" name="" ng-value="selectedCobrand">
+</div>
+
+<script>
+	document.getElementById("appLoadingImage").style.visibility = "hidden";
+	setTimeout(function() {
+		var mem_Id = document.getElementById('memId').value;
+		var sel_cob = document.getElementById('selCob').value;
+		var user_id = mem_Id + '.' + sel_cob;
+
+		(function(i, s, o, g, r, a, m) {
+			i['GoogleAnalyticsObject'] = r;
+			i[r] = i[r] || function() {
+				(i[r].q = i[r].q || []).push(arguments)
+			}, i[r].l = 1 * new Date();
+			a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+			a.async = 1;
+			a.src = g;
+			m.parentNode.insertBefore(a, m)
+		})(window, document, 'script',
+				'/ngycc/scripts/nextgenycc.min.js?SI_BUILD', 'ga');
+		ga('create', trackingIdGA, 'auto', {
+			userId : user_id
+		});
+		ga('require', 'displayfeatures');
+		ga('set', 'dimension1', user_id);
+		ga('send', 'pageview');
+	}, 10000);
+	
+</script>

@@ -1,0 +1,572 @@
+
+<div id="search_widget" class="siteDetail pull-left width-100"
+	ng-controller="SiteDetailController">
+	<div id="sw-loadingPanel" align="center"
+		ng-show="loaderForSearchWidget == true">
+		<img alt="Loading" class="margin-top-10" src="images/loading.gif" />
+	</div>
+	<div id="sw-errorPanel" ng-show="searchWidgetErrorMsg!=null "
+		class="panel-body error">{{searchWidgetErrorMsg}}</div>
+	<div id="siteDetail"
+		ng-show="siteDetailData!=null && searchWidgetErrorMsg==null"
+		data-ng-init="initSiteDetail();">
+		<div ng-repeat="data in siteDetailData">
+			<section id="sw-header" class="row row-site header">
+				<div class="siteHeader">
+					<div class="logo">
+						<a href="{{data.baseUrl}}" target="_blank"><img
+							src="{{data.logo}}" title="{{data.name}}" /></a>
+					</div>
+				</div>
+				<div class="siteurl">
+					<span>{{data.name}}</span> <a href="{{data.baseUrl}}"
+						target="_blank" title="{{data.baseUrl}}">{{data.baseUrl}}</a>
+				</div>
+				<div class="pull-right time-info" ng-if="data.lastModified">
+					{{staticLabels.last_updated}} : <span class="font-weight-600">{{data.lastModified
+						|dateConverter}} </span>
+				</div>
+			</section>
+			<section id="main-content" class="main-content"
+				ng-controller="GlobalMessageController">
+				<div>
+					<div ng-if="activeNotifications.length > 0"
+						class="row row-detail panel panel-warning notification_site_panel">
+						<div id="sw-gm-top-notification"
+							class="ft12 notification_menu_msgText margin-top-10"
+							ng-repeat="notification in activeNotifications">
+							<img id="sw-top-notification-identifier"
+								src='{{notification.categoryImg}}' height="16px" width="16px" />
+							<span id="sw-top-notification-title" style="padding-left: 5px">{{notification.title}}</span>
+						</div>
+					</div>
+				</div>
+				<div id="sw-basic-details"
+					class="row row-detail panel panel-default">
+					<div class="cursor-pointer panel-tab"
+						ng-click="showBasicDiv = !showBasicDiv"
+						ng-class="{'panel-heading panel-heading-custom ft16': !showBasicDiv, 'panel-heading panel-heading-custom1 ft16': showBasicDiv}">
+						<i class="pull-left fa"
+							ng-class="{'fa-play fa-rotate-90': !showBasicDiv, 'fa-play': showBasicDiv}"></i>
+						<span id="sw-basic-details-label" class="row-title">{{staticLabels.site_basic_details}}</span>
+					</div>
+					<div ng-show="!showBasicDiv" class="boxDetail">
+						<div class="col-md-6 col-lg-6">
+							<ul class="list-group width-100">
+								<li class="list-group-item no-border"><p
+										id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.display_name}}:</p>
+									<p id="sw-bd-name" class="basic-data">{{data.name}}
+										({{data.id}})</p></li>
+								<li class="list-group-item no-border"><p
+										id="sw-bd-statusLabel" class="basic-detail">{{staticLabels.basic_site_status}}:</p>
+									<p id="sw-bd-status" class="basic-data"
+										ng-if="data.status == 'Invisible'">{{staticLabels.Invisible}}</p>
+									<p id="sw-bd-status" class="basic-data"
+										ng-if="data.status == 'Unsupported'">{{staticLabels.Unsupported}}</p>
+									<p id="sw-bd-status" class="basic-data"
+										ng-if="data.status == 'UnsupportedBeta'">{{staticLabels.UnsupportedBeta}}</p>
+									<p id="sw-bd-status" class="basic-data"
+										ng-if="data.status == 'Supported'">{{staticLabels.Supported}}</p>
+									<p id="sw-bd-status" class="basic-data"
+										ng-if="data.status == 'Beta'">{{staticLabels.Beta}}</p>
+									<p id="sw-bd-status" class="basic-data"
+										ng-if="data.status == 'Unavailable'">{{staticLabels.Unavailable}}</p>
+								</li>
+								<li class="list-group-item no-border"><p
+										id="sw-bd-urlLabel" class="basic-detail">{{staticLabels.basic_login_url}}:</p>
+									<p class="basic-data">
+										<a href="{{data.loginUrl}}" target="_blank"
+											title="{{data.loginUrl}}">{{data.loginUrl}}</a>
+									</p></li>
+								<li class="list-group-item no-border"><p
+										id="sw-bd-localeLabel" class="basic-detail">{{staticLabels.basic_country}}:</p>
+									<p class="basic-data">{{data.country}}</p></li>
+
+							</ul>
+						</div>
+						<div class="col-md-6 col-lg-6">
+							<ul class="list-group width-100">
+								<li isyodlee ng-if="data.providerCategory"
+									class="list-group-item no-border"><p class="basic-detail">{{staticLabels.basic_service_category}}:</p>
+									<p class="basic-data">{{data.providerCategory}}</p></li>
+								<li class="list-group-item no-border" ng-if="data.createdDate"><p
+										class="basic-detail">{{staticLabels.basic_created}}:</p>
+									<p class="basic-data">{{data.createdDate|dateConverter}}</p></li>
+								<li class="list-group-item no-border"><p
+										class="basic-detail">{{staticLabels.auto_refresh}}:</p>
+									<p class="basic-data" ng-if="data.isAutoRefreshEnabled == true">{{staticLabels.enabled_status}}</p>
+									<p class="basic-data"
+										ng-if="data.isAutoRefreshEnabled == false">{{staticLabels.disabled_status}}</p></li>
+								<li isyodlee class="list-group-item no-border"><p
+										class="basic-detail">{{staticLabels.aggr_type}}:</p>
+									<p class="basic-data">{{data.aggregationType |
+										removeUnderscores}}</p></li>
+								<li class="list-group-item no-border"
+									ng-if="data.status == 'Unavailable'"
+									ng-repeat="reason in disabledReason">
+									<p class="basic-detail">{{staticLabels.disablement_reason}}:</p>
+									<p class="basic-data">{{reason.disablementReason}}</p>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="row width-100 panel panel-default"
+					style="background: transparent; border: 0; margin-bottom: 0; box-shadow: none;">
+					<div id="db-buttons"
+						class="btn-group pull-right margin-top-10 margin-bottom-14"
+						data-toggle="radio-buttons">
+						<label class="text-capitalize btn btn-primary btn-pfm"
+							ng-class="{'active':pfmType=='REFRESH'}" ng-if="isPfmSite"
+							ng-init="pfm.pfmType=pfmType"> <input class="hidden"
+							type="radio" value="REFRESH" ng-model="pfm.pfmType"
+							ng-click="pfmButtonSite(pfm.pfmType);">
+							{{staticLabels.refreshes}}
+						</label> <label class="text-uppercase btn btn-primary btn-pfm"
+							ng-class="{'active':pfmType=='IAV'}" ng-if="cobrandIAVStat"
+							ng-init="pfm.pfmType=pfmType"> <input class="hidden"
+							type="radio" value="IAV" ng-model="pfm.pfmType"
+							ng-click="pfmButtonSite(pfm.pfmType);">
+							{{staticLabels.iav}}
+						</label> <label isyodlee class="text-capitalize btn btn-primary btn-pfm"
+							ng-class="{'active':pfmType=='Add'}" ng-if="addAcct"
+							ng-init="pfm.pfmType=pfmType"> <input class="hidden"
+							type="radio" value="Add" ng-model="pfm.pfmType"
+							ng-click="pfmButtonSite(pfm.pfmType);">Add
+						</label>
+					</div>
+				</div>
+				<div class="row margin-10 row-detail panel panel-default"
+					style="margin-top: 0" id="siteRefreshStat">
+
+					<div>
+						<ul id="sw " class="container-panel width-100 pull-left"
+							style="margin-bottom: 24px;">
+							<li ng-click="getSiteConsolidatedStats();" id="sw-rs-site-tab"
+								class="container-tab container-tab-site active"
+								data-id="{{requestedSiteId}}">{{staticLabels.site_Label}}</li>
+
+							<li id="sw-rs-siteCont-tab"
+								ng-repeat="tag in data.containerNames|uniqueContainers:'container' track by $index"
+								class="container-tab cont-site"
+								ng-class="{ 'active': $index == selectedIndex  }"
+								ng-click="getContainerSpecificStats($index,$event)"
+								ng-model="containerName" data-type={{tag}}
+								data-id="{{requestedSiteId}}" ng-if="pfmType == 'REFRESH' ">{{tag
+								| removeUnderscores}}</li>
+
+						</ul>
+						<div id="sw-rs-loadingPanel" class="pull-left width-100"
+							align="center" ng-show="siteOARSErrorMsg==null && loading ">
+							<img alt="Loading" class="margin-bottom-6"
+								src="images/loading.gif" />
+						</div>
+						<div id="sw-rs-errorPanel"
+							ng-show="siteOARSErrorMsg!=null && loading == false"
+							class="panel-body error pull-left width-100">
+							{{siteOARSErrorMsg}}</div>
+						<div class="container-fluid-custom-details-stats width-100"
+							ng-if="siteOverallRefreshStats != null && siteOARSErrorMsg == null && loading==false">
+
+							<table id="sw-rs-ribbonPanel" class="row-border ribbon-contents"
+								style="width: 100%">
+								<tr>
+									<td id="sw-rs-ribbon-totalPanel"
+										class="row row-border green-box colour-white ftbold ribbon-totalPanel"
+										style="width: 22%; padding: 0 0px 0 15px;">
+										<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7"
+											style="padding: 0">
+											<div id="sw-rs-ribbon-totalsection"
+												class="pd-t10 ribbon-totalsection">{{overall_total.toLocaleString()}}</div>
+											<div id="sw-rs-ribbon-totallabel"
+												class="ft13 pd-t10 ribbon-totallabel">{{staticLabels.refresh_stats}}</div>
+										</div>
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 ft14 pd-t10"
+											style="padding-right: 0; padding-left: 0;">
+											<select id="sw-rs-ribbon-dropdown"
+												class="ribbonDropDown dropdown-caret-ribbon ribbon-dropdown"
+												ng-model="selectedSiteOverallRefreshTrendTimeSlot"
+												ng-change="getStatsonFilter(selectedSiteOverallRefreshTrendTimeSlot)">
+												<option ng-repeat="option in dropDownForOverallRefreshStats"
+													value="{{option.value}}">{{option.display}}</option>
+											</select>
+										</div>
+									</td>
+									<td id="sw-rs-ribbon-successPanel"
+										class="row row-border ribbon-contents ribbon-section"
+										style="padding: 0 0px 0 15px;">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+											style="padding: 0">
+											<div id="sw-rs-ribbon-successsection"
+												class="ft-green-22 ribbon-perc-section"
+												style="color: #77716f;">{{overall_success}}%</div>
+											<div id="sw-rs-ribbon-successlabel"
+												class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.success_Label}}</div>
+										</div>
+									</td>
+									<td ng-if="pfmType=='Add'" id="sw-rs-ribbon-pSuccessPanel"
+										class="row row-border ribbon-contents ribbon-section"
+										style="padding: 0 0px 0 15px;">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+											style="padding: 0">
+											<div id="sw-rs-ribbon-pSuccesssection"
+												class="ft-green-22 ribbon-perc-section"
+												style="color: #77716f;">{{overall_pSuccess}}%</div>
+											<div id="sw-rs-ribbon-pSuccesslabel"
+												class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.pSuccess_Label}}</div>
+										</div>
+									</td>
+									<td id="sw-rs-ribbon-technicalPanel"
+										class="row row-border ribbon-contents ribbon-section"
+										style="padding: 0 0px 0 15px;">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+											style="padding: 0">
+											<div id="sw-rs-ribbon-techsection"
+												class="ft-green-22 ribbon-perc-section"
+												style="color: #77716f;">{{overall_technical}}%</div>
+											<div id="sw-rs-ribbon-techlabel"
+												class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.technical_failure_Label}}</div>
+										</div>
+									</td>
+									<td id="sw-rs-ribbon-sitePanel"
+										class="row row-border ribbon-contents ribbon-section"
+										style="padding: 0 0px 0 15px;">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+											style="padding: 0">
+											<div id="sw-rs-ribbon-sitesection"
+												class="ft-green-22 ribbon-perc-section"
+												style="color: #77716f;">{{overall_site}}%</div>
+											<div id="sw-rs-ribbon-sitesection"
+												class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.site_failure_Label}}</div>
+										</div>
+									</td>
+									<td id="sw-rs-ribbon-uarPanel"
+										class="row row-border ribbon-contents ribbon-section"
+										style="padding: 0 0px 0 15px;">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+											style="padding: 0">
+											<div id="sw-rs-ribbon-uarPanel"
+												class="ft-green-22 ribbon-perc-section"
+												style="color: #77716f;">{{overall_uar}}%</div>
+											<div id="sw-rs-ribbon-uarlabel"
+												class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.uar_failure_Label}}</div>
+										</div>
+									</td>
+									<td id="sw-rs-ribbon-latencyPanel" isyodlee
+										class="row row-border ribbon-contents ribbon-section"
+										style="padding: 0 0px 0 15px;">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+											style="padding: 0">
+											<div id="sw-rs-ribbon-latencysection"
+												class="ft-green-22 ribbon-perc-section"
+												style="color: #77716f;">{{overall_latency}} Sec</div>
+											<div id="sw-ribbon-latencylabel"
+												class="ribbon-underlabel pd-t10 ribbon-label-section">{{staticLabels.avg_latency_label}}</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div id="sw-hs-panel" class="container-fluid-custom-details-stats"
+						style="float: left; width: 100%; margin-top: 20px;">
+						<div class="panel panel-default panel-historic-charts">
+							<div id="sw-hs-heading"
+								class="panel-heading panel-custom ft16 refresh-account-trend">{{staticLabels.refresh_trends_historic}}</div>
+							<div class="panel-body">
+								<div class="div-dropdown">
+									<span id="sw-hs-time"
+										ng-show="siteHistoricRefreshStatslastUpdated!=null"
+										class="last-refresh">{{staticLabels.last_refresh_time}}
+										{{siteHistoricRefreshStatslastUpdated|dateConverter}}</span> <span
+										class="refreshTrendDropDown" ng-show="siteHRSErrorMsg==null">{{staticLabels.refresh_trend_Label}}
+										<select id="sw-hs-dropdown"
+										class="borderLessDropDown dropdown-caret"
+										ng-model="selectedSiteHistoricRefreshTrendTimeSlot"
+										ng-change="getHistoricStatsonFilter(selectedSiteHistoricRefreshTrendTimeSlot)">
+											<option ng-repeat="option in dropDownForHistoricStats"
+												value="{{option.value}}"><b>{{option.name}}</b></option>
+									</select>
+									</span>
+								</div>
+								<div align="center" id="sw-hs-loadingPanel" class="loading"
+									ng-show="siteHistoryRefreshStats==null && siteHRSErrorMsg==null">
+									<img class="loadingIcon" alt="Loading" src="images/loading.gif">
+								</div>
+								<div id="sw-hs-errorPanel" ng-show="siteHRSErrorMsg!=null"
+									class="panel-body error">{{siteHRSErrorMsg}}</div>
+								<div
+									ng-show="siteHistoryRefreshStats!=null && siteHRSErrorMsg==null"
+									style="min-width: 92%;"
+									id="overall_historic_refresh_site_stats_db"></div>
+							</div>
+						</div>
+					</div>
+					<div id="sw-containerCont-panel" ng-show="consolidatedView"
+						class="container-fluid-custom-details-stats"
+						style="float: left; width: 100%; margin-top: 10px;">
+						<div>
+							<div class="panel panel-default panel-historic-charts width-49"
+								style="float: left">
+								<div id="sw-containerCont-heading"
+									class="panel-heading panel-custom ft16 refresh-account-trend">{{staticLabels.container_contribution_label}}{{selectedSiteOverallRefreshTrendTimeSlot.replace('P',
+									'').replace('T', '')}}r</div>
+								<div class="panel-body">
+									<!-- <div ng-show="siteContainerContributionRefreshStats!=null && siteCRSErrorMsg==null" class="div-dropdown div-dropdown-custom">
+									<span class="last-refresh">{{staticLabels.last_refresh_time}}
+										{{siteContainerRefreshStatslastUpdated}}</span>
+									</span>
+								</div> -->
+									<div id="sw-containerCont-loadingPanel" align="center"
+										ng-show="siteContainerContributionRefreshStats==null && siteCRSErrorMsg==null">
+										<img alt="Loading" src="images/loading.gif">
+									</div>
+									<div id="sw-containerCont-errorPanel"
+										ng-show="siteCRSErrorMsg!=null" class="row panel-body error">
+										{{siteCRSErrorMsg}}</div>
+									<div id="sw-containerCont-legends"
+										ng-show="siteContainerContributionRefreshStats!=null && siteCRSErrorMsg==null"
+										class="legends">
+										<ul ng-if="pfmType!='Add'"
+											style="float: left; width: 20%; margin-top: 40px;">
+											<li class="cursor-pointer"
+												ng-class="{'active' : selectedErrorContribution == errorCategory.value}"
+												ng-repeat="errorCategory in containerErrorContributionLinks"
+												ng-click="renderDataforContainerContribution(errorCategory.value);"><a
+												class="li-errorType">{{errorCategory.value}}</a></li>
+										</ul>
+										<ul ng-if="pfmType=='Add'"
+											style="float: left; width: 20%; margin-top: 40px;">
+											<li class="cursor-pointer"
+												ng-class="{'active' : selectedErrorContribution == errorCategory.value}"
+												ng-repeat="errorCategory in addAcctContainerErrorContributionLinks"
+												ng-click="renderDataforContainerContribution(errorCategory.value);"><a
+												class="li-errorType">{{errorCategory.value}}</a></li>
+										</ul>
+										<div class="wrapper_container"
+											style="width: 80%; float: left; height: 86%; overflow: hidden;"
+											mb-scrollbar="scrollbar('horizontal', true, true)">
+											<div
+												style="min-width: 470px; max-width: 800px; height: 100%; margin: 0 auto"
+												ng-show="siteContainerContributionRefreshStats!=null && siteCRSErrorMsg==null"
+												id="overall_container_refresh_site_stats_db"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="sw-ec-panel"
+								class="panel panel-default panel-historic-charts width-49"
+								style="float: left; margin-left: 2%">
+								<div id="sw-ec-heading"
+									class="panel-heading panel-custom ft16 refresh-account-trend">{{staticLabels.error_code_contribution_label}}{{selectedSiteOverallRefreshTrendTimeSlot.replace('P',
+									'').replace('T', '')}}r</div>
+								<div class="panel-body" style="text-align: center; padding: 0%">
+									<div id="sw-ec-loadingPanel" align="center"
+										ng-show="siteErrorContributionRefreshStats==null && siteECRSErrorMsg==null">
+										<img alt="Loading" style="padding-top: 16px;"
+											src="images/loading.gif">
+									</div>
+								</div>
+								<div id="sw-ec-errorPanel" ng-show="siteECRSErrorMsg!=null"
+									class="row panel-body error">{{siteECRSErrorMsg}}</div>
+								<div ng-show="siteErrorContributionRefreshStats!=null"
+									class="legends"
+									style="padding: 10px 20px; width: 100%; height: 86%; overflow: hidden;"
+									mb-scrollbar="scrollbar('horizontal', true, true)">
+									<div
+										style="min-width: 600px; max-width: 800px; height: 100%; margin: 0 auto"
+										ng-show="siteErrorContributionRefreshStats!=null && siteECRSErrorMsg == null"
+										id="overall_container_refresh_error_stats_db"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div id="sw-sc"
+					class="row margin-10 row-detail panel panel-default service">
+					<div class="cursor-pointer panel-tab"
+						ng-click="showServiceDiv = !showServiceDiv"
+						ng-class="{'panel-heading panel-heading-custom ft16': !showServiceDiv, 'panel-heading panel-heading-custom1 ft16': showServiceDiv}">
+						<i class="pull-left fa"
+							ng-class="{'fa-play fa-rotate-90': !showServiceDiv, 'fa-play': showServiceDiv}"></i>
+						<span id="sw-sc-label" class="row-title">{{staticLabels.site_service_details}}</span>
+					</div>
+
+					<div class="col-md-12 col-lg-12 pad-0 supportedDetailContainer"
+						ng-show="!showServiceDiv"
+						mb-scrollbar="scrollbar('vertical', true)">
+						<div id="sw-sc-table" ng-if="lengthOfContAttributes == 0"
+							class="noData">{{staticLabels.NoDatafound}}</div>
+						<table id="sw-sc-table"
+							class="table table-stripped supported-detail"
+							ng-if="lengthOfContAttributes > 0">
+							<thead>
+								<tr>
+									<th id="sw-sc-idlabel" class="text-uppercase">{{staticLabels.id_label}}</th>
+									<th id="sw-sc-namelabel" class="text-uppercase">{{staticLabels.display_name}}</th>
+									<th id="sw-sc-taglabel" class="text-uppercase">{{staticLabels.container_label}}</th>
+									<th id="sw-sc-statuslabel" class="text-uppercase">{{staticLabels.status_label}}</th>
+									<th id="sw-sc-datelabel" class="text-uppercase">{{staticLabels.last_updated}}</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								<tr ng-repeat="serviceData in supportedContainer | orderBy:'id'">
+
+									<td id="sw-sc-id">{{ serviceData.id}}</td>
+									<td id="sw-sc-name">{{ serviceData.name}}</td>
+									<td id="sw-sc-tag">{{ serviceData.container |
+										removeUnderscores | lowercase}}</td>
+									<td id="sw-sc-status" ng-if="serviceData.status == 'Invisible'">{{staticLabels.Invisible}}</td>
+									<td id="sw-sc-status"
+										ng-if="serviceData.status == 'Unsupported'">{{staticLabels.Unsupported}}</td>
+									<td id="sw-sc-status"
+										ng-if="serviceData.status == 'UnsupportedBeta'">{{staticLabels.UnsupportedBeta}}</td>
+									<td id="sw-sc-status" ng-if="serviceData.status == 'Supported'">{{staticLabels.Supported}}</td>
+									<td id="sw-sc-status" ng-if="serviceData.status == 'Beta'">{{staticLabels.Beta}}</td>
+									<td id="sw-sc-status"
+										ng-if="serviceData.status == 'Unavailable'">{{staticLabels.Unavailable}}</td>
+									<td id="sw-sc-date">{{ serviceData.lastModified |
+										dateConverter}}</td>
+								</tr>
+							</tbody>
+						</table>
+
+					</div>
+				</div>
+
+				<div class="row margin-10 row-detail panel panel-default"
+					id="feature">
+					<div class="cursor-pointer panel-tab"
+						ng-click="showFeatureDiv = !showFeatureDiv"
+						ng-class="{'panel-heading panel-heading-custom ft16': !showFeatureDiv, 'panel-heading panel-heading-custom1 ft16': showFeatureDiv}">
+						<i class="pull-left fa"
+							ng-class="{'fa-play fa-rotate-90': !showFeatureDiv, 'fa-play': showFeatureDiv}"></i>
+						<span id="sw-feature-label" class="row-title">{{staticLabels.site_feature_details}}</span>
+					</div>
+					<div id="sw-feature-errorLabel" ng-if="supportedFeature.length == 0"
+						class="noData">{{staticLabels.NoDatafound}}</div>
+
+					<div class="col-md-12 col-lg-12 pad-0 featureDetail mainScrollbar"
+						ng-show="!showFeatureDiv" ng-if="supportedFeature.length > 0"
+						id="sw-feature-body">
+						<div class="list"
+							mb-scrollbar="scrollbar('horizontal', true, true)">
+
+							<div class="col-md-3 col-lg-3 container item"
+								ng-repeat="(key, parentValue) in supportedFeature">
+
+								<span id="sw-feature-key" class="text-uppercase display-block margin-bottom-14">{{parentValue.feature}}:</span>
+								<span class="feature"> {{staticLabels.transactions}} </span>
+								<span id="sw-feature-trans"  class="display-block margin-bottom-14 sub-attribute">{{staticLabels.noofdays}} : {{parentValue.noOfTransaction}}</span>
+								<ul class="pad-0" ng-if="parentValue!=0">
+									<li ng-repeat="(key,subParentValue) in parentValue.val">
+										<div ng-repeat="(key,childValue) in subParentValue">
+											<div id="sw-feature-value"
+												class="margin-bottom-6 display-block feature">
+												<span ng-if="key=='ACCT_PROFILE'">{{staticLabels.acct_profile}}</span>
+												<span ng-if="key=='DOCUMENT'">{{staticLabels.document}}</span>
+												<span ng-if="key!='ACCT_PROFILE' && key!='DOCUMENT'">{{key
+													| removeUnderscores | lowercase}}</span>
+											</div>
+											<ul class="pad-0" ng-if="childValue!=0">
+												<li class="margin-bottom-6 list-style-none"
+													ng-repeat="(key,subChildValue) in childValue"><span
+													id="sw-subf-key" class="attribute">{{key
+														|removeUnderscores | lowercase}}</span>
+													<ul class="pad-left-5" ng-if="subChildValue!=0">
+														<li class="margin-bottom-6 list-style-none"
+															ng-repeat="(key,subSubChildValue) in subChildValue">
+															<span id="sw-subf-value"
+															ng-repeat="(key,subChild) in subSubChildValue"
+															class="sub-attribute" ng-if="key == 'noOfDays'">
+																{{staticLabels.noofdays}} : {{subChild}} </span> <span
+															id="sw-subf-value"
+															ng-repeat="(key,subChild) in subSubChildValue"
+															class="sub-attribute" ng-if="key != 'noOfDays'">
+																{{key}} : {{subChild}} </span>
+														</li>
+													</ul></li>
+											</ul>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="sw-feature-disclaimer"
+						class="pull-left width-100 disclaimer">
+						{{staticLabels.supported_feature_disclaimer}} {{cobrandName}}</div>
+				</div>
+
+				<!-- Historic Notifications Starts -->
+
+				<div>
+
+					<div id="sw-nhPanel" ng-if="historicNotifications.length > 0"
+						class="row margin-10 row-detail panel panel-default service">
+						<div class="cursor-pointer panel-tab"
+							ng-click="showHistoricNotification = !showHistoricNotification"
+							ng-class="{'panel-heading panel-heading-custom ft16': !showHistoricNotification, 'panel-heading panel-heading-custom1 ft16': showHistoricNotification}">
+							<i class="pull-left fa"
+								ng-class="{'fa-play fa-rotate-90': !showHistoricNotification, 'fa-play': showHistoricNotification}"></i>
+							<span class="row-title">{{staticLabels.notificationHistory}}</span>
+						</div>
+
+						<div class="col-md-12 col-lg-12 pad-0 supportedDetailContainer"
+							ng-show="!showHistoricNotification"
+							mb-scrollbar="scrollbar('vertical', true)">
+							<table id="sw-nh-table"
+								class="table table-stripped supported-detail">
+								<thead>
+									<tr>
+										<th id="sw-nh-typeLabel" class="text-uppercase">{{staticLabels.issueType}}</th>
+										<th id="sw-nh-titleLabel" class="text-uppercase">{{staticLabels.messageTitle}}</th>
+										<th id="sw-nh-tagLabel" class="text-uppercase">{{staticLabels.impactedContainer}}</th>
+										<th id="sw-nh-sDateLabel" class="text-uppercase">{{staticLabels.startDate}}</th>
+										<th id="sw-nh-eDateLabel" class="text-uppercase">{{staticLabels.endDate}}</th>
+										<th id="sw-nh-updateLabel" class="text-uppercase">{{staticLabels.updates}}</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat-start="data in historicNotifications">
+										<td id="sw-nh-type">{{ data.issueTypes |
+											removeUnderscores}}</td>
+										<td id="sw-nh-title">{{ data.title}}</td>
+										<td id="sw-nh-tag">{{ data.impactedContainers |
+											removeUnderscores}}</td>
+										<td id="sw-nh-sDate">{{ data.startDate}}</td>
+										<td id="sw-nh-eDate">{{ data.endDate}}</td>
+										<td id="sw-nh-update" class="text-uppercase"
+											ng-if="data.updates.length > 0"><a href=""
+											class="siteDetailLink"
+											ng-click="data.showUpdates = !data.showUpdates"
+											onclick="ga('send','event','href','swNotificationView', 'swView' ,13) ;ga('send','pageview','/swNotificationView')">
+												<u> {{staticLabels.view}} </u> <i class="fa fa-angle-right"
+												style="font-size: 20px; margin-left: 2px;"
+												ng-class="{'fa-angle-down': data.showUpdates, 'fa-angle-right': !data.showUpdates}"></i>
+										</a></td>
+										<td id="sw-nh-update" class="text-uppercase"
+											ng-if="data.updates.length == 0">{{staticLabels.na}}</td>
+									</tr>
+									<tr ng-repeat-end
+										ng-if="data.showUpdates && data.updates.length > 0">
+										<td colspan="6">
+											<ul style="padding-left: 45px;">
+												<li id="sw-nh-updatesList"
+													ng-repeat="update in data.updates track by $index"
+													style="background-color: white; text-align: left; color: #77716f;">
+													{{update}}</li>
+											</ul>
+										</td>
+									<tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,9 @@
+com\yodlee\framework\web\handler\YodleeRequestHandler$2.class
+com\yodlee\framework\boot\BootstrapLoader.class
+com\yodlee\framework\listeners\ContextListener.class
+com\yodlee\framework\web\config\WebConfigurerAdapter.class
+com\yodlee\framework\spring\modules\CommonsConfigurationFactoryBean.class
+com\yodlee\framework\web\handler\YodleeRequestHandler.class
+com\yodlee\framework\spring\ApplicationContextProvider.class
+com\yodlee\framework\config\AppConfig.class
+com\yodlee\framework\web\handler\YodleeRequestHandler$1.class

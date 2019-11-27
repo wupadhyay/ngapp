@@ -1,0 +1,411 @@
+<fieldset id="notificationDetail" class="text-capitalize"
+	data-ng-init="loadRequiredFieldsOnPrev();">
+	<h1 class="fs-title">
+		<b>{{staticLabels.notification_detail_label}}</b>
+	</h1>
+	<div class="form-group width-100 pull-left">
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<label for="{{staticLabels.notificationType_label}}">{{staticLabels.notificationType_label}}</label>
+			<select name="" class="select-field form-control width-100"
+				ng-model="formData.notificationType"
+				ng-options="notification as notification.name for notification in notificationTypes track by notification.id"
+				ng-change="notificationTypeSel(formData,notificationform)"
+				value="Select">
+				<option value="">Select Notification Type</option>
+			</select>
+		</div>
+		<div ng-show="notiType"
+			class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6"
+			ng-if="formData.notificationType.name=='Maintenance'">
+			<label class="required"
+				for="{{staticLabels.notificationSubType_label}}">{{staticLabels.notificationSubType_label}}</label>
+			<select name="subtype" class="select-field form-control width-100"
+				ng-model="formData.notificationSubType"
+				ng-options="notiSub as notiSub.name for notiSub in notificationSubTypes track by notiSub.id"
+				ng-change="notificationSubTypeSel(formData.notificationSubType)"
+				required>
+				<option value="">Select Notification Sub Type</option>
+			</select> <span class="validationerror"
+				ng-show="notificationform.$submitted && notificationform.subtype.$error.required">
+				{{staticLabels.maintenance_sub_type_validation_error}} </span>
+
+		</div>
+
+	</div>
+
+
+	<div class="form-group width-100 pull-left" ng-show="notiType">
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6 pos-rel">
+			<label class="required" for="{{staticLabels.status_label}}">{{staticLabels.status_label}}</label>
+
+			<select name="status" class="select-field form-control width-100"
+				name="" ng-model="formData.status"
+				ng-options="notificationStat as notificationStat.name  disable when notificationStat.value == staticLabels.cancel_upper_label||notificationStat.value == staticLabels.extended_upper_label for notificationStat in notificationStatusList track by notificationStat.id"
+				ng-change="notificationStatusSel();calculateActualDowntime(formData,formData.status.name)"
+				ng-if="formData.notificationType.name=='Maintenance'" required>
+			</select> <select name="status" class="select-field form-control width-100"
+				name="" ng-model="formData.status"
+				ng-options="incidentStat as incidentStat.name  disable when incidentStat.value == staticLabels.invalid_upper_label for incidentStat in incidentStatus track by incidentStat.id"
+				ng-change="statusSel(formData.status);calculateActualDowntime(formData,formData.status.name)"
+				ng-if="formData.notificationType.name=='Incident'" required>
+			</select> <span class="validationerror"
+				ng-show="notificationform.$submitted &&  notificationform.status.$error.required">
+				{{staticLabels.status_select_dropdown_validation_error}} </span>
+			<div>
+				<span class="validationerror" ng-if="errorOnNotifcationStatus">{{staticLabels.status_advisory_validation_error}}</span>
+			</div>
+			<span class="alert alert-info status-info"
+				ng-if="formData.notificationSubType.name == 'Advisory' && formData.status.name != 'For Your Information'">Please
+				select <strong>"For your Information"</strong> Status
+			</span>
+		</div>
+
+		<div
+			ng-if="formData.notificationType.name=='Incident' && formData.status.id==1"
+			class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<label for="{{staticLabels.substatus_label}}">{{staticLabels.substatus_label}}</label>
+
+			<select class="select-field form-control width-100" name=""
+				ng-model="formData.subStatus"
+				ng-options="incidentSubStat as incidentSubStat.name for incidentSubStat in incidentSubStatus track by incidentSubStat.id"><option
+					value="">Select Sub Status</option>
+			</select>
+		</div>
+
+	</div>
+	<div class="form-group width-100 pull-left" ng-show="notiType">
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<label class="required" for="{{staticLabels.ticketNo_label}}">{{staticLabels.ticketNo_label}}</label>
+			<input class="form-control" type="text" name="TicketNumber"
+				id="TicketNumber" ng-model="formData.serviceNowTicket"
+				ng-pattern="/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/"
+				placeholder="Ticket Number" required> <span
+				class="validationerror"
+				ng-show="notificationform.$submitted && !notificationform.TicketNumber.$valid">{{staticLabels.servicenow_ticket_value_validation_error}}
+			</span> <span class="validationerror"
+				ng-if="notificationform.$submitted && notificationform.TicketNumber.$error.required">
+				{{staticLabels.servicenow_ticket_required_validation_error}} </span>
+		</div>
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<label class="required" for="{{staticLabels.startTime_label}}">{{staticLabels.startTime_label}}
+				{{staticLabels.ist_label}}</label>
+
+			<div class='input-group date' id='startDate'>
+				<input type='text' class="form-control" name="startDate"
+					datetimez="datePickerOptions" ng-model="formData.startTime"
+					ng-readonly='true'
+					ng-change='checkDateErr(formData.startTime,formData.endTime,formData.etaTime)'
+					required /> <span class="input-group-addon"> <i
+					class="fa fa-calendar" aria-hidden="true"></i>
+				</span>
+			</div>
+			<span class="validationerror"
+				ng-if="notificationform.$submitted && notificationform.startDate.$error.required">
+				{{staticLabels.startdate_required_validation_error}}</span>
+		</div>
+	</div>
+
+	<div class="form-group width-100 pull-left" ng-show="notiType">
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<label for="{{staticLabels.bug_id_label}}">{{staticLabels.bug_id_label}}</label>
+			<input class="form-control" type="text" ng-maxlength="11"
+				name="BugID" placeholder="Bug ID" ng-model="formData.bugId"
+				ng-pattern="/^[0-9]*$/" /> <span class="validationerror"
+				ng-show="notificationform.$submitted && !notificationform.BugID.$valid">{{staticLabels.bugid_value_validation_error}}</span>
+			<span class="validationerror"
+				ng-show="notificationform.$submitted && notificationform.BugID.$error.maxlength">{{staticLabels.bugid_length_validation_error}}
+			</span>
+		</div>
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<label
+				ng-class="{required: formData.notificationType.name=='Maintenance'}"
+				for="{{staticLabels.endTime_label}}">{{staticLabels.endTime_label}}
+				{{staticLabels.ist_label}}</label>
+
+			<div class='input-group date' id='endDate'>
+				<input name="endDate" type='text' class="form-control"
+					name="endDate" datetimez="datePickerOptions"
+					ng-model="formData.endTime" ng-readonly='true'
+					ng-change='checkDateErr(formData.startTime,formData.endTime,formData.etaTime)'
+					ng-required="formData.notificationType.name=='Maintenance'" /> <span
+					class="input-group-addon"><i class="fa fa-calendar"
+					aria-hidden="true"></i> </span>
+			</div>
+			<span class="validationerror">{{errMsgEndDate}}</span> <span
+				class="validationerror"
+				ng-show="notificationform.$submitted && notificationform.endDate.$error.required && errMsgEndDate==false">{{staticLabels.enddate_required_validation_error}}
+			</span>
+		</div>
+
+	</div>
+	<div ng-show="notiType" class="form-group width-100 pull-left">
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<label class="required" for="{{staticLabels.impact_label}}">{{staticLabels.impact_label}}</label>
+			<div style="position: relative;">
+                <select id ="impactEle" required ng-model="formData.impact" class="dropdown_brand_select sel" 
+                    ng-options="a.child group by a.parent for a in impactDropdown" ng-change="selectImpact(formData.impact)">
+                    <option value="" disabled selected hidden>Please Choose...</option>
+            </select>
+            
+            </div>
+            <input ng-show="impactTxt" class="form-control m-t20" type="text" name="impact" placeholder="Specify Impact" ng-model="formData.impactText" ng-maxlength="500" ng-required="formData.impact.child=='Others'">
+            
+             <span class="validationerror"
+                ng-show="(notificationform.$submitted && notificationform.impact.$error.required)||(notificationform.$submitted&&formData.impact==null)">{{staticLabels.impact_required_validation_error}}</span>
+            <span class="validationerror"
+                ng-show="notificationform.$submitted &&  notificationform.impact.$error.maxlength">{{staticLabels.impact_length_validation_error}}
+            </span>
+
+		</div>
+
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6"
+			ng-show="formData.notificationType.name!='Incident'">
+			<div class="chkBox col-md-3 ng-binding m-t24">
+				<input type="checkbox" ng-model="formData.downtimeSel"
+					ng-change="downtimeChecked(formData.downtimeSel)"
+					class="ng-valid ng-dirty ng-valid-parse ng-touched ng-not-empty"
+					aria-checked="true" aria-invalid="false">DownTime
+			</div>
+
+			<div class="pull-left col-md-9" ng-show="downtimeBox">
+				<label for="DownTime">Type</label> <select name="downTimeType"
+					class="select-field form-control pull-left ng-valid ng-dirty ng-valid-parse ng-touched ng-not-empty width-100 ft-size12"
+					ng-model="formData.downTimeType"
+					aria-invalid="false"
+					ng-options="downTimeType as downTimeType.name for
+				downTimeType in downTimeTypes track by downTimeType.name"
+					value="downTimeType.name" ng-required="downtimeBox">
+					<option value="">Select downtime Type</option>
+				</select> <span class="validationerror"
+					ng-show="notificationform.$submitted &&  notificationform.downTimeType.$error.required">
+					{{staticLabels.downtime_dropdown_validation_error}}</span>
+			</div>
+
+		</div>
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6" ng-if="formData.notificationType.name=='Incident'">
+			<label for="{{staticLabels.next_update_label}}">{{staticLabels.next_update_label}}</label>
+			<div>
+				<select ng-model="formData.nextUpdate" class="dropdown_brand_select sel" 
+		            ng-options="nextUpdateOptions as nextUpdateOptions.name for nextUpdateOptions in nextUpdateOptions track by nextUpdateOptions.id" ng-change="selectUpdate(formData.nextUpdate)">
+		            <option value="" disabled selected hidden>Please Choose...</option>
+		    </select>
+			
+			</div>
+			<input ng-show="updateTxt" class="form-control m-t20" ng-model="formData.nextUpdateText" type="text" name="nextUpdate" placeholder="Specify Time Period" ng-maxlength="500">
+
+		</div>
+	</div>
+	<div ng-show="notiType" class="form-group width-100 pull-left">
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<!-- label class="required" for="{{staticLabels.criticality_label}}" ng-if="formData.notificationType.name=='Maintenance'">{{staticLabels.criticality_label}}</label>
+				<select class="select-field form-control" name="criticality" ng-model="formData.criticality" ng-options="criticality as criticality.name for criticality in criticalityOptions track by criticality.id" ng-change="criticalitySel()" ng-if="formData.notificationType.name=='Maintenance'" required><option value="">Select </option>
+				</select>
+				<span class="validationerror" ng-show="notificationform.$submitted && notificationform.criticality.$error.required"> Select a value for Criticality </span-->
+			<label class="required" for="{{staticLabels.priority_label}}"
+				ng-if="formData.notificationType.name=='Incident'">{{staticLabels.priority_label}}</label>
+
+			<select name="priority" class="select-field form-control"
+				ng-model="formData.priority"
+				ng-options="priority as priority.name for priority in priorityOptions track by priority.id"
+				ng-change="prioritySel()"
+				ng-if="formData.notificationType.name=='Incident'" required><option
+					value="">Select</option>
+			</select> <span class="validationerror"
+				ng-show="notificationform.$submitted && notificationform.priority.$error.required">{{staticLabels.priority_required_validation_error}}
+			</span> </span>
+
+		</div>
+
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6"
+			ng-show="formData.notificationType.name=='Incident'">
+			<div class="chkBox col-md-3 ng-binding m-t24">
+				<input type="checkbox" ng-model="formData.downtimeSel"
+					ng-change="downtimeChecked(formData.downtimeSel)"
+					class="ng-valid ng-dirty ng-valid-parse ng-touched ng-not-empty"
+					aria-checked="true" aria-invalid="false">DownTime
+			</div>
+
+			<div class="pull-left col-md-9" ng-show="downtimeBox">
+
+				<div class="pull-left col-md-9" ng-show="downtimeBox">
+					<label for="DownTime">Type</label> <select name="downTimeType"
+						class="select-field form-control pull-left ng-valid ng-dirty ng-valid-parse ng-touched ng-not-empty ft-size12 width-100"
+						ng-model="formData.downTimeType"
+						aria-invalid="false"
+						ng-options="downTimeType as downTimeType.name for
+							downTimeType in downTimeTypes track by downTimeType.name"
+						value="downTimeType.name" ng-required="downtimeBox">
+						<option value="">Select downtime Type</option>
+					</select> <span class="validationerror"
+						ng-show="notificationform.$submitted &&  notificationform.downTimeType.$error.required">{{staticLabels.downtime_select_dropdown_validation_error}}
+					</span>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	<div ng-show="notiType" class="form-group width-100 pull-left">
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<label for="{{staticLabels.dependency_label}}">{{staticLabels.dependency_label}}</label>
+			<input type="text" name="Dependency" placeholder="Add Dependency"
+				class="form-control" ng-model="formData.dependency"
+				ng-pattern="/^[A-Za-z0-9,]*$/"
+				ng-keyup="limitDependency($event,formData.dependency,3)" /> <span
+				class="validationerror"
+				ng-show="notificationform.$submitted && !notificationform.Dependency.$valid">{{staticLabels.dependency_max_comma_seperated_values_validation_error}}</span>
+			<span class="validationerror"
+				ng-show="errorExcededMaximumDependencies">{{staticLabels.dependency_max_limit_validation_error}}</span>
+			<span class="validationerror" ng-show="errorOnInvalidDependencies">{{staticLabels.dependency_pattern_validation_error}}</span>
+		</div>
+
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<div class="col-md-6" ng-show="downtimeBox">
+				<label for="{{staticLabels.downtime_label}}">{{staticLabels.Service_Disrption_Est_label}}</label>
+				<input ng-keyup="validateServiceDisruption($event,formData)"
+					class="form-control pull-left width-46" type="text" name="time"
+					id="time" ng-model="formData.estimatedDuration" number> 
+					<select
+					class="select-field form-control pull-left ft-size12"
+					style="width: 54%; margin-left: -5px;" id="hours"
+					ng-model="formData.intervalTypeEstimated"
+					ng-init="formData.intervalTypeEstimated = 'Minutes'">
+					<option>Minutes</option>
+					<option>Hours</option>
+				</select>
+				<div class="validationerror" ng-show="errorOnMaximumEstimatedTime">
+					{{staticLabels.downtime_maxlimit_validation_error}}</div>
+
+				<div class="validationerror" ng-show="errorOnInvalidEstimatedTime">
+					{{staticLabels.downtime_estimated_invalid_validation_error}}</div>
+			</div>
+			<div class="col-md-6"
+				ng-show="downtimeBox&&(formData.status.value==staticLabels.closed_upper_label||formData.status.value==staticLabels.resolved_upper_label)">
+				<label for="{{staticLabels.downtime_label}}">{{staticLabels.Service_Disruption_Act_label}}</label>
+				<input ng-keyup="validateServiceDisruption($event,formData)"
+					class="form-control pull-left width-46" type="text" name="time"
+					id="time" ng-model="formData.actualDuration" number> <select
+					class="select-field form-control pull-left ft-size12"
+					style="width: 54%; margin-left: -5px;" id="hours"
+					ng-model="formData.intervalTypeActual"
+					ng-init="formData.intervalTypeActual = 'Minutes'">
+					<option>Minutes</option>
+					<option>Hours</option>
+				</select>
+				<div class="validationerror" ng-show="errorOnMaximumActualTime">
+					{{staticLabels.downtime_maxlimit_validation_error}}</div>
+				<div class="validationerror" ng-show="errorOnInvalidActualTime">
+					{{staticLabels.downtime_actual_invalid_validation_error}}</div>
+
+			</div>
+		</div>
+	</div>
+	<div ng-show="notiType" class="form-group width-100 pull-left">
+		<div class="pull-left col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<label for="{{staticLabels.doc_attachment_label}}">{{staticLabels.doc_attachment_label}}</label>
+			<div class="pull-left width-100">
+				<form name="file"></form>
+				<form name="doc">
+					<div class="file-upload">
+						<div class="file-select">
+							<div class="file-select-button" id="fileName">Choose File</div>
+							<div class="file-select-name" id="noFile">
+								<span class="width-100"
+									ng-if="formData.uploadAttachment == undefined">No File
+									Choosen</span> <span class="width-100 txt-trans-0"
+									ng-if="formData.uploadAttachment.length == 1">
+									<span ng-repeat="file in formData.uploadAttachment">{{file.filename}}</span></span>
+									<span class="width-100 txt-trans-0" ng-if="formData.uploadAttachment.length > 1">{{formData.uploadAttachment.length}} Files Selected</span>
+							</div>
+							<input id="fileAttachment" class="pull-left inputfile"
+								type="file" ng-model="formData.uploadAttachment" name="file"
+								base-sixty-four-input multiple
+								accept="application/msword, .docx, application/vnd.ms-powerpoint,.pptx, application/pdf,.msg, .txt, .xls, .xlsx"
+								ng-change="createAttachment()">
+						</div>
+					</div>
+
+					<span class="alert width-100 pull-left m-t10 pad-5"
+						ng-class="{'alert-danger': doc.file.$invalid }"
+						ng-if="doc.file.$error && formData.uploadAttachment && (doc.file.$error.accept || fileRemoved.length > 0)"> <span
+						ng-if="doc.file.$error.accept"> File Format not Supported</span> <span
+						ng-if="fileRemoved.length > 0"> {{fileRemoved}} is Excluded as Max Upload Size of
+							10MB Exceeded </span>
+					</span>
+
+				</form>
+			</div>
+				<span class="footnote"> {{staticLabels.footnote_attachment}}</span>
+		</div>
+	</div>
+	<div ng-show="notiType" class="form-group width-100 pull-left" ng-if="formData.uploadAttachment.length > 0">
+		<div class="pull-left col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<div class="table-responsive">
+				<table class="table tbl">
+					<thead>
+						<tr>
+							<th style="width:80%">{{staticLabels.file_label}}</th>
+							<th>{{staticLabels.action_label}}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="file in formData.uploadAttachment">
+							<td>{{file.filename}}</td>
+							<td><span class="fa fa-remove m-l10" role="button"
+								type="submit" ng-click="cancel($index);"></span></td>
+						</tr>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="form-group width-100 pull-left" ng-show="notiType">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<label class="required" for="{{staticLabels.service_product_label}}">{{staticLabels.service_product_label}}</label>
+			<input type="text" name="serviceProductAffected" placeholder="Service And Product Affected" class="form-control notiTitle" ng-model="formData.serviceProductAffected" ng-maxlength="300" required/>			
+			<span class="validationerror"
+				ng-show="notificationform.$submitted && notificationform.serviceProductAffected.$error.required ">
+				{{staticLabels.service_product_required_validation_error}} </span>
+		</div>
+	
+	</div>
+	<div class="form-group width-100 pull-left" ng-show="notiType">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<label class="required"
+				for="{{staticLabels.notificationSubType_label}}">{{staticLabels.title_label}}</label>
+			<input type="text" name="title" placeholder="Title"
+				class="form-control notiTitle" ng-model="formData.title"
+				ng-maxlength="300" required /> <span class="validationerror"
+				ng-show="notificationform.$submitted &&  notificationform.title.$error.maxlength">
+				{{staticLabels.title_length_validation_error}}</span> <span
+				class="validationerror"
+				ng-show="notificationform.$submitted && notificationform.title.$error.required ">
+				{{staticLabels.title_required_validation_error}} </span>
+		</div>
+	</div>
+
+	<div ng-show="notiType" class="form-group width-100 pull-left">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<label class="required" for="{{staticLabels.description}}">{{staticLabels.description}}</label>
+			<textarea ui-tinymce="tinymceOptions" class="form-control" rows="5"
+				name="address" placeholder="Description"
+				ng-model="formData.description" ng-maxlength="10000" required></textarea>
+			<span class="validationerror"
+				ng-show="notificationform.$submitted && notificationform.address.$error.required ">
+				{{staticLabels.description_required_validation_error}} </span> <span
+				class="validationerror"
+				ng-show="notificationform.$submitted  && notificationform.address.$error.maxlength">
+				{{staticLabels.description_length_validation_error}} </span>
+		</div>
+	</div>
+
+	<div class="form-group col-md-2 pull-right m-t20 pad-l0">
+		<button id="nextDetail" class="btn btn-block btn-info pull-right"
+			ng-click="focusInvalid(notificationform,formData);saveNotificationDetail(formData,notificationform)">
+			{{staticLabels.next_label}} <i
+				class="fa fa-hand-o-right pull-right hand-icon margin-left0"></i>
+		</button>
+	</div>
+
+</fieldset>

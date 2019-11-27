@@ -1,0 +1,168 @@
+<div id='container2' ng-hide="showSiteMetadata">
+	<div isnotinv id="sm-label-errorPanel"
+		ng-show="labelPropertyErrorMsg!=null" class="panel-body error">
+		{{FileErrorMsg}}</div>
+
+	<div isnotinv ng-show="labelPropertyErrorMsg==null" id="siteMetadata"
+		class="container-fluid-custom base-background outer_layer"
+		data-ng-init="initSiteMetadataSearch();">
+
+		<div class="div-ht4"></div>
+
+		<div id="sm-cobrandList-errorPanel" ng-show="CLErrorMsg!=null"
+			class="panel-body error">{{CLErrorMsg}}</div>
+
+		<div id="sm-cobrand-loadingPanel" align="center"
+			ng-show="(cobrandList.length<1 && cobrandName==undefined) && CLErrorMsg==null">
+			<img alt="Loading" src="images/loading.gif"> <br /> <br />
+		</div>
+
+		<div isyodlee id="sm-cobrand-loadingPanel" align="center"
+			ng-show="(cobrandList.length<1) && CLErrorMsg==null">
+			<img alt="Loading" src="images/loading.gif"> <br /> <br />
+		</div>
+		<div iscobrand id="sm-cobrand-t1-loadingPanel" align="center"
+			ng-show="((cobrandList.length==0 && cobrandName==undefined) && CLErrorMsg==null) || loading">
+			<img alt="Loading" src="images/loading.gif"> <br /> <br />
+		</div>
+
+		<div
+			ng-show="labelPropertyErrorMsg==null && CLErrorMsg==null && (cobrandList.length>0 || cobrandName!=undefined)">
+			<div class="col-md-6 col-xs-6 col-sm-6 col-lg-6">
+				<div isyodlee id="sm-cobrandList-label"
+					class="label col-md-2 col-xs-2 col-sm-2 col-lg-2 text-left">{{staticLabels.cobrand_Label}}</div>
+				<div isyodlee id="sm-cobrand-dropdown"
+					ng-show="cobrandList.length>0"
+					class="col-md-10 col-xs-10 col-sm-10 col-lg-10">
+					<md-input-container style="width:100%">
+					<div class='filter-dropdown' layout='row' ng-click="selclicked()">
+						<md-select id="cobrandId" ng-model="cob.selectedCobrand"
+							data-md-container-class='mySelect' aria-label="Select"
+							ng-change="refreshStatSite(cob.selectedCobrand);"
+							onclick=" ga('send','pageview','/siteInfoCobSelect')"
+							class="dropdown_brand_select sel"> <md-select-header
+							class="device-select-header">
+						<form>
+							<input ng-model="searchTerm"
+								ng-keyup='$event.keyCode == 13 && deviceIdSubmit($event)'
+								ng-keydown='$event.stopPropagation($event)' type="search"
+								class="header-searchbox md-text" />
+						</form>
+						</md-select-header> <md-optgroup
+							ng-repeat="(key,items) in cobrandList | filter: searchTerm | groupBy:'channel' ">
+						<label class="label_brand_select" ng-if="key != 'undefined'">{{key}}</label>
+						<md-option class="option_brand_select" ng-value="item"
+							ng-repeat="item in items | filter: searchTerm"> <span
+							style="padding-left: 16px;" ng-if="key != 'undefined'">{{item.name}}
+							[{{item.id}}]</span> <span ng-if="key == 'undefined'">{{item.name}}
+							[{{item.id}}]</span> </md-option> </md-optgroup> </md-select>
+					</div>
+					</md-input-container>
+				</div>
+				<div iscobrand id="sm-subbrandList-label"
+					ng-show="subbrandList.length>0 || (cob.selectedCobrand.subbrands!=undefined && cob.selectedCobrand.subbrands.length>0)"
+					class="label col-md-2 col-xs-2 col-sm-2 col-lg-2 text-left">{{staticLabels.subbrand_Label}}</div>
+				<div iscobrand id="sm-subbrand-dropdown"
+					ng-show="subbrandList.length>0 || (cob.selectedCobrand.subbrands!=undefined && cob.selectedCobrand.subbrands.length>0)"
+					class="col-md-10 col-xs-10 col-sm-10 col-lg-10">
+					<md-input-container style="width:100%">
+					<div class='filter-dropdown' layout='row'
+						ng-click="selclickedSub()">
+						<md-select ng-model="cob.selectedCobrand" id="subbrandId"
+							data-md-container-class='mySelectSub' aria-label="Select"
+							ng-change="refreshStatSite(cob.selectedCobrand);"
+							onclick=" ga('send','pageview','/siteInfoCobSelect')"
+							class="dropdown_brand_select selSub"> <md-select-header
+							class="device-select-header">
+						<form>
+							<input ng-model="searchTerm"
+								ng-keyup='$event.keyCode == 13 && deviceIdSubmit($event)'
+								ng-keydown='$event.stopPropagation($event)' type="search"
+								class="header-searchbox md-text" />
+						</form>
+						</md-select-header> <md-optgroup
+							ng-repeat="(key,items) in subbrandList | filter: searchTerm | groupBy:'channel' ">
+						<label class="label_brand_select" ng-if="key != 'undefined'">{{key}}</label>
+						<md-option class="option_brand_select" ng-value="item"
+							ng-repeat="item in items | filter: searchTerm"> <span
+							style="padding-left: 16px;" ng-if="key != 'undefined'">{{item.name}}
+							[{{item.id}}]</span> <span ng-if="key == 'undefined'">{{item.name}}
+							[{{item.id}}]</span> </md-option> </md-optgroup> </md-select>
+					</div>
+					</md-input-container>
+				</div>
+			</div>
+			<div isyodlee class="div-ht5"></div>
+			<div isyodlee class="div-ht5"></div>
+			<div iscobrand
+				ng-if="subbrandList.length>0 || (cob.selectedCobrand.subbrands!=undefined && cob.selectedCobrand.subbrands.length>0)"
+				class="div-ht5"></div>
+			<div iscobrand
+				ng-if="subbrandList.length>0 || (cob.selectedCobrand.subbrands!=undefined && cob.selectedCobrand.subbrands.length>0)"
+				class="div-ht5"></div>
+			<div id="sm-search-box" class="panel panel-default site-search-box">
+				<div class="div-ht1 height-15 panel-tab"
+					ng-click="isCollapsedSiteSearch = !isCollapsedSiteSearch"
+					ng-class="{'panel-heading panel-heading-custom ft16': !isCollapsedSiteSearch, 'panel-heading panel-heading-custom1 ft16': isCollapsedSiteSearch}">
+					<i class="pull-left fa"
+						ng-class="{'fa-play fa-rotate-90': !isCollapsedSiteSearch, 'fa-play': isCollapsedSiteSearch}"></i>
+					<span id="sm-search-labelPanel" class="site-search">{{staticLabels.site_search_label}}</span>
+				</div>
+				<div class="panel-body Search-labels"
+					uib-collapse="isCollapsedSiteSearch">
+					<div class="div-ht2"></div>
+					<div id="sm-searchBox-criteria-labelPanel"
+						class="div-ht3 search-label-left">{{staticLabels.criteria_label}}</div>
+					<div id="sm-searchBox-input-labelPanel"
+						class="div-ht3 search-label-right">{{selectedOptionForSearch}}</div>
+					<div class="div-ht6"></div>
+					<div id="sm-searchBox-dropdown" class="search-label-left">
+						<select class="siteMetadata-search-dropdown"
+							ng-model="selectedOptionForSearch" ng-change="changeLabel();"
+							onclick=" ga('send','pageview','/siteInfoSearchCriteria')">
+							<option ng-repeat="option in dropDownForSiteSearch"
+								value="{{option.value}}">{{option.value}}</option>
+						</select>
+					</div>
+					<div id="sm-searchBox-input" class="search-label-right">
+						<input name="siteSearchInputCriteria"
+							class="siteMetadata-search-input"
+							ng-model="siteSearchInputCriteria"
+							value="{{siteSearchInputCriteria}}"
+							ng-keypress="checkIfEnterKeyWasPressed($event)"
+							onclick=" ga('send','pageview','/siteInfoSiteInput')" /> &nbsp;
+					</div>
+					<div class="div-ht4"></div>
+					<div class="div-ht4"></div>
+					<div class="search-label-left">
+						<div ng-show="inputValueErrorMsg!=null"
+							id="sm-searchBox-input-errorPanel"
+							class="panel-body error-validation">{{inputValueErrorMsg}}</div>
+					</div>
+					<div id="sm-searchbtn" class="search-button-right"
+						ng-click="fetchSiteMetadata();">
+						<button class="btn btn-info search-button">
+							{{staticLabels.search_label}}</button>
+					</div>
+					<div class="div-ht7"></div>
+					<div class="div-ht7"></div>
+				</div>
+			</div>
+
+			<div align="center" id="sm-searchBox-results-loadingPanel"
+				ng-show="loadingSiteResults && inputValueErrorMsg==null && siteResultsErrorMsg==null">
+				<img alt="Loading" src="images/loading.gif"> <br /> <br />
+			</div>
+
+			<div id="sm-sr-include"
+				ng-include="'views/siteMetadata/siteMetadataResults.html'"></div>
+		</div>
+	</div>
+</div>
+<pageslide ps-side='bottom' ps-open="checked"
+	style="overflow:auto; padding-bottom:40px;">
+<div style="padding-top: 45px">
+	<span ng-click="toggle();" class="close_button">X Close</span>
+	<div ng-include src="sidebar.location"></div>
+</div>
+</pageslide>

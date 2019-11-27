@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.1 (33804) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 21</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Interface-Icons---Line" transform="translate(-15.000000, -551.000000)">
+            <g id="Group" transform="translate(16.000000, 391.000000)">
+                <g id="Group-21" transform="translate(0.000000, 161.000000)">
+                    <g id="Group-15" transform="translate(7.000000, 0.000000)" font-size="14" font-family="ProximaNova-Bold, Proxima Nova" letter-spacing="1.0989207" fill="#77716F" font-weight="bold">
+                        <g id="Group-18">
+                            <g id="Group-20">
+                                <text id="!">
+                                    <tspan x="0" y="14">!</tspan>
+                                </text>
+                            </g>
+                        </g>
+                    </g>
+                    <circle id="Oval" stroke="#77716F" cx="9" cy="9" r="9"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

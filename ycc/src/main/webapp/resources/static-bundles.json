@@ -1,0 +1,61 @@
+{
+	"bundles": [
+		{
+			"type": "css",
+			"name": "nextgenycc.css",
+			"files": [
+				"external/font-awesome/font-awesome.css",
+				"external/font-awesome/font-awesome.min.css",
+				"external/proximaNova/proximaNova.css",
+				"external/typeahead/angular-material.min.css",
+				"app.css"
+			]
+		},
+		{
+			"type": "js",
+			"name": "scripts/nextgenycc.js",
+			"files": [
+				"scripts/external/highcharts/highcharts_v4_1_3.js",
+				"scripts/external/angular-lib/ngStorage.min.js",
+				"scripts/external/angular-lib/mb-scrollbar.js",
+				"scripts/external/angular-lib/angulartics-ga.min.js",
+				"scripts/external/angular-lib/angulartics.min.js",
+				"scripts/external/angular-lib/analytics.js",
+				"scripts/external/angular-lib/angular-filter.js",
+				"scripts/external/angular-lib/angular-material.min.js",
+				"scripts/external/angular-lib/angular-aria.min.js",
+				"scripts/app.js",
+				"scripts/dispatcher.js",
+				"scripts/common.js",
+				"scripts/interceptors.js",
+				"modules/common/constants.js",
+				"modules/services/services.js",
+				"modules/controllers/controllers.js",
+				"modules/directives/directive.js",
+				"modules/services/appService.js",
+				"modules/services/aclService.js",
+				"modules/services/commonService.js",
+				"modules/services/dashboardService.js",
+				"modules/services/siteMetadataService.js",
+				"modules/services/notificationService.js",
+				"modules/services/userContactInfoService.js",
+				"modules/services/localStorageService.js",
+				"modules/services/pagerService.js",
+				"modules/services/globalMessageService.js",
+				"modules/directives/aclDirective.js",
+				"modules/directives/commonDirective.js",
+				"modules/directives/tooltip.js",
+				"modules/controllers/appController.js",
+				"modules/controllers/dashboardController.js",
+				"modules/controllers/siteMetadataController.js",
+				"modules/controllers/siteDetailController.js",
+				"modules/controllers/notificationController.js",
+				"modules/controllers/communicationController.js",
+				"modules/controllers/sitealertController.js",
+				"modules/controllers/userContactInfoController.js",
+				"modules/controllers/globalMessageController.js",
+				"modules/controllers/modalController.js"
+	     ]
+		}
+	]
+}

@@ -1,0 +1,54 @@
+<div id='notification' class="text-capitalize" ng-hide="showDashboard">
+	<div id="notification-label-errorPanel" isnotinv
+		ng-show="labelPropertyErrorMsg!=null" class="panel-body error">
+		{{labelPropertyErrorMsg}}</div>
+
+	<div isnotinv ng-show="labelPropertyErrorMsg==null"
+		class="container-fluid-custom base-background"
+		data-ng-init="initNotification();" id="notificationMain">
+		<div class="container-fluid">
+			<div class="row container-fluid-custom">
+				<div class="col-md-10 col-sm-10 col-md-offset-1">
+					<div id="form-container">
+						<div class="page-header text-center">
+							<div id="status-buttons" class="text-center">
+								<div 
+									class="pull-left">
+									<span class="pull-left bck"  ng-click="showConfirm()"> <i
+										ng-if="$state.current.name=='notification.create.detail'"
+										class="fa fa-angle-double-left"></i> <label
+										ng-if="$state.current.name=='notification.create.detail'">BACK</label>
+										<label
+										ng-if="$state.current.name!='notification.create.detail'">CANCEL</label>
+								</div>
+								<a href=""
+									ng-class="{active: $state.includes('notification.create.detail')}"
+									style="color: #999"><span>1</span> Notification Details</a> <a
+									href=""
+									ng-class="{active: $state.includes('notification.create.customer')}"
+									style="color: #999"><span>2</span> Customer Details</a> <a
+									href=""
+									ng-class="{active: $state.includes('notification.create.summary')}"
+									style="color: #999"><span>3</span> Preview & Submit</a>
+							</div>
+						</div>
+						<form id="notificationForm" name="notificationform"
+							class="form-container" novalidate>
+							<div id="form-views" ui-view></div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	setTimeout(function(){
+	    var frame = document.getElementById("uiTinymce0_ifr");
+		var cntnt = frame.contentWindow.document;
+	    var frameBody = cntnt.getElementById('tinymce');
+		frameBody.style.height= '84px';
+	    
+	}, 500);
+</script>

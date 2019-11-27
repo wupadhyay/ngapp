@@ -1,0 +1,28 @@
+{
+  "name": "scotch-angular-testing",
+  "version": "1.0.0",
+  "description": "Learn to test Angular code with Jasmine and Karma",
+  "main": "server.js",
+  "scripts": {
+    "test": "karma start",
+    "start": "node server.js"
+  },
+  "author": "Vivek Berlia",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "morgan": "^1.7.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.4.1",
+    "karma": "^3.0.0",
+    "karma-coverage": "^1.1.2",
+    "karma-html-reporter": "^0.2.7",
+    "karma-jasmine": "^1.0.2",
+    "karma-junit-reporter": "^1.2.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-spec-reporter": "^0.0.26"
+  }
+}

@@ -1,0 +1,149 @@
+<div id="sm-results-errorPanel" ng-show="siteResultsErrorMsg!=null"
+	class="panel-body error">{{siteResultsErrorMsg}}</div>
+
+<div class="panel panel-default site-search-box"
+	ng-show="filteredSiteResults.length>0 && inputValueErrorMsg==null">
+	<div class="panel-tab"
+		ng-click="isCollapsedSearchResults = !isCollapsedSearchResults"
+		ng-class="{'panel-heading panel-heading-custom ft16': !isCollapsedSearchResults, 'panel-heading panel-heading-custom1 ft16': isCollapsedSearchResults}">
+		<i class="pull-left fa"
+			ng-class="{'fa-play fa-rotate-90': !isCollapsedSearchResults, 'fa-play': isCollapsedSearchResults}"></i>
+		<span id="sm-results-labelPanel" class="site-search">{{staticLabels.search_results_label}}</span>
+	</div>
+	<div class="panel-body panel-h1 site-search-results-section"
+		uib-collapse="isCollapsedSearchResults">
+		<table id="sm-results" class="table table-responsive">
+			<thead id="sm-results-table-header" class="table-label">
+				<tr class="table-header">
+					<th id="sm-results-idlabel" class="table-header" style="width: 9%;"><a
+						ng-click="sort('siteId');" class="cursor-pointer"> <span
+							class="table-label">{{staticLabels.site_id_label}}</span> <span
+							ng-show="sortKey == 'siteId'"><span ng-show="!reverseSort"
+								class="fa fa-caret-down"></span><span ng-show="reverseSort"
+								class="fa fa-caret-up"></span></span>
+					</a></th>
+					<th id="sm-results-statuslabel" class="table-header"
+						style="width: 6%;">{{staticLabels.status_label}}</th>
+					<th id="sm-results-namelabel" class="table-header"
+						style="width: 16%;"><a ng-click="sort('siteName');"
+						class="cursor-pointer"> <span class="table-label">{{staticLabels.site_name_label}}</span>
+							<span ng-show="sortKey == 'siteName'"><span
+								ng-show="!reverseSort" class="fa fa-caret-down"></span><span
+								ng-show="reverseSort" class="fa fa-caret-up"></span></span>
+					</a></th>
+					<!-- <th class="table-header" style="width: 25%;">{{staticLabels.login_url_label}}</th> -->
+					<th id="sm-results-urllabel" class="table-header"
+						style="width: 22%;">{{staticLabels.site_url_label}}</th>
+					<th id="sm-results-localelabel" class="table-header"
+						style="width: 7%;"><a ng-click="sort('country');"
+						class="cursor-pointer"> <span class="table-label">{{staticLabels.country_label}}</span>
+							<span ng-show="sortKey == 'country'"><span
+								ng-show="!reverseSort" class="fa fa-caret-down"></span><span
+								ng-show="reverseSort" class="fa fa-caret-up"></span></span>
+					</a></th>
+					<th id="sm-results-csidlabel" class="table-header"
+						style="width: 13%;">{{staticLabels.content_label}}<br />
+						{{staticLabels.services_label}} </span>
+					</th>
+					<th id="sm-results-cachelabel" class="table-header"
+						style="width: 10%;">{{staticLabels.auto_refresh}}</th>
+					<th isyodlee id="sm-results-aggrlabel" class="table-header"
+						style="width: 10%;">{{staticLabels.aggr_type}}</th>
+					<th id="sm-results-detailslabel" class="table-header"
+						style="width: 10%;">{{staticLabels.details_label}}</th>
+
+				</tr>
+			</thead>
+			<tbody id="sm-table-results" class="table-contents">
+				<tr ng-repeat="data in filteredSiteResults|orderBy:sortKey:reverse">
+					<td id="sm-results-id" style="width: 9%;">{{data.siteId}}</td>
+					<td id="sm-results-status" style="width: 6%;"><a
+						class="a-color" tooltip="{{data.statusTip}}"><img
+							src="{{data.statusImg}}" /></a></td>
+					<td id="sm-results-name" style="width: 16%;">{{data.siteName}}</td>
+					<td id="sm-results-url" style="width: 22%;"><a
+						tooltip="{{data.loginURL}}" href="{{data.loginURL}}"
+						target="_blank" class="loginUrl">{{data.minloginURL}}</a> <!-- <a tooltip="{{data.loginURL}}" ng-show="{{data.showLoginMinIcon}}">...</a>--></td>
+					<!-- <td style="width: 22%;"><a tooltip="{{data.siteURL}}"
+						href="{{data.siteURL}}" target="_blank">{{data.minsiteURL}}</a><a
+						tooltip="{{data.siteURL}}" ng-show="{{data.showBaseMinIcon}}"><b>...</b></a></td> -->
+					<td id="sm-results-locale" style="width: 7%;"
+						class="text-capitalize">{{data.country | lowercase}}</td>
+					<td id="sm-results-csid" style="width: 13%;"><span
+						class="cursor-pointer text-capitalize"
+						tooltip="{{data.containerList | removeUnderscores}}">{{data.contentServices
+							| removeUnderscores}}</span><a tooltip="{{data.containerList}}"
+						ng-show="{{data.showContainerListIcon}}"><b>...</b></a></td>
+					<td id="sm-results-cache" style="width: 10%;"
+						class="text-capitalize"><p
+							ng-if="data.isAutoRefreshEnabled == true">{{staticLabels.enabled_status}}</p>
+						<p ng-if="data.isAutoRefreshEnabled == false">{{staticLabels.disabled_status}}</p></td>
+					<td isyodlee id="sm-results-aggr" style="width: 10%;"
+						class="text-capitalize">{{data.aggregationType}}</td>
+
+					<td id="sm-results-details" style="width: 10%;"><a href=""
+						class="siteDetailLink"
+						ng-click="getSiteDetailById(data.siteId,$event);toggle();"
+						onclick=" ga('send','pageview','/siteInfoViewDetail')"
+						data-id="siteDetail">{{staticLabels.view_details_label}}</a></td>
+				</tr>
+			</tbody>
+			<tfoot id="sm-table-footer" class="table-footer">
+				<tr>
+					<td colspan="12">
+						<div class="pull-left status-content">
+							<ul>
+								<li id="status-unavailable"><img
+									class="status-content-icon" title="Unavailable"
+									src="images/Unavailable.svg"> <span>{{staticLabels.Unavailable}}</span>
+								</li>
+								<li id="status-unsupport-beta"><img
+									class="status-content-icon" title="UnsupportedBeta"
+									src="images/UnsupportedBeta.svg"> <span>{{staticLabels.UnsupportedBeta}}</span>
+								</li>
+								<li id="status-support"><img class="status-content-icon"
+									title="Supported" src="images/Supported.svg"> <span>{{staticLabels.Supported}}</span>
+								</li>
+								<li id="status-beta"><img class="status-content-icon"
+									title="Beta" src="images/Beta.svg"> <span>{{staticLabels.Beta}}</span>
+								</li>
+								<li id="status-invisible"><img class="status-content-icon"
+									title="Invisible" src="images/Invisible.svg"> <span>{{staticLabels.Invisible}}</span>
+								</li>
+								<li id="status-not-support"><img
+									class="status-content-icon" title="Unsupported"
+									src="images/Unsupported.svg"> <span>{{staticLabels.Unsupported}}</span>
+								</li>
+							</ul>
+						</div>
+						<div class="pull-right">
+							<ul class="pagination">
+								<li class="cursor-pointer" id="sm-pagination-first"
+									ng-class="{disabled:pager.currentPage === 1}"><a
+									ng-click="setPage(1)">{{staticLabels.label_first}}</a></li>&nbsp;
+								<li class="cursor-pointer" id="sm-paginate-backward"
+									ng-class="{disabled:pager.currentPage === 1}"><a
+									ng-click="setPage(pager.currentPage - 1)"><i
+										class="fa fa-play fa-rotate-180"></i></a></li>
+								<li class="cursor-pointer" id="sm-paginate"
+									ng-repeat="page in pager.pages"
+									ng-class="{active:pager.currentPage === page}"><a
+									ng-click="setPage(page)">{{page}}</a></li>
+								<li class="cursor-pointer" id="sm-paginate-forward"
+									ng-class="{disabled:pager.currentPage === pager.totalPages}">
+									<a ng-click="setPage(pager.currentPage + 1)"><i
+										class="fa fa-play"></i></a>
+								</li>
+								<li class="cursor-pointer" id="sm-pagination-last"
+									ng-class="{disabled:pager.currentPage === pager.totalPages}">
+									<a ng-click="setPage(pager.totalPages)">{{staticLabels.label_last}}</a>
+								</li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+		</body>
+	</div>
+</div>

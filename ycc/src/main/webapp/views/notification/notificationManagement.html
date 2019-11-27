@@ -1,0 +1,352 @@
+<div id='container3' class="container-fluid base-background"
+	ng-hide="showNotification">
+	<div class="m-t30"></div>
+	<div id="notification-label-errorPanel" isnotinv
+		ng-show="labelPropertyErrorMsg!=null" class="panel-body error">
+		{{labelPropertyErrorMsg}}</div>
+
+	<div isnotinv ng-show="labelPropertyErrorMsg==null"
+		class="container-fluid-custom base-background"
+		data-ng-init="initNotification();" id="notificationMain">
+		<div class="container-fluid base-backgroun">
+			<div class="row container-fluid-custom">
+				<div class="col-md-12 col-sm-12" ui-view>
+					<div class="row notiSearchPanel">
+						<div ng-if="msg" class="alert alert-success text-center">
+							<strong>{{msg}} </strong>
+						</div>
+						<ul class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pull-left">
+							<li
+								class="createForm col-lg-2 col-md-2 col-sm-2 col-xs-2 pull-left">
+								<a ui-sref="notification.create.detail"
+								ui-sref-opts="{location:false, reload: true}"
+								class="createButton"> <span
+									class="plus_icon col-lg-4 col-md-4 col-sm-4 col-xs-4"> <i
+										class="fa fa-plus" aria-hidden="true"></i>
+								</span> <span class="txt col-lg-8 col-md-8 col-sm-8 col-xs-8">Create</span></a>
+							</li>
+							<li id="searchBox"
+								class="col-lg-4 col-md-4 col-sm-4 col-xs-4 pull-right">
+								<form style="height: 100%;" name="advSearchForm" action=""
+									autocomplete="off">
+									<input id="" type="text"
+										ng-model="formSearch.notificationIdQuery"
+										placeholder="Search for Notification Id..." class="notiSearch" />
+									<span class="search_icon"
+										ng-click="advSearch(); $event.stopPropagation();"> <img
+										src="images/advSearch.png" style="width: 80%" />
+									</span>
+									<div id="advSearchBox" ng-show="advSearchBox">
+										<div id="searchField">
+											<div class="form-group width-100 pull-left">
+												<div class="searchField pull-left margin-right-10">
+													<label class="required"
+														for="{{staticLabels.notificationType_label}}">{{staticLabels.notificationType_label}}</label>
+													<select name=""
+														class="select-field form-control width-100 btm_border"
+														ng-model="formSearch.notificationType"
+														ng-options="notification as notification.name for notification in notificationTypes track by notification.id"
+														ng-change="resetSearchForm();notificationTypeSel()" value="Select">
+														<option value="">Select Notification Type</option>
+													</select>
+												</div>
+
+                                              	
+												<div class="searchField pull-left" ng-if="formSearch.notificationType">
+													<label for="{{staticLabels.enviroment_label}}">{{staticLabels.enviroment_label}}</label>
+													<select ng-model="formSearch.selectedEnv"
+														class="select-field envSelect form-control width-100"
+														ng-change="changeEnvironment(formSearch.selectedEnv,formSearch)">
+														<option value="" selected="selected">Select Environment</option>
+														<option value=" {{environment.name}}"
+															ng-repeat="environment in environmentsDropDown">
+															{{environment.name}}</option>
+													</select>
+												</div>
+
+												<div class="searchField pull-left margin-left-10 pad-left" ng-if="formSearch.notificationType">
+													<label for="{{staticLabels.cobrand_Label}}">{{staticLabels.cobrand_Label}}</label>
+													<div id="rolesDivCreate"
+													class="width-100 pull-left">								
+														<md-autocomplete class="normalAuto" ng-disabled="formSearch.selectedEnv==undefined" md-selected-item="formSearch.selectedCob" md-search-text="formSearch.searchText" 
+														md-items="item in getMatches(formSearch.searchText)" md-item-text="item.display" placeholder="Search cobrands" md-no-cache="true">
+															<md-item-template>
+																<span> {{item.display}}</span>
+															</md-item-template>
+															<md-not-found>
+																No matches found.
+															</md-not-found>
+														</md-autocomplete>
+													</div>
+												</div>
+											</div>
+											<div ng-if="formSearch.notificationType"
+												class="form-group width-100 pull-left">
+												 <div class="searchField pull-left margin-right-10"
+													ng-if="formSearch.notificationType.name == 'Maintenance'">
+													<label for="{{staticLabels.notificationSubType_label}}">{{staticLabels.notificationSubType_label}}</label>
+													<select name=""
+														class="select-field form-control width-100 btm_border"
+														ng-model="formSearch.notificationSubType"
+														ng-options="notiSub as notiSub.name for notiSub in notificationSubTypes track by notiSub.id"
+														ng-change="notificationSubTypeSel()" value="Select">
+														<option value="">Select Notification Sub Type</option>
+													</select>
+												</div>
+												<div class="searchField pull-left margin-right-10">
+													<label for="{{staticLabels.status_label}}">{{staticLabels.status_label}}</label>
+													<select
+														class="select-field form-control width-100 btm_border"
+														name="" ng-model="formSearch.status"
+														ng-options="notificationStat as notificationStat.name for notificationStat in notificationStatusList track by notificationStat.id"
+														ng-if="formSearch.notificationType.name == 'Maintenance'"><option
+															value="">Select Status</option>
+													</select> <select
+														class="select-field form-control width-100 btm_border"
+														name="" ng-model="formSearch.status"
+														ng-options="incidentStat as incidentStat.name for incidentStat in incidentStatus track by incidentStat.id"
+														ng-if="formSearch.notificationType.name == 'Incident'"><option
+															value="">Select Status</option>
+													</select>
+												</div>
+												<div ng-if="formSearch.notificationType"
+													class="searchField pull-left">
+													<label for="{{staticLabels.ticketNo_label}}">{{staticLabels.ticketNo_label}}</label>
+													<input class="form-control btm_border" type="text"
+														name="Ticket Number"
+														ng-model="formSearch.serviceNowTicket"
+														placeholder="Ticket Number">
+												</div>
+												<div class="searchField pull-left margin-left-10 pad-left"
+													ng-if="formSearch.notificationType.name == 'Incident'">
+													<label for="{{staticLabels.priority_label}}">{{staticLabels.priority_label}}</label>
+													<select class="select-field form-control btm_border"
+														name="" ng-model="formSearch.priority"
+														ng-options="priority as priority.name for priority in priorityOptions track by priority.id"
+														ng-change="prioritySel()"><option value="">Select
+														</option>
+													</select>
+												</div>
+												
+												<div class="searchField pull-left margin-right-10"></div>												
+											</div>
+											<div ng-if="formSearch.notificationType"
+												class="form-group width-100 pull-left">
+												<div class="searchField pull-left margin-right-10">
+													<label for="{{staticLabels.startTime_label}}">{{staticLabels.startTime_label}}</label>
+
+													<div class='input-group date width-100' id='startDate'>
+														<input type='text' class="form-control btm_border"
+															name="startDate" ng-model="formSearch.startTime"
+															datetimez="datePickerOptions" ng-readonly="true"
+															ng-change='checkDateErr(formSearch.startTime,formSearch.endTime)'
+															style="width: 190px;" /> <span class="input-group-addon"
+															style="padding: 12px 8px;"> <i
+															class="fa fa-calendar" aria-hidden="true"></i>
+														</span>
+													</div>
+													<span class="validationerror">{{errMsgStartDate}}</span>
+												</div>
+												<div class="searchField pull-left margin-right-10">
+													<label for="{{staticLabels.endTime_label}}">{{staticLabels.endTime_label}}</label>
+													<div class='input-group date width-100' id='endDate'>
+														<input type='text' class="form-control btm_border"
+															name="endDate" ng-model="formSearch.endTime"
+															datetimez="datePickerOptions" ng-readonly="true"
+															ng-change='checkDateErr(formSearch.startTime,formSearch.endTime)'
+															style="width: 190px;" /> <span class="input-group-addon"
+															style="padding: 12px 8px"><i
+															class="fa fa-calendar" aria-hidden="true"></i> </span>
+													</div>
+													<span class="validationerror">{{errMsgEndDate}}</span>
+												</div>
+												<div ng-if="formSearch.notificationType"
+													class="searchField pull-left">
+													<label for="{{staticLabels.dependency_label}}">{{staticLabels.dependency_label}}</label>
+													<input class="form-control btm_border" type="text"
+														name="dependency"
+														ng-model="formSearch.dependencies"
+														placeholder="Ticket Number">
+												</div>
+												
+											</div>
+											<div ng-if="formSearch.notificationType"
+												class="form-group width-100 pull-left">
+												<div class="searchField pull-right">
+													<span
+														class="btn blue-gradient btn-rounded btn-sm my-0 adv_search_btn pull-left margin-l20"
+														ng-click="resetNotificationSearch(formSearch)">Reset</span>
+													<span
+														class="btn blue-gradient btn-rounded btn-sm my-0 adv_search_btn"
+														ng-click="searchNotifications('',formSearch)">Search</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+							</li>
+						</ul>
+					</div>
+					<div class="row table-responsive">
+						<div id="noti-loadingPanel" align="center"
+							ng-show="notifications == null && notificationSearchErrorMsg ==null">
+							<img alt="Loading" class="margin-top-10" src="images/loading.gif" />
+						</div>
+						<div
+							ng-if="notificationSearchErrorMsg !=null && notifications.length == 0"
+							class="validationerror text-center">{{notificationSearchErrorMsg}}
+						</div>
+						<button id ="ExportButton" ng-show="false"
+							ng-json-export-excel data="excelResults"
+							filename="notificationData"
+							report-fields="{notificationId: 'ID', 'title':'Title',
+							publishTime: 'publishTime', notificationType: 'Notification Type',  status: 'Status',
+							 'referenceTicket.serviceNowTicket': 'Service Now Ticket', 
+							 'incident.priority': 'priority',
+							 'incident.isCustomerReported':'isCustomerReported',
+							 'startTime':'start Time','endTime':'end Time','created':'created',
+							 'lastupdated':'Last updated','description':'Description','serviceProductAffected':'serviceProductAffected', 'dependencyValues':'dependencies','cobs':'Cobrands'}">
+							<i class="fa fa-download" style="margin-right: 5px"></i>
+						</button>
+						
+						<button ng-if="notifications.length > 0"
+							ng-click="fetchExportData();" class="btn btn-primary"
+							style="float: right; margin-right: 12px; margin-bottom: 10px;" >Export
+							<i class="fa fa-download" style="margin-right: 5px"></i>
+						</button>
+						<table id="resTable" class="table searchResult tbl txt-center"
+							ng-if="notifications.length > 0">
+							<thead>
+								<tr>
+									<th class="txt-center"><a href=""
+										ng-click="setOrderProperty('id')">
+											{{staticLabels.id_label}} <span
+											ng-show="orderProperty == '-id'"><i
+												class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+											ng-show="orderProperty == 'id'"><i
+												class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+									</a></th>
+									<th class="txt-center"><a
+										ng-click="setOrderProperty('notificationType')">
+											{{staticLabels.type | uppercase}} <span
+											ng-show="orderProperty == '-notificationType'"><i
+												class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+											ng-show="orderProperty == 'notificationType'"><i
+												class="fa fa-chevron-down" aria-hidden="true"></i></span>
+									</a></th>
+									<th class="txt-center"><a
+										ng-click="setOrderProperty('status')">{{staticLabels.status_label
+											| uppercase}} <span ng-show="orderProperty == '-status'"><i
+												class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+											ng-show="orderProperty == 'status'"><i
+												class="fa fa-chevron-down" aria-hidden="true"></i></span>
+									</a></th>
+									<th class="txt-center"><a
+										ng-click="setOrderProperty('referenceTicket.serviceNowTicket')">{{staticLabels.SR_No_label
+											| uppercase}} <span
+											ng-show="orderProperty == '-referenceTicket.serviceNowTicket'"><i
+												class="fa fa-chevron-up" aria-hidden="true"></i> </span><span
+											ng-show="orderProperty == 'referenceTicket.serviceNowTicket'"><i
+												class="fa fa-chevron-down" aria-hidden="true"></i></span>
+									</a></th>
+									<th class="txt-center"><a
+										ng-click="setOrderProperty('incident.priority')">{{staticLabels.priority_label
+											| uppercase}} <span
+											ng-show="orderProperty == '-incident.priority'"><i
+												class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+											ng-show="orderProperty == 'incident.priority'"><i
+												class="fa fa-chevron-down" aria-hidden="true"></i></span>
+									</a></th>
+									<th class="txt-center" style="width:13%"><a
+										ng-click="setOrderProperty('startTime')">{{staticLabels.startTime_label
+											| uppercase}} <span ng-show="orderProperty == '-startTime'"><i
+												class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+											ng-show="orderProperty == 'startTime'"><i
+												class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+									</a></th>
+									<th class="txt-center" style="width:13%"><a
+										ng-click="setOrderProperty('endTime')">{{staticLabels.endTime_label
+											| uppercase}} <span ng-show="orderProperty == '-endTime'"><i
+												class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+											ng-show="orderProperty == 'endTime'"><i
+												class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+									</a></th>
+									<th class="txt-center" style="width:13%"><a
+										ng-click="setOrderProperty('lastupdated')">{{staticLabels.last_updated
+											| uppercase}} <span ng-show="orderProperty == '-lastupdated'"><i
+												class="fa fa-chevron-up" aria-hidden="true"></i> </span> <span
+											ng-show="orderProperty == 'lastupdated'"><i
+												class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+									</a></th>
+									<th class="txt-center">{{staticLabels.edit_label |
+										uppercase}}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr
+									ng-repeat="(key,data) in notifications |orderBy:orderProperty">
+									<td class="notificationId"><a href=""
+										ng-click="toggle(); viewNotification(data.notificationId,false);$event.stopPropagation()">{{data.notificationId}}</a></td>
+									<td>{{data.notificationType}}</td>
+									<td>{{data.status | uppercase}}</td>
+									<td>{{data.referenceTicket.serviceNowTicket}}</td>
+									<td><span ng-if="data.notificationType=='INCIDENT'">{{data.incident.priority}}</span>
+									</td>
+									<td><span ng-if="data.startTime">{{data.startTime}}</span></td>
+									<td><span ng-if="data.endTime!=undefined">{{data.endTime}}</span></td>
+									<td><span ng-if="data.lastupdated">{{data.lastupdated}}</span></td>
+									<td class="edit_link"><span class="width-100"
+										style="display: block;"
+										ng-click="toggle(); EditingNotification(data.notificationId,true);$event.stopPropagation()"
+										ng-if="(data.notificationType=='MAINTENANCE' && data.status != staticLabels.closed_upper_label) || (data.notificationType=='INCIDENT' && data.status != staticLabels.resolved_upper_label)"><img
+											src="images/edit.png" /></span> <span
+										ng-if="(data.notificationType=='MAINTENANCE' && data.status == staticLabels.closed_upper_label) || (data.notificationType=='INCIDENT' && data.status == staticLabels.resolved_upper_label)"><img
+											src="images/edit_disable.png" /></span></td>
+								</tr>
+
+							</tbody>
+							<tfoot ng-if="pager.totalPages>1">
+								<tr>
+									<td colspan="9">
+										<div class="pull-right">
+											<ul class="pagination">
+												<li class="cursor-pointer" id="sm-pagination-first"
+													ng-class="{disabled:pager.currentPage === 1}"><a
+													ng-click="setPage(1)">{{staticLabels.label_first}}</a></li>&nbsp;
+												<li class="cursor-pointer" id="sm-paginate-backward"
+													ng-class="{disabled:pager.currentPage === 1}"><a
+													ng-click="setPage(pager.currentPage - 1)"><i
+														class="fa fa-play fa-rotate-180"></i></a></li>
+												<li class="cursor-pointer" id="sm-paginate"
+													ng-repeat="page in pager.pages"
+													ng-class="{active:pager.currentPage === page}"><a
+													ng-click="setPage(page)">{{page}}</a></li>
+												<li class="cursor-pointer" id="sm-paginate-forward"
+													ng-class="{disabled:pager.currentPage === pager.totalPages}">
+													<a ng-click="setPage(pager.currentPage + 1)"><i
+														class="fa fa-play"></i></a>
+												</li>
+												<li class="cursor-pointer" id="sm-pagination-last"
+													ng-class="{disabled:pager.currentPage === pager.totalPages}">
+													<a ng-click="setPage(pager.totalPages)">{{staticLabels.label_last}}</a>
+												</li>
+											</ul>
+										</div>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<pageslide ps-side='bottom' ps-open="checked"
+	style="overflow:auto; padding-bottom:40px;">
+<div style="padding-top: 45px">
+	<span ng-click="toggle();" class="close_button">X Close</span>
+	<div ng-include src="notiView.url"></div>
+</div>
+</pageslide>

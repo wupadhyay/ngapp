@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Yodlee Infotech Private Limited
+
+  Logback configuration for Yodlee Customer Care App
+
+  @Authour Badarinath Sadavarthi
+  @Date Sep 15, 2016
+-->
+<configuration name="YccLogger" debug="true">
+
+  <property resource="logback.properties" />
+
+  <appender name="YCC_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  
+    <file>${LOGS_HOME}/${LOG_FOLDER}/${LOG_FILENAME}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${LOGS_HOME}/${LOG_FOLDER}/%d{yyyy-MM-dd,aux}/logfile_${LOG_FILENAME}.%d{yyyy-MM-dd}%i.log
+      </fileNamePattern>
+      <maxFileSize>100MB</maxFileSize>
+      <maxHistory>100</maxHistory>
+      <totalSizeCap>30GB</totalSizeCap>
+    </rollingPolicy>
+
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.springframework">
+    <level value="INFO" />
+  </logger>
+
+  <logger name="org.hibernate">
+    <level value="INFO" />
+  </logger>
+
+  <logger name="org.apache.http">
+    <level value="INFO" />
+  </logger>
+
+  <logger name="org.eclipse.jetty">
+    <level value="INFO" />
+  </logger>
+
+  <logger name="com.mchange">
+    <level value="INFO" />
+  </logger>
+
+  <root level="${LOG_LEVEL}">
+    <appender-ref ref="YCC_LOG" />
+  </root>
+</configuration>

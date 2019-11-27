@@ -1,0 +1,117 @@
+<div id="siteAlert" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" data-ng-init="initSiteAlert();">
+
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+		<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 pad-l0">
+			<form name="siteAlertSearch" action="" autocomplete="off">
+		    	<input ng-model="siteFormSearch.siteAlertQuery" type="text" class="width-100 notiSearch commSearch" ng-keypress="searchSiteAlert($event,siteFormSearch)" ng-change="checkIfSearchCleared(siteFormSearch)" placeholder="Site/Provider id or name" 
+		    	onclick=" ga('send','pageview','/siteAlertSearch')" />
+		    </form>
+		</div>
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 pad-l0 pad-r0">  
+		    <select class="env-dropdown" ng-model="filter.container" ng-init="filter.container='0'" ng-change="filterContainer(filter.container)" onclick=" ga('send','pageview','/siteAlertContainer')">
+		    	<option ng-selected="true" value="0">Select Containers</option>
+		        <option id="{{option}}" ng-repeat="(key,option) in containers" value="{{option}}" class="text-capitalize">{{option | removeUnderscores}}
+		        </option>
+		    </select>
+		</div>
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 pad-r0"> 
+			<ul class="nav nav-pills statusTab">
+				<li class="txt-center" ng-class="{active:isSetFilter('Ongoing')}" ng-click="filterStatus('Ongoing')" onclick=" ga('send','pageview','/siteAlertTabOngoing')">Ongoing</li>
+				<li class="txt-center" ng-class="{active:isSetFilter('Upcoming')}" ng-click="filterStatus('Upcoming')" onclick=" ga('send','pageview','/siteAlertTabUpcoming')">Upcoming</li>
+			</ul>
+		</div>
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 pad-r0">
+		    <md-switch md-no-ink ng-model="filter.showClosedSiteAlert" class="margin-0 switch-txt" aria-label="Show Closed" ng-click="event = $event"
+		    ng-change="filterShowClosed(filter.showClosedSiteAlert);" onclick="ga('send','pageview','/siteAlertShowClosed')">
+		      {{staticLabels.show_closed}} </md-switch>
+		</div>
+	</div>
+	<div id="notification-label-errorPanel"
+        ng-show="siteAlertErrorMsg!=null && groupByDateSiteAlert.length == 0 && !siteAlertLoader" class="panel-body error pull-left width-100 m-t10">
+        {{siteAlertErrorMsg}}</div>
+	<div id="noti-loadingPanel" align="center" ng-show="siteAlertLoader">
+	    <img alt="Loading" class="margin-top-10" src="images/spinner.gif" style="width: 48px; height:48px; margin:auto" />
+	</div>
+	<div class="constrained pad-t20 commScroll">
+		<div id="siteAlertContent" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" infinite-scroll="loadMoreSiteAlert()" infinite-scroll-container='".constrained"' infinite-scroll-distance="1" infinite-scroll-parent="true">
+			<div class="panel panel-default" ng-repeat="data in groupByDateSiteAlert | limitTo:numberToScroll">
+	    		<div class="panel-heading">
+	      			<h4 class="panel-title"> {{staticLabels.last_updated}}: {{data.key | date:'MMMM dd, yyyy'}} </h4>
+	      		</div>
+
+			    <div class="panel-body updateBorder pad-0" ng-repeat="sitealert in data.value">
+			      	<ul class="site-alert pad-0 margin-0 display-table">
+			      		<li class="width-100 pull-left display-table-row updateBorder pad-10" data-toggle="collapse" href="#siteTracked-{{sitealert.id}}" ng-click="handleTitlePanelclick(isClicked); isClicked = !isClicked" ng-class="{'selBorderHeader': isClicked}">
+			      			<div class="width-100 pull-left ">
+			      				<span class="favIcon display-table-cell pull-left">
+			      					<span ng-if="!sitealert.favicon">&nbsp;</span>
+			      					<img ng-if="sitealert.favicon" src="{{sitealert.favicon}}" />
+			      				</span>
+			      				
+			      				<span class="titleText display-table-cell pull-left subsBold">{{sitealert.id}} | {{sitealert.title}}</span>
+			      				<span class="status display-table-cell pull-left">{{sitealert.status}}</span>
+			      				<span class="angle-icon display-table-cell pull-left">
+			      					<i class="pull-left fa"
+									ng-class="{'fa-angle-up fa-rotate-360': isClicked, 'fa-angle-down': !isClicked}"></i>
+								</span>
+			      			</div>
+			      			<div class="width-100 pull-left">
+			      				<span class="favIcon display-table-cell pull-left">&nbsp;</span>
+			      				
+			      				<span class="titleText dateTxt display-table-cell pull-left">{{staticLabels.publised_label}}: {{sitealert.createdDate | date:"MM/dd/yyyy, h:mm a"}} | Tentative ETA: <span ng-if="sitealert.eta">{{sitealert.eta | date:"MM/dd/yyyy" }} </span>
+			      				<span ng-if="!sitealert.eta">{{staticLabels.na}}</span>	 </span>
+			      				<span class="status display-table-cell pull-left"></span>
+			      			</div>
+			      		</li>
+			      		<li id="siteTracked-{{sitealert.id}}" class="panel-collapse collapse width-100 pull-left" ng-class="{'selBorderPannel': isClicked}">
+			      			<div class="width-100 pull-left pad-10 updateBorder">
+			      				<ul class="pad-0">
+			      					<li class="pull-left width-100 pad-b10">
+			      						<span class="txt-label">{{staticLabels.description_label}}:</span>
+			      						<span class="txt-data" ng-if="sitealert.description">{{sitealert.description}}</span>
+			      						<span class="txt-data" ng-if="!sitealert.description">{{staticLabels.na}}</span>
+			      					</li>
+			      					<li class="pull-left pad-b10 width-100">
+			      						<span class="txt-label">{{staticLabels.siteId_label}}:</span>
+			      						<span class="txt-data" ng-if="sitealert.siteId">{{sitealert.siteId}}</span>
+			      						<span class="txt-data" ng-if="!sitealert.siteId">{{staticLabels.na}}</span>
+			      					</li>
+			      					<li class="pull-left pad-b10 width-100">
+			      						<span class="txt-label">Impacted Container(s):</span>
+			      						<span class="txt-data" ng-if="sitealert.impContainers">
+			      							<span ng-repeat="cont in sitealert.impContainers | unique: cont">{{cont}}
+			      							<span class="comma-separator">, </span></span>
+			      						</span>
+			      						<span class="txt-data" ng-if="!sitealert.impContainers">{{staticLabels.na}}</span>
+			      					</li>
+			      					<li class="pull-left pad-b10 width-100">
+			      						<span class="txt-label">{{staticLabels.impact_label}}:</span>
+			      						<span class="txt-data" ng-if="sitealert.impact">{{sitealert.impact}}</span>
+			      						<span class="txt-data" ng-if="!sitealert.impact">{{staticLabels.na}}</span>
+			      					</li>
+			      					<li class="pull-left pad-b10 width-100">
+			      						<span class="txt-label">{{staticLabels.err_code_label}}:</span>
+			      						<span class="txt-data">{{sitealert.errorCode}}</span>
+			      					</li>
+			      					<li class="pull-left pad-b10 width-100">
+			      						<span class="txt-label">Start Date:</span>
+			      						<span class="txt-data" ng-if="sitealert.startDate">{{sitealert.startDate | date:"MM/dd/yyyy"}}</span>
+			      						<span class="txt-data" ng-if="!sitealert.startDate">{{staticLabels.na}}</span>
+			      					</li>
+			      				</ul>
+			      				
+			      			</div>
+			      			<div class="width-100 pull-left site-updates" ng-repeat="update in sitealert.updates | orderBy: '-lastupdated' " style="padding-right: 10px; padding-left: 10px; ">
+			      				<div class="pad-10" ng-class="{'updateBorder': sitealert.updates.length > 1 }">
+			      					<span class="titleText display-block width-100 subsBold">{{update.message}}</span>
+			      					<span class="titleText dateTxt display-block width-100">Updated on: {{update.lastupdated | date:"MM/dd/yyyy, h:mm a"}}</span>
+			      				</div>
+			      			</div>
+			      		</li>
+			      	</ul>
+			    </div>
+	      	</div>
+		</div>
+		<div id="scrollTop" ng-click="backToTop()"><i class="fa fa-angle-up" onclick=" ga('send','pageview','/siteAlertTop)" ></i>TOP</div>
+		</div>
+	</div>

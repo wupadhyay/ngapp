@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Yodlee Infotech Private Limited Maven configuration 
+	for YCC Next Generation Build @Date June 2016 @Author -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.yodlee</groupId>
+	<artifactId>parent</artifactId>
+	<packaging>pom</packaging>
+	<name>Next Gen YCC Build</name>
+	<description>Next Gen Yodlee Customer Case Application</description>
+	<version>1.0</version>
+
+	<modules>
+		<module>framework</module>
+		<module>ycc</module>
+	</modules>
+
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<js.minimize>false</js.minimize>
+				<BUILD_TYPE>build</BUILD_TYPE>
+				<RELEASE_VERSION>1.0</RELEASE_VERSION>
+				<razor.version>1.0</razor.version>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>production</id>
+			<properties>
+				<js.minimize>true</js.minimize>
+				<razor.version>1.0</razor.version>
+			</properties>
+		</profile>
+	</profiles>
+
+
+	<properties>
+
+		<!-- Java Properties -->
+		<java.version>1.8</java.version>
+		<jdk.version>1.8</jdk.version>
+
+		<!-- Project Properties -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.version>${BUILD_TYPE}_${BUILD_NUMBER}-${RELEASE_VERSION}_release</project.build.version>
+
+		<build.release.version>${RELEASE_VERSION}</build.release.version>
+		<build.number>${BUILD_NUMBER}</build.number>
+
+		<!-- Plugins -->
+		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
+		<maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
+		<maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
+
+		<!-- Spring Frameworks Versions -->
+		<spring.boot.version>1.4.0.RELEASE</spring.boot.version>
+		<spring.framework.version>4.3.2.RELEASE</spring.framework.version>
+
+		<!-- Apache Commons library -->
+		<apache.commons.lang.version>3.4</apache.commons.lang.version>
+		<apache.commons.io.version>2.4</apache.commons.io.version>
+		<apache.commons.httpclient.version>4.5.2</apache.commons.httpclient.version>
+		<apache.commons.collections.version>4.1</apache.commons.collections.version>
+		<apache.commons.configuration.version>1.10</apache.commons.configuration.version>
+		<apache.freemaker.version>2.3.24-incubating</apache.freemaker.version>
+
+		<!-- Thirdparty libs -->
+		<slf4j.version>1.7.21</slf4j.version>
+		<logback.version>1.1.7</logback.version>
+		<aspectjtools.version>1.8.9</aspectjtools.version>
+		<!-- <aspect4log.version>1.0.7</aspect4log.version> -->
+		<oracle.version>11.2.0.3</oracle.version>
+		<jackson.version>2.9.5</jackson.version>
+		<jayway.jsonpath.version>2.2.0</jayway.jsonpath.version>
+		<c3p0.version>0.9.5.2</c3p0.version>
+		<json.version>20160212</json.version>
+		<jodatime.version>2.9.2</jodatime.version>
+
+		<!-- Unit Testing Frameworks -->
+		<testng.version>6.9.10</testng.version>
+		<reportng.version>1.1.4</reportng.version>
+		<google.inject.guice.version>4.0</google.inject.guice.version>
+		<jayway.restassured.version>2.9.0</jayway.restassured.version>
+		<jacoco.version>0.7.2.201409121644</jacoco.version>
+
+		<!-- providers -->
+		<javax.el.version>3.0.1-b04</javax.el.version>
+
+		<!-- web -->
+		<jsp.version>2.2</jsp.version>
+		<jstl.version>1.2</jstl.version>
+		<javax.servlet>3.1.0</javax.servlet>
+		<gson.version>2.8.0</gson.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.plugin.version}</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven.jar.plugin.version}</version>
+				<configuration>
+					<skipIfEmpty>true</skipIfEmpty>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<warSourceDirectory>src/main/webapp</warSourceDirectory>
+					<warSourceExcludes>modules/common/*.*,modules/controllers/*.*,modules/directives/*.*,modules/services/*.*,scripts/*.*,styles/external/font-awesome/*.*,styles/external/proximaNova/*.*,styles/app.css,scripts/external/angular-lib/*.*,scripts/external/highcharts/*.*</warSourceExcludes> 
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<outputFileNameMapping>@{groupId}@-@{artifactId}@-@{version}@.@{extension}@</outputFileNameMapping>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven.surefire.plugin.version}</version>
+				<configuration>
+					<systemPropertyVariables>
+						<junit.test.version>-${BUILD_NUMBER}</junit.test.version>
+						<org.uncommons.reportng.escape-output>false</org.uncommons.reportng.escape-output>
+						<org.uncommons.reportng.title>YCC Next Generation Application Unit
+							Test Results</org.uncommons.reportng.title>
+					</systemPropertyVariables>
+
+					<properties>
+						<property>
+							<name>usedefaultlisteners</name>
+							<value>false</value>
+						</property>
+						<property>
+							<name>listener</name>
+							<value>org.uncommons.reportng.HTMLReporter,
+								org.uncommons.reportng.JUnitXMLReporter</value>
+						</property>
+					</properties>
+					<workingDirectory>target/</workingDirectory>
+				</configuration>
+			</plugin>
+
+			
+			<!-- jacoco Plugin -->
+			
+			  <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                                  
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals><goal>prepare-agent</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>report</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+		 </plugins>
+	</build>
+
+	<dependencies>
+		<!-- javax dependencies -->
+
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>${javax.el.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>${jsp.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet}</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- spring dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+	     <version>${spring.boot.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>tomcat-embed-el</artifactId>
+					<groupId>org.apache.tomcat.embed</groupId>
+				</exclusion>
+	       <exclusion>
+	         <artifactId>log4j-over-slf4j</artifactId>
+	         <groupId>org.slf4j</groupId>
+	       </exclusion>
+	       <exclusion>
+	         <artifactId>jul-to-slf4j</artifactId>
+	         <groupId>org.slf4j</groupId>
+	       </exclusion>
+	       <exclusion>
+	         <artifactId>jcl-over-slf4j</artifactId>
+	         <groupId>org.slf4j</groupId>
+	       </exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+			<version>${spring.boot.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>${spring.boot.version}</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>junit</artifactId>
+					<groupId>junit</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<version>${spring.boot.version}</version>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.framework.version}</version>		
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+			<version>${spring.boot.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.framework.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${spring.framework.version}</version>
+		</dependency>
+		
+	    <dependency>
+	      <groupId>org.springframework</groupId>
+	      <artifactId>spring-core</artifactId>
+	      <version>${spring.framework.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.framework.version}</version>
+		</dependency>
+
+
+		<!-- apache commons -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${apache.commons.lang.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${apache.commons.httpclient.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${apache.commons.io.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>${apache.commons.collections.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>${apache.commons.configuration.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${apache.freemaker.version}</version>
+		</dependency>
+
+		<!-- thirdparty libs -->
+
+		<!-- SLF4J(Simple Logging Facade for Java) is a simple facade or abstraction 
+			for various logging frameworks where you can switch logging backends in a 
+			blink allowing the end user to plug in the desired logging framework at deployment 
+			time. Log back has transitive dependency with SLF4J. It adds almost no overhead 
+			and Log back has a native bindings to it. -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+		<!-- Log back is intended as a successor to the log4j project, picking 
+			up where log4j leaves off. It is a sister project of slf4j and directly implements 
+			the slf4j API making it faster.It is heavily tested, lightweight, and has 
+			a very small memory footprint. It provides several advantages over log4j 
+			like faster implementation,automated loading of configuration, compression/removal 
+			of archived files etc. -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+
+		<!-- Spring AOP implementation reuses some classes from the aspectj-weaver. 
+			AspectJ provides annotations and it automatically generates a proxy for that 
+			bean to intercept method invocations and ensure that advice is executed as 
+			needed. With the @AspectJ support enabled, any bean defined in your application 
+			context with a class that is an @AspectJ, it will be automatically detected 
+			by Spring and used to configure Spring AOP. -->
+<!-- 		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjtools</artifactId>
+			<version>${aspectjtools.version}</version>
+		</dependency> -->
+
+		<!-- Aspect4log solves the cross-cutting concern that every application 
+			has, i.e logging. It will allows you to log more with less code and above 
+			all your log will have a unified easy to read and analyze format. @Log annotation 
+			works with constructors and also with all method visibilities levels (while 
+			SpringAOP can work only with public). -->
+		<!-- <dependency> <groupId>net.sf.aspect4log</groupId> <artifactId>aspect4log</artifactId> 
+			<version>${aspect4log.version}</version> </dependency> -->
+
+	<!-- 	<dependency>
+			<groupId>oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>${oracle.version}</version>
+		</dependency>  -->
+
+		<!-- Jackson is a multi-purpose Java library for processing JSON data format. 
+			It aims to be the best possible combination of fast, correct, lightweight, 
+			and ergonomic. -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<!-- c3p0 is an easy-to-use library for making traditional JDBC drivers 
+			"enterprise-ready" by augmenting them with functionality defined by the jdbc3 
+			spec and the optional extensions to jdbc2. -->
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>${c3p0.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>${json.version}</version>
+		</dependency>
+
+		<!-- Joda-Time is the de facto standard date and time library for Java -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${jodatime.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>${jayway.jsonpath.version}</version>
+		</dependency>
+
+		<!-- unit testing -->
+
+		<!-- TestNG is a testing framework inspired from JUnit and NUnit but introducing 
+			some new functionalities that make it more powerful and easier to use, such 
+			as annotations etc. -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- ReportNG is a simple HTML reporting plug-in for the TestNG unit-testing 
+			framework. It provides a simple, colour-coded view of the test results. The 
+			output can be customised by over-riding the default stylesheet with your 
+			own CSS file. -->
+		<dependency>
+			<groupId>org.uncommons</groupId>
+			<artifactId>reportng</artifactId>
+			<version>${reportng.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Guice provides support for dependency injection using annotations 
+			to configure Java objects. It allows implementation classes to be bound programmatically 
+			to an interface, then injected into constructors, methods or fields using 
+			an @Inject annotation. When more than one implementation of the same interface 
+			is needed, the user can create custom annotations that identify an implementation, 
+			then use that annotation when injecting it. -->
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>${google.inject.guice.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- REST Assured is a simple Java library for testing of REST services.It 
+			can be used to validate and verify the response of any requests. -->
+		<dependency>
+			<groupId>com.jayway.restassured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>${jayway.restassured.version}</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+		</dependency>
+
+	</dependencies>
+</project>

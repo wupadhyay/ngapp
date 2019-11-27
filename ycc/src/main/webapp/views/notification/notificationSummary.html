@@ -1,0 +1,307 @@
+<fieldset id="notificationSummary" class="text-capitalize">
+	<div class="alert alert-danger text-center"
+		ng-show="errorOnNotificationCreate !=null">
+		{{errorOnNotificationCreate}}</div>
+	<h1 class="fs-title">
+		<b>{{staticLabels.notification_preview_label}}</b>
+	</h1>
+	<div id="sw-basic-details" class="row row-detail panel panel-default">
+		<div class="cursor-pointer panel-tab"
+			ng-click="showBasicDiv = !showBasicDiv"
+			ng-class="{'panel-heading panel-heading-custom ft16': !showBasicDiv, 'panel-heading panel-heading-custom1 ft16': showBasicDiv}">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !showBasicDiv, 'fa-play': showBasicDiv}"></i>
+			<span id="sw-basic-details-label" class="row-title">{{staticLabels.notification_detail_label}}</span>
+		</div>
+		<div ng-show="!showBasicDiv" class="boxDetail customTxt"
+			ng-repeat="detail in notificationDetail">
+			<div class="col-md-6 col-lg-6">
+				<ul class="list-group width-100">
+					<li class="no-border"><p id="sw-bd-nameLabel"
+							class="basic-detail">{{staticLabels.notificationType_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">
+							{{detail.notificationType.name}}</p></li>
+					<li class="no-border"
+						ng-if="detail.notificationType.name == 'Maintenance'"><p
+							id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.notificationSubType_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">
+							{{detail.notificationSubType.name}}</p></li>
+					<!-- li class="no-border" ng-if="detail.notificationType.name == 'Maintenance'"><p id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.criticality_label}} :</p><p id="sw-bd-name" class="basic-data"> {{detail.criticality.name}}</p></li-->
+					<li class="no-border"
+						ng-if="detail.notificationType.name == 'Incident'"><p
+							id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.priority_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">
+							{{detail.priority.name}}</p></li>
+					<li class="no-border"><p id="sw-bd-nameLabel"
+							class="basic-detail">{{staticLabels.impact_label}} :</p>
+						<p id="sw-bd-name" class="basic-data viewTxt"
+							mb-scrollbar="scrollbar('vertical', true)">{{detail.impact}}
+						</p></li>
+					<li class="no-border" ng-if="detail.serviceNowTicket.length > 0"><p
+							id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.SR_No_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">
+							{{detail.serviceNowTicket}}</p></li>
+					<li class="no-border" ng-if="detail.bugId.length > 0"><p
+							id="sw-bd-nameLabel" class="basic-detail">Bug Id :</p>
+						<p id="sw-bd-name" class="basic-data">{{detail.bugId}}</p></li>
+					<li class="no-border customTxt" >
+                        <p id="sw-bd-nameLabel" class="basic-detail width-14 psLabelWidth">{{staticLabels.short_service_product_label}} :</p>
+                        <p id="sw-bd-name" class="basic-data viewTxt psValueWidth" mb-scrollbar="scrollbar('vertical', true)">                            
+                                {{detail.serviceProductAffected}}                            
+                        </p>
+                    </li>	
+				</ul>
+			</div>
+			<div class="col-md-6 col-lg-6">
+				<ul class="list-group width-100">
+					<li class="no-border"><p id="sw-bd-nameLabel"
+							class="basic-detail">{{staticLabels.status_label}} :</p>
+						<p id="sw-bd-name" class="basic-data">{{detail.status.name}}</p></li>
+					<li class="no-border"
+						ng-if="detail.notificationType.name == 'Incident' && detail.subStatus.length > 0"><p
+							id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.substatus_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">
+							{{detail.subStatus.name}}</p></li>
+					<li class="no-border"><p id="sw-bd-nameLabel"
+							class="basic-detail">{{staticLabels.startTime_label}}{{staticLabels.ist_label_short}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">{{detail.startTime}}</p></li>
+					<li class="no-border" ng-if="detail.endTime"><p
+							id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.endTime_label}}{{staticLabels.ist_label_short}}:</p>
+						<p id="sw-bd-name" class="basic-data">{{detail.endTime}}</p></li>
+					<li class="no-border"
+						ng-if="detail.notificationType.name == 'Incident' && detail.nextUpdatePeriod"><p
+							id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.next_update_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">{{detail.nextUpdatePeriod}}</p></li>
+					<li class="no-border" ng-if="detail.dependency.length > 0"><p
+							id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.dependency_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">{{detail.dependency}}</p></li>
+					<li class="no-border"
+						ng-if="detail.notificationType.name == 'Maintenance' && detail.downtime.required"><p
+							id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.downtime_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">
+							{{detail.downtime.duration}} {{detail.downtime.intervalType}}</p></li>
+					<li class="no-border" ng-if="detail.serviceDisruption.type!=null"><p
+							id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.Service_Disrption_Type}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">{{detail.serviceDisruption.type.name}}</p></li>
+					<li class="no-border"
+						ng-if="detail.serviceDisruption.estimatedDuration!=null"><p
+							id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.Service_Disrption_Est_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">{{detail.estimatedDuration}}
+							{{detail.estimatedDurationIntervalType}}</p></li>
+					<li class="no-border"
+						ng-if="detail.serviceDisruption.actualDuration!=null">
+						<p id="sw-bd-nameLabel" class="basic-detail">{{staticLabels.Service_Disruption_Act_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data">{{detail.actualDuration}}
+							{{ detail.actualDurationIntervalType}}</p>
+					</li>
+
+				</ul>
+			</div>
+			<div class="col-md-12 col-lg-12">
+				<ul class="list-group width-100">
+					
+					<li class="no-border customTxt fullText">
+						<p id="sw-bd-nameLabel" class="basic-detail width-14">{{staticLabels.title_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data viewTxt"
+							mb-scrollbar="scrollbar('vertical', true)">{{detail.title}}</p>
+					</li>
+
+					<li class="no-border customTxt fullText">
+						<p id="sw-bd-nameLabel" class="basic-detail width-14">{{staticLabels.description}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data viewTxt"
+							mb-scrollbar="scrollbar('vertical', true)">
+							<span class="desc-area" ng-bind-html="detail.description"></span>
+						</p>
+
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="sw-basic-details" class="row row-detail panel panel-default"
+		ng-repeat="detail in notificationDetail">
+		<div class="cursor-pointer panel-tab"
+			ng-click="showBasicDiv = !showBasicDiv"
+			ng-class="{'panel-heading panel-heading-custom ft16': !showBasicDiv, 'panel-heading panel-heading-custom1 ft16': showBasicDiv}">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !showBasicDiv, 'fa-play': showBasicDiv}"></i>
+			<span id="sw-basic-details-label" class="row-title">{{staticLabels.notification_customer_label}}</span>
+		</div>
+		<div ng-show="!showBasicDiv" class="boxDetail customTxt">
+			<div class="col-md-6 col-lg-6">
+				<ul class="list-group width-100">
+					<li class="no-border"><p id="sw-bd-nameLabel"
+							class="basic-detail">{{staticLabels.enviroment_label}} :</p>
+						<p id="sw-bd-name" class="basic-data">{{detail.environment}}</p></li>
+				</ul>
+			</div>
+			<div class="col-md-6 col-lg-6">
+				<ul class="list-group width-100">
+					<li class="no-border" id="dc-nameLabel"
+						ng-if="detail.dataCenter.length > 0"><p class="basic-detail">
+							{{staticLabels.datacenter_label}} :</p>
+						<p id="sw-bd-name" class="basic-data">
+							<span class="cust_sublist" ng-repeat="dc in detail.dataCenter">{{dc}}<span
+								class="comma-separator">,</span></span>
+						</p></li>
+					<li class="no-border" ng-if="detail.productType.length > 0">
+						<p id="sw-bd-nameLabel" class="basic-detail">
+							{{staticLabels.product_type_label}}:</p>
+						<p id="sw-bd-name" class="basic-data">
+							<span class="cust_sublist" ng-repeat="prod in detail.productType">
+								{{prod}} <span class="comma-separator">,</span>
+							</span>
+						</p>
+					</li>
+					<li class="no-border" id="backendGroup"
+						ng-if="detail.backendGroup.length > 0">
+						<p id="sw-bd-nameLabel" class="basic-detail">#{{staticLabels.backend_grp_label}}:</p>
+						<p id="sw-bd-name" class="basic-data-edit">
+							<span ng-if="detail.backendGroup.length > 1">
+								{{detail.backendGroup.length}}</span> <span
+								ng-if="detail.backendGroup.length == 1"
+								ng-repeat="backend in detail.backendGroup">{{backend}}</span>
+						<div class="hover-icon" ng-if="detail.backendGroup.length > 1"
+							ng-mouseover="showBgPopover=true;"
+							ng-mouseleave="showBgPopover=false;">
+							...
+							<div class="popover bottom bgPopover" ng-show="showBgPopover">
+								<div class="arrow"></div>
+								<span ng-repeat="backend in detail.backendGroup"><img
+									src="images/tick_icon.png" class="width-9" /> {{backend}}</span>
+							</div>
+						</div>
+						</p>
+
+					</li>
+					<li class="no-border" ng-if="detail.dataBase.length > 0">
+						<p id="sw-bd-nameLabel" class="basic-detail">#{{staticLabels.database_label}}
+							:</p>
+						<p id="sw-bd-name" class="basic-data-edit">
+							<span ng-if="detail.dataBase.length > 1">
+								{{detail.dataBase.length}}</span> <span
+								ng-if="detail.dataBase.length == 1"
+								ng-repeat="db in detail.dataBase">{{db}}</span>
+						<div class="hover-icon" ng-if="detail.dataBase.length > 1"
+							ng-mouseover="showDbPopover=true;"
+							ng-mouseleave="showDbPopover=false;">
+							...
+							<div class="popover bottom dbPopover" ng-show="showDbPopover">
+								<div class="arrow"></div>
+								<span ng-repeat="db in detail.dataBase"><img
+									src="images/tick_icon.png" class="width-9" /> {{db}}</span>
+							</div>
+						</div>
+						</p>
+					</li>
+
+					<li class="no-border" ng-if="detail.cobrandCount > 0">
+						<p id="sw-bd-nameLabel" class="basic-detail">
+							{{staticLabels.num_cobrands}} :</p>
+						<p id="sw-bd-name" class="basic-data-edit" title="">
+							<span ng-if="detail.cobrandCount > 1">
+								{{detail.cobrandCount}}</span> <span ng-if="detail.cobrandCount == 1"
+								ng-repeat="cob in detail.cobrandInfo">{{cob.name}}</span>
+						<div ng-if="detail.cobrandCount > 1" class="hover-icon"
+							ng-mouseover="showCobPopover=true;"
+							ng-mouseleave="showCobPopover=false;">
+							...
+							<div class="popover bottom cobPopover" ng-show="showCobPopover">
+								<div class="arrow"></div>
+								<span ng-repeat="cob in detail.cobrandInfo"><img
+									src="images/tick_icon.png" class="width-9" /> {{cob.name}}</span>
+							</div>
+						</div>
+						</p>
+					</li>
+
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="sw-basic-details" class="row row-detail panel panel-default"
+		ng-if="attachment">
+		<div class="cursor-pointer panel-tab"
+			ng-click="showAttachmentDiv = !showAttachmentDiv"
+			ng-class="{'panel-heading panel-heading-custom ft16': !showAttachmentDiv, 'panel-heading panel-heading-custom1 ft16': showAttachmentDiv}">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !showAttachmentDiv, 'fa-play': showAttachmentDiv}"></i>
+			<span id="sw-basic-details-label" class="row-title">{{staticLabels.attachment_label}}</span>
+		</div>
+		<div ng-show="!showAttachmentDiv" class="boxDetail">
+			<div class="col-sm-12 col-md-12 col-lg-12">
+				<div class="table-responsive">
+
+					<table class="table tbl">
+						<thead>
+							<tr>
+								<th>{{staticLabels.file_label}}</th>
+								<th>{{staticLabels.file_type}}</th>
+								<th>{{staticLabels.action_label}}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="file in attachment">
+								<td>{{file.name}}</td>
+								<td>{{file.extension}}</td>
+								<td><span class="fa fa-remove m-l10" role="button"
+									type="submit" ng-click="cancel($index);"></span></td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="highlightNote row row-detail panel panel-default bg-info">
+		<p class="notePara text-primary">
+			<strong>Note:</strong> Yodlee cobrand [Cobrand id : 1000004] is
+			selected by default , and the email will go to all the contacts under
+			Yodlee cobrand
+		</p>
+	</div>
+
+	<div
+		class="col-sm-12 col-sm-12 col-md-12 col-lg-12 pull-left m-t20 pad-l0">
+		<div class="col-md-2 pull-right pad-r0">
+			<a ng-disabled="createAPIcalled"
+				ng-click="createNotificationFunc(formData,'publish')"
+				class="btn btn-block btn-success pull-right pad-l6 pad-r6">
+				{{staticLabels.submit_publish_label}}<i
+				class="fa fa-envelope-o hand-icon pull-right"></i>
+			</a>
+		</div>
+		<div class="col-md-2 pull-right pad-r0">
+			<a ng-disabled="createAPIcalled"
+				ng-click="createNotificationFunc(formData)"
+				class="btn btn-block btn-success pull-right">
+				{{staticLabels.notification_dashboard_submit_button_text}} <i
+				class="fa fa-floppy-o hand-icon pull-right m-r8"></i>
+			</a>
+		</div>
+		<div class="col-md-2 pull-right pad-r0">
+			<a ui-sref="notification.create.customer"
+				ui-sref-opts="{location:false}" ng-click="saveCustomerInfoData()"
+				class="btn btn-block btn-info pull-right"> <i
+				class="fa fa-hand-o-left hand-icon pull-left m-l8"></i>
+				{{staticLabels.previous_label}}
+			</a>
+		</div>
+	</div>
+</fieldset>

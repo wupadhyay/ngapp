@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="14px" height="10px" viewBox="0 0 14 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.1 (33804) - http://www.bohemiancoding.com/sketch -->
+    <title>Triangle 1</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Content-Service-Search---Client" transform="translate(-31.000000, -336.000000)" fill="#908D8C">
+            <g id="Group-5" transform="translate(30.000000, 329.000000)">
+                <path d="M7.37252168,7.36855204 C7.69344824,6.91561406 8.21717256,6.92041201 8.53469956,7.36855204 L14.7779169,16.1798832 C15.0988434,16.6328212 14.9157483,17 14.3642302,17 L1.54299102,17 C0.993591628,17 0.811777358,16.6280233 1.12930436,16.1798832 L7.37252168,7.36855204 Z" id="Triangle-1" transform="translate(7.954402, 12.000000) scale(-1, -1) translate(-7.954402, -12.000000) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

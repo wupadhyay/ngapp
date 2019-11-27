@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<project
+       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+       xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+       <modelVersion>4.0.0</modelVersion>
+
+       <parent>
+              <groupId>com.yodlee</groupId>
+              <artifactId>parent</artifactId>
+              <version>1.0</version>
+       </parent>
+       
+
+       <artifactId>ycc</artifactId>
+       <packaging>war</packaging>
+       <name>ycc</name>
+       <properties>
+       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+              <webapp.dir>src/main/webapp</webapp.dir>
+       </properties>
+       
+
+       <dependencies>
+
+              <dependency>
+                     <groupId>com.yodlee</groupId>
+                     <artifactId>framework</artifactId>
+                     <version>${project.parent.version}</version>
+              </dependency>
+
+              <!-- JS Webjars -->
+              <dependency>
+                     <groupId>org.webjars</groupId>
+                     <artifactId>bootstrap</artifactId>
+                     <version>3.3.6</version>
+              </dependency>
+
+              <dependency>
+                     <groupId>org.webjars</groupId>
+                     <artifactId>angularjs</artifactId>
+                     <version>1.5.4</version>
+              </dependency>
+
+              <dependency>
+                     <groupId>org.webjars</groupId>
+                     <artifactId>angular-ui-bootstrap</artifactId>
+                     <version>1.3.1</version>
+              </dependency>
+
+              <dependency>
+                     <groupId>org.webjars</groupId>
+                     <artifactId>angular-ui-router</artifactId>
+                     <version>0.2.18</version>
+              </dependency>
+
+              <dependency>
+                     <groupId>org.webjars</groupId>
+                     <artifactId>angular-ui-select</artifactId>
+                     <version>0.14.8</version>
+              </dependency>
+
+              <dependency>
+                     <groupId>org.webjars.npm</groupId>
+                     <artifactId>angular-aside</artifactId>
+                     <version>1.3.0</version>
+              </dependency>
+
+              <dependency>
+                     <groupId>org.webjars</groupId>
+                     <artifactId>ng-table</artifactId>
+                     <version>1.0.0-beta.9</version>
+              </dependency>
+
+              <dependency>
+                     <groupId>org.webjars</groupId>
+                     <artifactId>underscorejs</artifactId>
+                     <version>1.8.3</version>
+              </dependency>
+
+              <dependency>
+                     <groupId>org.webjars.bower</groupId>
+                     <artifactId>waves</artifactId>
+                     <version>0.7.4</version>
+              </dependency>
+              
+              <dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+              <!-- CSS webjars -->
+              <dependency>
+                     <groupId>org.webjars</groupId>
+                     <artifactId>font-awesome</artifactId>
+                     <version>4.6.3</version>
+              </dependency>
+
+              <dependency>
+                     <groupId>junit</groupId>
+                     <artifactId>junit</artifactId>
+                     <version>3.8.1</version>
+                     <scope>test</scope>
+              </dependency>
+       </dependencies>
+
+
+<build>
+<finalName>ngycc</finalName>
+    
+        <plugins>
+
+    <!--  <plugin>
+     <artifactId>maven-antrun-plugin</artifactId>
+     <version>1.7</version>
+     <executions>
+            <execution>
+                   <id>execution</id>
+                   <phase>package</phase>
+                   <goals>
+                          <goal>run</goal>
+                   </goals>
+                   <configuration>
+                        <tasks>
+                                       <replace token= "BUILD_NUMBER" value="${BUILD_NUMBER}" dir="src/main/webapp">                                 
+                                       </replace>
+                                     </tasks>
+                   </configuration>
+            </execution>
+            </executions>
+      </plugin>
+     -->        
+      <plugin>
+        <groupId>com.samaxes.maven</groupId>
+        <artifactId>minify-maven-plugin</artifactId>
+        <version>1.7.6</version>
+        <executions>
+          <execution>
+            <id>bundle-minify</id>
+             <phase>package</phase>
+            <configuration>
+            <bundleConfiguration>ycc/src/main/webapp/resources/static-bundles.json</bundleConfiguration>
+             <cssSourceDir>styles</cssSourceDir>
+             <jsSourceDir>/</jsSourceDir>
+            </configuration>
+            <goals>
+              <goal>minify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+       <plugin>
+        	<groupId>com.github.eirslett</groupId>
+        	<artifactId>frontend-maven-plugin</artifactId>
+	        <version>1.6</version>
+	        <executions>
+ <!-- 
+	          1. install node.exe locally
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v7.10.0</nodeVersion>
+                        </configuration>
+                    </execution>
+                    2. Run npm install to update packages and dependencies like karma and phatonmjs
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+ -->
+		<execution>
+			<id>javascript tests</id>
+			<goals>
+				<goal>karma</goal>
+			</goals>
+			<configuration>
+				<karmaConfPath>karma.conf.js</karmaConfPath>
+			</configuration>
+		</execution>
+	</executions>
+  </plugin> 
+     
+       </plugins> 
+</build>
+
+
+</project>
+

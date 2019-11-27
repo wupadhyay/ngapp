@@ -1,0 +1,1319 @@
+<fieldset class="width-100" ng-if="!editableMode" id="viewNotification">
+	<div style="margin: -30px 16px 16px; text-align: center;">
+		<h1 class="fs-title"
+			style="display: inline-block; margin-left: 3%; margin-top: 0px;">
+			<b>{{staticLabels.view_notification_label}}</b>
+		</h1>
+		<span
+			ng-if="viewNotificationDetails.status!=staticLabels.closed_upper_label && viewNotificationDetails.status!=staticLabels.resolved_upper_label"
+			class="fa fa-pencil" role="button" ng-click="editFlagCheck();"></span>
+
+	</div>
+	<div id="notification-details"
+		class="row row-detail panel panel-default">
+		<div class="cursor-pointer panel-tab"
+			ng-click="showNotificationDetailsDiv = !showNotificationDetailsDiv">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !showNotificationDetailsDiv, 'fa-play': showNotificationDetailsDiv}"></i>
+			<span id="vn-notification-details-label" class="row-title">{{staticLabels.notification_detail_label}}</span>
+		</div>
+		<div ng-show="!showNotificationDetailsDiv" class="boxDetail customTxt">
+			<div class="col-md-6 col-lg-6">
+				<ul class="list-group width-100">
+					<li class="list-group-item no-border">
+						<p id="notification-idLabel" class="basic-detail">{{staticLabels.notification_id_label}}:</p>
+						<p id="notification-id" class="basic-data">{{viewNotificationDetails.notificationId}}
+						</p>
+					</li>
+					<li class="list-group-item no-border">
+						<p id="notification-typeLabel" class="basic-detail">{{staticLabels.notificationType_label}}:</p>
+						<p id="notification-type" class="basic-data">{{viewNotificationDetails.notificationType}}</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.notificationType=='MAINTENANCE' && viewNotificationDetails.maintenance.notificationSubtype != undefined"
+						class="list-group-item no-border">
+						<p id="notification-subTypeLabel" class="basic-detail">{{staticLabels.notificationSubType_label}}:</p>
+						<p id="notification-subType" class="basic-data">{{viewNotificationDetails.maintenance.notificationSubtype}}</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.notificationType=='INCIDENT'&& viewNotificationDetails.incident.priority!=undefined"
+						class="list-group-item no-border">
+						<p id="priorityLabel" class="basic-detail">{{staticLabels.priority_label}}:</p>
+						<p id="priority" class="basic-data">{{viewNotificationDetails.incident.priority}}</p>
+					</li>
+					<li ng-if="viewNotificationDetails.impact!=undefined"
+						class="list-group-item no-border">
+						<p id="impactLabel" class="basic-detail">{{staticLabels.impact_label}}:</p>
+						<p id="impact" class="basic-data viewTxt"
+							mb-scrollbar="scrollbar('vertical', true)">{{viewNotificationDetails.impact}}
+						</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.referenceTicket!=undefined && viewNotificationDetails.referenceTicket.serviceNowTicket!=undefined"
+						class="list-group-item no-border">
+						<p id="sr-NumberLabel" class="basic-detail" class="required">{{staticLabels.SR_No_label}}:</p>
+						<p id="sr-number" class="basic-data">{{viewNotificationDetails.referenceTicket.serviceNowTicket}}
+						</p>
+					</li>
+					<li class="list-group-item no-border">
+						<p id="productLabel" class="basic-detail">{{staticLabels.service_product_label}}:</p>
+						<p id="productText" class="basic-data viewTxt" mb-scrollbar="scrollbar('vertical', true)">{{viewNotificationDetails.serviceProductAffected}} </p>
+					</li>
+					<li class="list-group-item no-border">
+						<p id="titleLabel" class="basic-detail">{{staticLabels.title_label}}:</p>
+						<p id="title" class="basic-data viewTxt"
+							mb-scrollbar="scrollbar('vertical', true)">{{viewNotificationDetails.title}}
+						</p>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-6 col-lg-6">
+				<ul class="list-group width-100">
+					<li class="list-group-item no-border">
+						<p id="notification-statusLabel" class="basic-detail">{{staticLabels.notificationStatus_label}}:</p>
+						<p id="notification-status" class="basic-data">{{viewNotificationDetails.status}}</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.notificationType=='INCIDENT' && viewNotificationDetails.incident.isCustomerReported!=undefined"
+						class="list-group-item no-border">
+						<p id="notificationSubStatusLabel" class="basic-detail">Customer
+							Reported:</p>
+						<p id="notification-subStatus" class="basic-data">{{viewNotificationDetails.incident.isCustomerReported}}</p>
+					</li>
+					<li ng-if="viewNotificationDetails.startTime!=undefined"
+						class="list-group-item no-border">
+						<p id="startTimeLabel" class="basic-detail">{{staticLabels.startTime_label}}:</p>
+						<p id="start-time" class="basic-data">{{viewNotificationDetails.startTime|dateConverterNotification}}
+						</p>
+					</li>
+					<li ng-if="viewNotificationDetails.endTime!=undefined"
+						class="list-group-item no-border">
+						<p id="endTimeLabel" class="basic-detail">{{staticLabels.endTime_label}}:</p>
+						<p id="end-time" class="basic-data">{{viewNotificationDetails.endTime|dateConverterNotification}}
+						</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.notificationType=='INCIDENT' && viewNotificationDetails.incident!=undefined && viewNotificationDetails.incident.nextUpdatePeriod!=undefined"
+						class="list-group-item no-border">
+						<p id="nextUpdateLabel" class="basic-detail">{{staticLabels.next_update_label}}:</p>
+						<p id="nextUpdate" class="basic-data">{{viewNotificationDetails.incident.nextUpdatePeriod}}
+						</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.referenceTicket!=undefined && viewNotificationDetails.referenceTicket.dependencies!=undefined"
+						class="list-group-item no-border">
+						<p id="dependencyLabel" class="basic-detail">{{staticLabels.dependency_label}}:</p>
+						<p id="dependency" class="basic-data">{{viewNotificationDetails.referenceTicket.dependencies.join()}}
+						</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.referenceTicket!=undefined && viewNotificationDetails.referenceTicket.bugId!=undefined"
+						class="list-group-item no-border">
+						<p id="bug-idLabel" class="basic-detail">{{staticLabels.bug_id_label}}:</p>
+						<p id="bug-id" class="basic-data">{{viewNotificationDetails.referenceTicket.bugId}}
+						</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.incident!=undefined && viewNotificationDetails.incident.rca!=undefined && viewNotificationDetails.incident.rca.summary!=undefined"
+						class="list-group-item no-border"
+						ng-if="viewNotificationDetails.rca">
+						<p id="rcaLabel" class="basic-detail">{{staticLabels.rca_label}}:</p>
+						<p id="rca" class="basic-data">{{viewNotificationDetails.incident.rca.summary}}
+						</p>
+					</li>
+
+					<li
+						ng-if="viewNotificationDetails.serviceDisruption!=undefined && viewNotificationDetails.serviceDisruption.type!='' && viewNotificationDetails.serviceDisruption.type!=undefined"
+						class="list-group-item no-border"
+						ng-if="viewNotificationDetails.serviceDisruption">
+						<p id="serviceDisruptionTypeLabel" class="basic-detail">{{staticLabels.Service_Disrption_Type}}:</p>
+						<p id="serviceDisruptionTypeVal" class="basic-data">{{viewNotificationDetails.serviceDisruption.type}}
+						</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.serviceDisruption!=undefined && viewNotificationDetails.serviceDisruption.estimatedDuration!='' && viewNotificationDetails.serviceDisruption.estimatedDuration!=undefined"
+						class="list-group-item no-border"
+						ng-if="viewNotificationDetails.serviceDisruption">
+						<p id="serviceDisruptionEstimatedLabel" class="basic-detail">{{staticLabels.Service_Disrption_Est_label}}:</p>
+						<p id="serviceDisruptionEstimatedVal" class="basic-data">{{viewNotificationDetails.serviceDisruption.estimatedDuration|ISOtoMinutesConverter}}
+							Minutes</p>
+					</li>
+
+					<li
+						ng-if="viewNotificationDetails.serviceDisruption!=undefined && viewNotificationDetails.serviceDisruption.actualDuration!='' && viewNotificationDetails.serviceDisruption.actualDuration!=undefined"
+						class="list-group-item no-border"
+						ng-if="viewNotificationDetails.serviceDisruption">
+						<p id="serviceDisruptionActualLabel" class="basic-detail">{{staticLabels.Service_Disruption_Act_label}}:</p>
+						<p id="serviceDisruptionActualVal" class="basic-data">{{viewNotificationDetails.serviceDisruption.actualDuration|ISOtoMinutesConverter}}
+							Minutes</p>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-12 col-lg-12">
+				<ul class="list-group width-100">
+					<li class="list-group-item no-border fullText">
+						<p id="descriptionLabel" class="basic-details"
+							style="width: 19.5%; padding-right: 0">{{staticLabels.description_label}}:</p>
+						<p id="description" class="basic-data viewTxt"
+							mb-scrollbar="scrollbar('vertical', true)">
+							<span style="width: 97%; display: block; overflow: hidden"
+								ng-bind-html="viewNotificationDetails.description"></span>
+						</p>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="customer-details" class="row row-detail panel panel-default">
+		<div class="cursor-pointer panel-tab"
+			ng-click="showCustomerDetailsDiv = !showCustomerDetailsDiv">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !showCustomerDetailsDiv, 'fa-play': showCustomerDetailsDiv}"></i>
+			<span id="vn-customer-details-label" class="row-title">{{staticLabels.notification_customer_label}}</span>
+		</div>
+		<div ng-show="!showCustomerDetailsDiv" class="boxDetail customTxt">
+			<div class="col-md-6 col-lg-6">
+				<ul class="list-group width-100">
+					<li class="list-group-item no-border">
+						<p id="environmentLabel" class="basic-detail ">{{staticLabels.enviroment_label}}:</p>
+						<p id="environment" class="basic-data ">{{viewNotificationDetails.environment}}</p>
+					</li>
+				</ul>
+			</div>
+			<div ng-show="!showCustomerDetailsDiv" class="col-md-6 col-lg-6">
+				<ul class="list-group width-100">
+					<li
+						ng-if="viewNotificationDetails.customerSelectionCriteria.type=='productType'"
+						class="list-group-item no-border">
+						<p id="productTypeLabel" class="basic-detail">#{{staticLabels.product_type_label}}:</p>
+						<p id="product-type" class="basic-data-edit">
+							<span
+								ng-if="viewNotificationDetails.customerSelectionCriteria.value.length > 1">
+								{{viewNotificationDetails.customerSelectionCriteria.value.length}}</span>
+							<span
+								ng-if="viewNotificationDetails.customerSelectionCriteria.value.length == 1"
+								ng-repeat="value in viewNotificationDetails.customerSelectionCriteria.value">{{value}}</span>
+						<div
+							ng-if="viewNotificationDetails.customerSelectionCriteria.value.length > 1">
+							<span class="hover-icon" ng-mouseover="showProductPopover=true;"
+								ng-mouseleave="showProductPopover=false;">...
+								<div class="popover bottom bgPopover"
+									ng-class="{showDetailsPopup:showProductPopover}"
+									ng-show="showProductPopover">
+									<span class="padding-right:10px;"
+										ng-repeat="value in viewNotificationDetails.customerSelectionCriteria.value">
+										<div>{{value}}</div>
+									</span>
+								</div>
+							</span>
+						</div>
+						</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.customerSelectionCriteria.type=='backendGroup'"
+						class="list-group-item no-border">
+						<p id="backend-grpLabel" class="basic-detail">#{{staticLabels.backend_grp_label}}:</p>
+						<p id="backend-grp" class="basic-data-edit">
+							<span
+								ng-if="viewNotificationDetails.customerSelectionCriteria.value.length > 1">
+								{{viewNotificationDetails.customerSelectionCriteria.value.length}}</span>
+							<span
+								ng-if="viewNotificationDetails.customerSelectionCriteria.value.length == 1"
+								ng-repeat="value in viewNotificationDetails.customerSelectionCriteria.value">{{value}}</span>
+						<div
+							ng-if="viewNotificationDetails.customerSelectionCriteria.value.length > 1">
+							<span class="hover-icon" ng-mouseover="showBgPopover=true;"
+								ng-mouseleave="showBgPopover=false;">...
+								<div class="popover bottom bgPopover"
+									ng-class="{showDetailsPopup:showBgPopover}"
+									ng-show="showBgPopover">
+									<span class="padding-right:10px;"
+										ng-repeat="value in viewNotificationDetails.customerSelectionCriteria.value">
+										<div>{{value}}</div>
+									</span>
+								</div>
+							</span>
+						</div>
+						</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.customerSelectionCriteria.type=='dataCenter'"
+						class="list-group-item no-border">
+						<p id="datacenterLabel" class="basic-detail">#{{staticLabels.datacenter_label}}:</p>
+						<p id="datacenter" class="basic-data-edit">
+							<span
+								ng-if="viewNotificationDetails.customerSelectionCriteria.value.length > 1">
+								{{viewNotificationDetails.customerSelectionCriteria.value.length}}</span>
+							<span
+								ng-if="viewNotificationDetails.customerSelectionCriteria.value.length == 1"
+								ng-repeat="value in viewNotificationDetails.customerSelectionCriteria.value">{{value}}</span>
+						<div
+							ng-if="viewNotificationDetails.customerSelectionCriteria.value.length > 1">
+							<span class="hover-icon" ng-mouseover="showDCPopover=true;"
+								ng-mouseleave="showDCPopover=false;">...
+								<div class="popover bottom bgPopover"
+									ng-class="{showDetailsPopup:showDCPopover}"
+									ng-show="showDCPopover">
+									<span class="padding-right:10px;"
+										ng-repeat="value in viewNotificationDetails.customerSelectionCriteria.value">
+										<div>{{value}}</div>
+									</span>
+								</div>
+							</span>
+						</div>
+						</p>
+					</li>
+					<li
+						ng-if="viewNotificationDetails.customerSelectionCriteria.type=='dataBase'"
+						class="list-group-item no-border">
+						<p id="databaseLabel" class="basic-detail">#{{staticLabels.database_label}}:</p>
+						<p id="database" class="basic-data-edit">
+							<span
+								ng-if="viewNotificationDetails.customerSelectionCriteria.value.length > 1">
+								{{viewNotificationDetails.customerSelectionCriteria.value.length}}</span>
+							<span
+								ng-if="viewNotificationDetails.customerSelectionCriteria.value.length == 1"
+								ng-repeat="value in viewNotificationDetails.customerSelectionCriteria.value">{{value}}</span>
+						<div
+							ng-if="viewNotificationDetails.customerSelectionCriteria.value.length > 1">
+							<span class="hover-icon" ng-mouseover="showDbPopover=true;"
+								ng-mouseleave="showDbPopover=false;">...
+								<div class="popover bottom bgPopover"
+									ng-class="{showDetailsPopup:showDbPopover}"
+									ng-show="showDbPopover">
+									<span class="padding-right:10px;"
+										ng-repeat="value in viewNotificationDetails.customerSelectionCriteria.value">
+										<div>{{value}}</div>
+									</span>
+								</div>
+							</span>
+						</div>
+						</p>
+					</li>
+					<li class="list-group-item no-border">
+						<p id="cobrandLabel" class="basic-detail">#{{staticLabels.cobrand_Label}}:</p>
+						<p id="cobrand" class="basic-data-edit">
+							<span ng-if="viewNotificationDetails.cobrandInfo.length > 1">
+								{{viewNotificationDetails.cobrandInfo.length}}</span> <span
+								ng-if="viewNotificationDetails.cobrandInfo.length == 1"
+								ng-repeat="value in viewNotificationDetails.cobrandInfo">{{value.name}}</span>
+						<div ng-if="viewNotificationDetails.cobrandInfo.length > 1">
+							<span class="hover-icon" ng-mouseover="showCobPopover=true;"
+								ng-mouseleave="showCobPopover=false;">...
+								<div class="popover bottom bgPopover"
+									ng-class="{showDetailsPopup:showCobPopover}"
+									ng-show="showCobPopover">
+									<span class="padding-right:10px;"
+										ng-repeat="value in viewNotificationDetails.cobrandInfo"><div>{{value.name}}</div>
+									</span>
+								</div>
+							</span>
+						</div>
+						</p>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div id="update" class="row row-detail panel panel-default"
+		ng-if="viewNotificationDetails.updates!=undefined">
+		<div class="cursor-pointer panel-tab"
+			ng-click="showUpdatesDiv = !showUpdatesDiv">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !showUpdatesDiv, 'fa-play': showUpdatesDiv}"></i>
+			<span class="row-title">{{staticLabels.update_label}}</span>
+		</div>
+		<div ng-show="!showUpdatesDiv" class="boxDetail">
+			<table class="table table-responsive">
+				<thead id="vn-updates-table-header" class="table-label">
+					<tr class="table-header">
+						<th id="vn-header-date" class="table-header" style="width: 10%;">{{staticLabels.updatedDate_label}}</th>
+						<th id="vn-header-by" class="table-header" style="width: 20%;">{{staticLabels.num_cobrands}}</th>
+						<th id="vn-header-update" class="table-header" style="width: 30%;">{{staticLabels.update_label}}</th>
+						<th id="vn-header-by" class="table-header" style="width: 10%;">{{staticLabels.updatedBy_label}}</th>
+						<th id="vn-header-isInternal" class="table-header"
+							style="width: 10%;">{{staticLabels.isInternal_label}}</th>
+						<th id="vn-header-by" class="table-header" style="width: 10%;">{{staticLabels.partial_closure}}</th>
+					</tr>
+				</thead>
+				<tbody id="vn-updates-table-results" class="table-contents">
+					<tr
+						ng-repeat="data in viewNotificationDetails.updates|orderBy:sortKey:reverse">
+						<td id="vn-results-date" style="width: 10%;">{{data.createdTime|dateConverterNotification}}</td>
+						<td id="vn-results-by" style="width: 10%; overflow: unset;">{{data.cobrandInfo.length}}
+							<div ng-if="data.cobrandInfo!=undefined">
+								<span style="position: relative;" class="hover-icon"
+									ng-init="this.showUpdatesPopover=false;"
+									ng-mouseover="this.showUpdatesPopover=true;"
+									ng-mouseleave="this.showUpdatesPopover=false;">...
+									<div style="width: auto" class="popover bottom bgPopover"
+										ng-class="{showDetailsPopup:this.showUpdatesPopover}"
+										ng-show="this.showUpdatesPopover!=undefined && this.showUpdatesPopover">
+										<span class="padding-right:10px;"
+											ng-repeat="value in data.cobrandInfo"><div>{{value.name}}</div></span>
+								</span>
+							</div>
+						</td>
+						<td id="vn-results-update" style="width: 30%;">{{data.message}}</td>
+						<td id="vn-results-by" style="width: 10%;">{{data.createdBy}}</td>
+						<td id="vn-results-isInternal" style="width: 10%;"><img
+							style="height: 10px;" ng-if="data.isInternal"
+							src="images/icon-tick.svg" /><img style="height: 10px;"
+							ng-if="!data.isInternal" class="center"
+							src="images/icon-close.svg" /></td>
+						<td id="vn-results-by" style="width: 10%;"><img
+							style="height: 10px;" ng-if="data.isResolved"
+							src="images/icon-tick.svg" /><img style="height: 10px;"
+							ng-if="!data.isResolved" class="center"
+							src="images/icon-close.svg" /></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div id="upload_attachment" class="row row-detail panel panel-default"
+		ng-if="viewNotificationDetails.attachments!=undefined">
+		<div class="cursor-pointer panel-tab"
+			ng-click="showAttachmentDiv = !showAttachmentDiv">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !showAttachmentDiv, 'fa-play': showAttachmentDiv}"></i>
+			<span id="vn-customer-details-label" class="row-title">{{staticLabels.doc_attachment_label}}</span>
+
+		</div>
+		<div ng-show="!showAttachmentDiv" class="boxDetail">
+			<div class="col-sm-12 col-md-12 col-lg-12">
+				<div class="table-responsive">
+
+					<table class="table tbl"
+						ng-if="viewNotificationDetails.attachments">
+						<thead>
+							<tr>
+								<th>{{staticLabels.attachment_id_label}}</th>
+								<th>{{staticLabels.file_label}}</th>
+								<th>{{staticLabels.file_type}}</th>
+								<th>{{staticLabels.isRCA_label}}</th>
+								<th>{{staticLabels.download_label}}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="file in viewNotificationDetails.attachments">
+								<td>{{file.attachmentId}}</td>
+								<td>{{file.name}}</td>
+								<td>{{file.extension}}</td>
+								<td><span ng-if="file.type == 'RCA'">Yes</span><span
+									ng-if="file.type == 'No'">{{file.type}}</span></td>
+								<td><span style="cursor: pointer"><span
+										ng-click="downloadFile(file)">Download <i
+											class="fa fa-download" aria-hidden="true"></i></span></span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12" style="margin-top: 20px; float: right;" ng-if="!viewNotificationDetails.publishTime && (viewNotificationDetails.status != 'closed' || viewNotificationDetails.status != 'resolved'">
+
+		<div class="col-md-2 pull-right pad-r0"
+			ng-if="editNotificationDetails.publishTime==undefined">
+			<a class="btn btn-block btn-success pull-right"
+				ng-click="editNotificationFormDetail(viewNotificationDetails.notificationId,true,true);">
+				{{staticLabels.submit_publish_label}}<i
+				class="fa fa-envelope-o pull-right m-r8 ft-size20"
+				ng-if="!showSpinPublish"></i> <i
+				class="fa fa-circle-o-notch fa-spin pull-right"
+				ng-if="showSpinPublish"></i>
+			</a>
+		</div>
+	</div>
+</fieldset>
+<fieldset ng-if="editableMode" id="editNotification" style="width: 100%" ng-init="editNotificationDetails.updates[updatesLength].isInternal=true">
+	<div style="margin: -30px 16px 16px; text-align: center;">
+		<h1 class="fs-title"
+			style="display: inline-block; margin-left: 3%; margin-top: 0px;">
+			<b>{{staticLabels.edit_notification}}</b>
+		</h1>
+	</div>
+	<div ng-if="notificationEditErrorMsg!=null"
+		class="alert alert-danger text-center">
+		<strong>{{notificationEditErrorMsg}} </strong>
+	</div>
+	<div class="modal confirmModal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="false" id="mi-modal">
+		<div class="modal-dialog modal-sm" style="padding-top: 40px;">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <h4 class="modal-title" id="myModalLabel">Internal Note is on.Data will not be sent to customer. Are you sure?</h4>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" id="modal-btn-si" ng-click="handleYesCnf()">Yes</button>
+			  <button type="button" class="btn btn-primary" id="modal-btn-no" ng-click="handleNoCnf()">No</button>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	<div id="notification-details" class="panel panel-default margin-15">
+		<div class="panel-tab"
+			ng-click="isCollapsedNotification = !isCollapsedNotification"
+			ng-class="{'panel-heading panel-heading-custom ft16': !isCollapsedNotification, 'panel-heading panel-heading-custom1 ft16': isCollapsedNotification}">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !isCollapsedNotification, 'fa-play': isCollapsedNotification}"></i>
+			<span id="sm-results-labelPanel" class="site-search">{{staticLabels.notification_detail_label}}</span>
+		</div>
+		<div ng-show="!showNotificationDetailsDiv"
+			class="panel-body panel-h1 site-search-results-section"
+			uib-collapse="isCollapsedNotification">
+			<div class="col-md-6 col-lg-6 col-sm-6 col-xs-6">
+				<ul class="list-group" style="padding-left: 18px; width: 96%">
+					<li class="list-group-item no-border pad-0 textinput"><input
+						type="text" id="notification_id" ng-disabled="true"
+						class="notification-field-diabled"
+						ng-model="editNotificationDetails.notificationId" /> <label
+						for="notification_id" class="inputDataFocus">{{staticLabels.notification_id_label}}</label>
+					</li>
+					<li class="list-group-item no-border pad-0 textinput"><input
+						type="text" id="notification_type" ng-disabled="true"
+						class="notification-field-diabled"
+						ng-model="editNotificationDetails.notificationType" /> <label
+						for="notification_type" class="inputDataFocus">{{staticLabels.notificationType_label}}</label>
+					</li>
+					<li
+						ng-if="editNotificationDetails.notificationType=='MAINTENANCE' && editNotificationDetails.maintenance.notificationSubtype != undefined"
+						class="list-group-item no-border pad-0 textinput">
+						<select
+						id="notification_subType"
+						ng-model="editNotificationDetails.maintenance.notificationSubtype"
+						ng-click="event = $event"
+						ng-change="checkChangeOfFields(event,editNotificationDetails.maintenance.notificationSubtype);notificationSubTypeSelEdit(editNotificationDetails.maintenance.notificationSubtype)">
+							<option id="{{option.id}}" ng-repeat="option in notificationSubTypes"
+								value="{{option.name}}">{{option.name}}</option>
+						</select>
+						<label for="notification_subType" class="inputDataFocus">{{staticLabels.notificationSubType_label}}</label>
+					</li>
+					<li ng-if="editNotificationDetails.notificationType=='INCIDENT'"
+						class="list-group-item no-border pad-0 textinput"><select
+						id="notification_priority"
+						ng-model="editNotificationDetails.incident.priority"
+						ng-click="event = $event"
+						ng-change="checkChangeOfFields(event,editNotificationDetails.incident.priority);prioritySel(editNotificationDetails.incident.priority);">
+							<option id="{{option.id}}" ng-repeat="option in priorityOptions"
+								value="{{option.name}}">{{option.name}}</option>
+					</select> <label for="notification_priority"
+						ng-class="{inputDataFocus:editNotificationDetails.incident.priority != undefined}">{{staticLabels.priority_label}}</label>
+					</li>
+					<li class="list-group-item no-border pad-0 textinput">
+						<select id="notification_impact" ng-model="editNotificationDetails.impact"
+	                        ng-click="event = $event"
+	                        ng-change="checkChangeOfFieldsForParentChildOptions(event,editNotificationDetails.impact);" ng-options="a.child group by a.parent for a in impactDropdown track by a.child" >
+	                                                        
+	                    </select><label for="notification_impact"
+                        ng-class="{inputDataFocus:editNotificationDetails.impact != undefined}"
+                        class="required">{{staticLabels.impact_label}}</label>
+                                                 
+                        <div style="margin-top: 40px;">
+                            <span class="validationerror" ng-show="errorOnNotificationImpact">
+                                {{staticLabels.impact_validation_error}} </span>
+                        </div>
+ 
+                    </li>
+                    <li ng-if="editNotificationDetails.impact.child == 'Others'" class="list-group-item no-border pad-0 textinput"><input
+                        type="text" id="notification_impactTxt" 
+                        ng-model="editNotificationDetails.impactTxt"
+                        ng-blur="checkChangeOfFields($event,editNotificationDetails.impactTxt);" />
+                        <label for="notification_impactTxt"
+                        ng-class="{inputDataFocus:editNotificationDetails.impactTxt != undefined}">{{staticLabels.impact_label}}</label>
+                    </li>
+					<li class="list-group-item no-border pad-0 textinput"><input id="notification_edit_serviceTicket"
+						type="text" ng-maxlength="15" id="notification_srno"
+						ng-model="editNotificationDetails.referenceTicket.serviceNowTicket"
+						ng-blur="checkChangeOfFields($event,editNotificationDetails.referenceTicket.serviceNowTicket);" />
+						<label for="notification_srno"
+						ng-class="{inputDataFocus:editNotificationDetails.referenceTicket.serviceNowTicket != undefined}"
+						class="required">{{staticLabels.SR_No_label}}</label>
+						<div style="margin-top: 40px;">
+							<span class="validationerror"
+								ng-show="errorOnNotificationSNReferenceTicket">
+								{{staticLabels.ticketNum_validation_error}} </span>
+						</div>
+						<div>
+							<span class="validationerror"
+								ng-show="errorOnNotificationSNTicket">
+								{{staticLabels.servicenow_validation_error}} </span>
+						</div></li>
+						<li class="list-group-item no-border pad-0 textinput">							
+							<input type="text" name="product" ng-maxlength="300" id="notification_servicesProductAffected" ng-model="editNotificationDetails.serviceProductAffected" ng-blur="checkChangeOfFields($event,editNotificationDetails.serviceProductAffected);"></input>
+							<label class="required" for="notification_servicesProductAffected" ng-class="{inputDataFocus:editNotificationDetails.serviceProductAffected != undefined}" class="">{{staticLabels.service_product_label}}</label>
+							<div style="margin-top:40px;"><span class="validationerror" ng-show="errorOnEmptyServiceProductAffected" > {{staticLabels.service_product_required_validation_error}} </span></div>							
+						</li>
+					<li class="list-group-item no-border pad-0 textinput"><input
+						type="text" name="title" ng-maxlength="300"
+						id="notification_title" ng-model="editNotificationDetails.title"
+						ng-blur="checkChangeOfFields($event,editNotificationDetails.title);"></input>
+						<label for="notification_title"
+						ng-class="{inputDataFocus:editNotificationDetails.title != undefined}"
+						class="required">{{staticLabels.title_label}}</label>
+						<div style="margin-top: 40px;">
+							<span class="validationerror" ng-show="errorOnNotificationTitle">
+								{{staticLabels.title_validation_error}} </span>
+						</div></li>
+					<li class="list-group-item no-border pad-0 textinput"><md-switch
+							ng-model="editNotificationDetails.serviceDisruption.required"
+							aria-label="Downtime Required" ng-click="event = $event"
+							ng-disabled="viewNotificationDetails.serviceDisruption!=undefined"
+							ng-change="changeValueonToggle(event);">
+						{{staticLabels.downtime_required}} </md-switch></li>
+
+					<li class="list-group-item no-border pad-0 textinput"
+						style="height: auto;">
+						<ul ng-show="editNotificationDetails.serviceDisruption.required"
+							style="padding: 0;">
+							<li class="list-group-item no-border  textinput"><label
+								for="editNotificationDetails.downTimeType"
+								ng-class="{inputDataFocus:editNotificationDetails.serviceDisruption != undefined}">{{staticLabels.Service_Disrption_Type}}</label>
+								<select style="margin-top: 5px;"
+								id="editNotificationDetails.downTimeType"
+								ng-model="editNotificationDetails.serviceDisruption.type"
+								ng-click="event = $event"
+								ng-blur="
+					                   checkChangeOfFields($event,editNotificationDetails.serviceDisruption.type);"
+								ng-init="editNotificationDetails.serviceDisruption.type!='Complete'?editNotificationDetails.serviceDisruption.type='Intermittent':editNotificationDetails.serviceDisruption.type='Complete'">
+									<option id="{{option.id}}" ng-repeat="option in downTimeTypes"
+										value="{{option.name}}">{{option.name}}</option>
+							</select></li>
+
+							<li class="list-group-item no-border textinput"><label
+								for="notification_downtime_estimated"
+								ng-class="{inputDataFocus:editNotificationDetails.serviceDisruption!= undefined}">{{staticLabels.Service_Disrption_Est_label}}</label>
+								<input style="width: 70% !important; margin-top: 5px;"
+								type="text" id="notification_downtime_estimated"
+								ng-model="editNotificationDetails.serviceDisruption.estimatedDuration"
+								ng-blur="checkChangeOfFields($event,editNotificationDetails.serviceDisruption.estimatedDuration);"
+								number></input> <label class="intervalAlign"
+								for="notification_downtime_intervalType_est"
+								ng-class="{inputDataFocus:editNotificationDetails.serviceDisruption!= undefined}" style="width:27%;">Interval
+									Type</label> <select id="notification_downtime_intervalType_est"
+								style="width: 27% !important; margin-left: 500px !important; margin-top: 5px;"
+								id="notification_downtime_intervalType"
+								ng-model="editNotificationDetails.serviceDisruption.estimatedDurationIntervalType"
+								ng-click="event = $event"
+								ng-change="checkChangeOfFields(event,editNotificationDetails.serviceDisruption.estimatedDurationIntervalType);"
+								ng-init="editNotificationDetails.serviceDisruption.estimatedDurationIntervalType='Minutes'">
+									<option id="h" value="Hours">Hours</option>
+									<option id="m" value="Minutes">Minutes</option>
+							</select>
+								<div style="margin-top: 40px;">
+									<span class="validationerror"
+										ng-show="errorOnInvalidEstimatedDisruptionTime">
+										{{staticLabels.downtime_validation_error}} </span> <span
+										class="validationerror" ng-show="errorOnMaximumEstimatedTime">{{staticLabels.downtime_maxlimit_validation_error}}
+									</span>
+								</div></li>
+
+							<li class="list-group-item no-border textinput"
+								ng-show="editNotificationDetails.status==staticLabels.closed_upper_label
+				                   ||editNotificationDetails.status==staticLabels.resolved_upper_label">
+								<label for="notification_downtime_actual"
+								ng-class="{inputDataFocus:editNotificationDetails.serviceDisruption!= undefined}">{{staticLabels.Service_Disruption_Act_label}}</label>
+								<input style="width: 70% !important; margin-top: 5px;"
+								type="text" id="notification_downtime_actual"
+								ng-model="editNotificationDetails.serviceDisruption.actualDuration"
+								number
+								ng-blur="checkChangeOfFields($event,editNotificationDetails.serviceDisruption.actualDuration);"></input>
+								<label for="notification_downtime_intervalType_act"
+								style="margin-left: 500px;"
+								ng-class="{inputDataFocus:editNotificationDetails.serviceDisruption!= undefined}">Interval
+									Type</label> <select id="notification_downtime_intervalType_act"
+								style="width: 27% !important; margin-left: 500px !important; margin-top: 5px;"
+								id="notification_downtime_intervalType"
+								ng-model="editNotificationDetails.serviceDisruption.actualDurationIntervalType"
+								ng-click="event = $event"
+								ng-change="checkChangeOfFields(event,editNotificationDetails.maintenance.downTime.intervalType);">
+									<option id="h" value="Hours">Hours</option>
+									<option id="m" value="Minutes">Minutes</option>
+							</select>
+
+								<div style="margin-top: 40px;">
+									<span class="validationerror"
+										ng-show="errorOnInvalidActualDisruptionTime"> Enter
+										valid actual down time </span> <span class="validationerror"
+										ng-show="errorOnMaximumActualTime">
+										{{staticLabels.downtime_maxlimit_validation_error}} </span>
+								</div>
+							</li>
+						</ul>
+
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-6 col-lg-6 col-sm-6 col-xs-6 margin-left120">
+				<ul class="list-group" style="padding-left: 18px; width: 96%">
+					<li class="list-group-item no-border pad-0 textinput"><select
+						ng-if="editNotificationDetails.notificationType=='MAINTENANCE'"
+						id="notification_status" ng-model="editNotificationDetails.status"
+						ng-click="event = $event"
+						ng-change="checkChangeOfFields(event,editNotificationDetails.status); displayInternalAlert(editNotificationDetails.status); calculateActualDowntime(editNotificationDetails,editNotificationDetails.status,true);">
+							<option
+								ng-if="editNotificationDetails.maintenance.notificationSubtype=='Advisory' && option.name=='For Your Information'"
+								id="{{option.id}}" ng-repeat="option in notificationStatusList"
+								value="{{option.value}}">{{option.name}}</option>
+							<option
+								ng-if="editNotificationDetails.maintenance.notificationSubtype!='Advisory' && option.name!='For Your Information'"
+								id="{{option.id}}" ng-repeat="option in notificationStatusList"
+								value="{{option.value}}">{{option.name}}</option>
+					</select> <select
+						ng-if="editNotificationDetails.notificationType=='INCIDENT'"
+						id="notification_status" ng-model="editNotificationDetails.status"
+						ng-click="event = $event"
+						ng-change="checkChangeOfFields(event,editNotificationDetails.status);  checkChangedStatus(editNotificationDetails.status); calculateActualDowntime(editNotificationDetails,editNotificationDetails.status,true);">
+							<option id="{{option.id}}" ng-repeat="option in incidentStatus"
+								ng-disabled="isDisabled(option.name)" value="{{option.value}}">{{option.name}}</option>
+					</select> <label for="notification_status"
+						ng-class="{inputDataFocus:editNotificationDetails.status!= undefined}"
+						class="required">{{staticLabels.notificationStatus_label}}</label>
+						<div style="margin-top: 40px;">
+							<span class="validationerror"
+								ng-show="errorOnExtendedStatusSelection">
+								{{staticLabels.status_validation_error}} </span>
+						</div> <span   class="alert alert-info ng-scope alert-message z-high"
+						ng-if="popUpOnStatusChange">{{staticLabels.resolved_alert_status}} {{staticLabels.internal_popup_status}}</span>
+						 
+						 <span class="alert alert-info ng-scope alert-message z-high"
+						ng-if="popUpMaintainence">{{staticLabels.internal_popup_status}}</span>
+					</li>
+
+					<li ng-if="editNotificationDetails.notificationType=='INCIDENT'"
+						class="list-group-item no-border pad-0 textinput"><md-switch
+							ng-disabled="viewNotificationDetails.incident.isCustomerReported"
+							ng-model="editNotificationDetails.incident.isCustomerReported"
+							aria-label="Customer reported" ng-click="event = $event"
+							ng-change="changeValueonToggle(event);">
+						{{staticLabels.customer_report}} </md-switch></li>
+					<li class="list-group-item no-border pad-0 textinput">
+						<div
+							ng-if="(editNotificationDetails.status==staticLabels.inProgress_upper_label || editNotificationDetails.status==staticLabels.extended_upper_label || editNotificationDetails.status==staticLabels.closed_upper_label || editNotificationDetails.status==staticLabels.resolved_upper_label || editNotificationDetails.status==staticLabels.restored_upper_label || editNotificationDetails.status==staticLabels.invalid_upper_label)"
+							class='input-group date' id='startDate'>
+							<label for="notification_startTime_input_disabled"
+								style="margin-top: -25px !important; left:0;"
+								ng-class="{inputDataFocus:editNotificationDetails.startTime != undefined}"
+								class="required">{{staticLabels.startTime_label}}{{staticLabels.ist_label}}</label>
+							<input type='text' class="form-control dateDisable"
+								id="notification_startTime_input_disabled" name="startDate"
+								ng-model="editNotificationDetails.startTime" readonly='true'
+								ng-change="checkChangeOfstartDateFields(this,editNotificationDetails.startTime);" />
+							<span class="input-group-addon"> <i class="fa fa-calendar"
+								aria-hidden="true"></i>
+							</span>
+						</div>
+						<div
+							ng-if="!(editNotificationDetails.status==staticLabels.inProgress_upper_label || editNotificationDetails.status==staticLabels.extended_upper_label || editNotificationDetails.status==staticLabels.closed_upper_label || editNotificationDetails.status==staticLabels.resolved_upper_label || editNotificationDetails.status==staticLabels.restored_upper_label || editNotificationDetails.status==staticLabels.invalid_upper_label)"
+							class='input-group date' id='startDate'>
+							<label for="notification_startTime"
+								style="margin-top: -25px !important; left:0;"
+								ng-class="{inputDataFocus:editNotificationDetails.startTime != undefined}"
+								class="required">{{staticLabels.startTime_label}}{{staticLabels.ist_label}}</label>
+							<input type='text' class="form-control dateBackground"
+								id="notification_startTime_input" name="startDate"
+								datetimez="datePickerOptions"
+								ng-model="editNotificationDetails.startTime" readonly='true'
+								ng-change="checkChangeOfstartDateFields(this,editNotificationDetails.startTime);" />
+							<span class="input-group-addon"> <i class="fa fa-calendar"
+								aria-hidden="true"></i>
+							</span>
+						</div>
+						<div style="margin-top: 40px;">
+							<span class="validationerror"
+								ng-show="errorOnNotificationstartTime">
+								{{staticLabels.start_time_validation_error}} </span>
+						</div>
+					</li>
+					<li
+						class="list-group-item no-border pad-0 textinput">
+						<div
+							ng-if="!(editNotificationDetails.status!= staticLabels.upcoming_upper_label &&
+							 editNotificationDetails.status!=staticLabels.extended_upper_label &&
+							  editNotificationDetails.status!=staticLabels.resolved_upper_label&&
+							editNotificationDetails.status!=staticLabels.restored_upper_label)"
+							class='input-group date' id='endDate'>
+							<label style="margin-top: -25px !important; left:0"
+								for="notification_endTime"
+								ng-class="{inputDataFocus:editNotificationDetails.endTime != undefined}"
+								class="required">{{staticLabels.endTime_label}}{{staticLabels.ist_label}}
+							</label> <input type='text' class="form-control dateBackground"
+								id="notification_endTime_input" name="endDate"
+								datetimez="datePickerOptions"
+								ng-model="editNotificationDetails.endTime" readonly='true'
+								ng-change="checkChangeOfendDateFields(this,editNotificationDetails.endTime);" />
+							<span class="input-group-addon"> <i class="fa fa-calendar"
+								aria-hidden="true"></i>
+							</span>
+						</div>
+						<div
+							ng-if="(editNotificationDetails.status!=staticLabels.upcoming_upper_label
+							 && editNotificationDetails.status!=staticLabels.extended_upper_label&&
+							  editNotificationDetails.status!=staticLabels.resolved_upper_label&&
+							editNotificationDetails.status!=staticLabels.restored_upper_label)"
+							class='input-group date' id='endDate'>
+							<label style="margin-top: -25px !important; left:0"
+								for="notification_endTime_input_disabled"
+								ng-class="{inputDataFocus:editNotificationDetails.endTime != undefined}"
+								class="required">{{staticLabels.endTime_label}}{{staticLabels.ist_label}}</label>
+							<input type='text' class="form-control dateDisable"
+								id="notification_endTime_input_disabled" name="endDate"
+								ng-model="editNotificationDetails.endTime" readonly='true'
+								ng-change="checkChangeOfendDateFields(this,editNotificationDetails.endTime);" />
+							<span class="input-group-addon"> <i class="fa fa-calendar"
+								aria-hidden="true"></i>
+							</span>
+						</div>
+						<div>
+							<span class="validationerror"
+								ng-show="errorOnNotificationendTime">
+								{{staticLabels.end_time_validation_error}} </span>
+						</div>
+						<div>
+							<span class="validationerror"
+								ng-show="errorOnNotificationPastendTime">
+								{{staticLabels.end_time_validation_error_onStartTime}} </span>
+						</div>
+					</li>
+					<li ng-if="editNotificationDetails.notificationType=='INCIDENT'" class="list-group-item no-border pad-0 textinput">
+						<select id="notification_nextUpdate" ng-model="editNotificationDetails.incident.nextUpdatePeriod"
+	                        ng-click="event = $event"
+	                        ng-change="checkChangeOfFieldsForOptions(event,editNotificationDetails.incident.nextUpdatePeriod);" ng-options="nextUpdateOptions as nextUpdateOptions.name for nextUpdateOptions in nextUpdateOptions track by nextUpdateOptions.name" >
+	                                                        
+	                    </select><label for="notification_nextUpdate"
+                        ng-class="{inputDataFocus:editNotificationDetails.incident.nextUpdatePeriod != undefined}"
+                        >{{staticLabels.next_update_label}}</label>
+                                                 
+                        
+                    </li>
+                    <li ng-if="editNotificationDetails.incident.nextUpdatePeriod.name == 'Custom'" class="list-group-item no-border pad-0 textinput"><input
+                        type="text" id="notification_nextUpdate" 
+                        ng-model="editNotificationDetails.updateTxt"
+                        ng-blur="checkChangeOfFields($event,editNotificationDetails.updateTxt);" />
+                        <label for="notification_nextUpdate"
+                        ng-class="{inputDataFocus:editNotificationDetails.updateTxt != undefined}">Customized Update Duration</label>
+                    </li>
+					<li class="list-group-item no-border pad-0 textinput"><input
+						type="text" id="notification_dependency"
+						ng-model="editNotificationDetails.referenceTicket.dependencies"
+						ng-blur="checkChangeOfFields($event,editNotificationDetails.referenceTicket.dependencies);" />
+						<label for="notification_dependency"
+						ng-class="{inputDataFocus:editNotificationDetails.referenceTicket.dependencies != undefined}">{{staticLabels.dependency_label}}</label>
+						<div style="margin-top: 40px;">
+							<span class="validationerror"
+								ng-show="errorOnNotificationDependencies">
+								{{staticLabels.dependency_validation_error}} </span>
+						</div>
+						<div style="margin-top: 40px;">
+							<span class="validationerror"
+								ng-show="errorOnNotificationDepencyReferenceTicket">
+								{{staticLabels.dependency_pattern_validation_error}} </span>
+						</div>
+						<div style="margin-top: 40px;">
+							<span class="validationerror"
+								ng-show="errorOnNotificationSingleDependencyReferenceTicket">
+								{{staticLabels.ticketNum_validation_error}} </span>
+						</div>
+						<div>
+							<span class="validationerror"
+								ng-show="errorOnNotificationDependencyEnd">
+								{{staticLabels.dependency_end_validation_error}} </span>
+						</div></li>
+					<li class="list-group-item no-border pad-0 textinput"><input
+						type="number" ng-maxlength="11" id="notification_bugId"
+						ng-model="editNotificationDetails.referenceTicket.bugId"
+						ng-blur="checkChangeOfFields($event,editNotificationDetails.referenceTicket.bugId);" />
+						<label for="notification_bugId"
+						ng-class="{inputDataFocus:editNotificationDetails.referenceTicket.bugId != undefined}">{{staticLabels.bug_id_label}}</label>
+					</li>
+					<li ng-if="editNotificationDetails.notificationType=='INCIDENT'"
+						class="list-group-item no-border pad-0 textinput"
+						style="margin: 0; margin-right: 10px; height: auto;">
+						<div
+							class="pull-left col-lg-12 col-md-12 col-sm-12 col-xs-12 rcaEdit"
+							style="margin-bottom: 16px;">
+							<input type="checkbox"
+								class="pull-left col-lg-3 col-md-3 col-sm-3 col-xs-3 pad-0"
+								ng-disabled="(editNotificationDetails.status!=staticLabels.resolved_upper_label && editNotificationDetails.status!=staticLabels.restored_upper_label && editNotificationDetails.incident.rca==undefined) || (editNotificationDetails.incident.priority=='P1' && editNotificationDetails.status==staticLabels.resolved_upper_label)"
+								ng-model="displayRCASummary" aria-label="Publish RCA"
+								ng-change="createRCAonToggle(displayRCASummary);"
+								style="margin-left: 15px; width: auto;"> <span
+								style="margin-left: 36px; margin-top: 3px; display: block;">{{staticLabels.publish_rca}}</span>
+						</div>
+						<div class="pull-left col-lg-12 col-md-12 col-sm-12 col-xs-12"
+							ng-if="displayRCASummary">
+							<div class="pull-left width-100" id="editRcaAddFile">
+								<form name="doc">
+									<div class="width-100 pull-left">
+										<input class="pull-left" type="file" id="addRcaAttachment"
+											ng-model="rca.attachments" name="file" base-sixty-four-input
+											accept="application/msword, .docx, application/vnd.ms-powerpoint,.pptx, application/pdf,.msg, .txt, .xls, .xlsx"
+											ng-blur="checkChangeOfFields($event,rca.attachments);"
+											style="font-size: 14px; width: 78%; border-bottom: none !important; padding-top: 0"
+											maxsize="10500">
+										<button class="pull-right" type="button" name=""
+											ng-click="uploadDoc(rca.attachments,displayRCASummary)"
+											ng-disabled="doc.file.$error.accept || doc.file.$error.maxsize ||uploadButtonText == 'Adding'">
+											<span ng-show="uploadButtonText == 'Adding'"><i
+												class="fa fa-circle-o-notch fa-spin"></i></span>
+											{{uploadButtonText}}
+										</button>
+									</div>
+									<span class="validationerror pull-left"
+										style="margin-top: 10px; padding: 5px;"
+										ng-if="doc.file.$error.accept"> File Format not
+										Supported. </span> <span class="validationerror pull-left"
+										style="padding: 5px;" ng-if="doc.file.$error.maxsize">
+										Exceeded Max File Size of 10MB </span> <span
+										class="validationerror pull-left" style="padding: 5px;"
+										ng-if="notificationform.$submitted && doc.file.$error.required">Please
+										Upload File</span> <span class="validationerror pull-left"
+										style="padding: 5px;"
+										ng-if="errResRCA">Attachment
+										is required for Resolved Status</span>
+								</form>
+							</div>
+							<div
+								ng-if="editNotificationDetails.notificationType=='INCIDENT' && (displayRCASummary || (editNotificationDetails.incident.rca!=undefined && editNotificationDetails.incident.rca.summary!=undefined))"
+								class="list-group-item no-border textinput"
+								style="padding: 0 !important; margin-top: 30px; margin-bottom: 0;">
+								<input type="text" ng-maxlength="300"
+									id="notification_rca_summary"
+									ng-model="editNotificationDetails.incident.rca.summary"
+									ng-blur="checkChangeOfFields($event,editNotificationDetails.incident.rca);" />
+								<label for="notification_rca_summary"
+									ng-class="{inputDataFocus:editNotificationDetails.incident.rca != undefined}">{{staticLabels.rca_label}}</label>
+							</div>
+							<span class="validationerror" ng-if="errRCA && displayRCASummary">RCA
+								Attachment or Summary is Required</span>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div ng-show="!showNotificationDetailsDiv" 
+				class="panel-body panel-h1 site-search-results-section"
+				uib-collapse="isCollapsedNotification">
+				<div class="col-md-12 col-lg-12 alignRight">
+					<ul class="list-group width-100">
+						<li class="list-group-item no-border pad-0 textinput"
+							style="height: auto; margin-top: 40px; margin-bottom: 30px">
+							<label for="notification_description" 
+							ng-class="{inputDataFocus:editNotificationDetails.description != undefined}"
+							class="required pad-0">{{staticLabels.description_label}}</label>
+							<div tabindex="0" id="edit_notification_description">
+							<textarea rows="2" ng-maxlength="10000" 
+								ui-tinymce="tinymceOptions"
+								ng-model="editNotificationDetails.description"
+								ng-blur="checkChangeOfFields($event,editNotificationDetails.description);"
+								autocomplete="off" />
+							</div>
+							<div>
+								<span class="validationerror pull-left"
+									ng-if="errorOnNotificationDescription" >
+									{{staticLabels.description_validation_error}} </span>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="customer-details" class="panel panel-default margin-15">
+		<div class="panel-tab"
+			ng-click="showCustomerDetailsDiv = !showCustomerDetailsDiv"
+			ng-class="{'panel-heading panel-heading-custom ft16': !showCustomerDetailsDiv, 'panel-heading panel-heading-custom1 ft16': showCustomerDetailsDiv}">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !showCustomerDetailsDiv, 'fa-play': showCustomerDetailsDiv}"></i>
+			<span id="sm-results-labelPanel" class="site-search">{{staticLabels.notification_customer_label}}</span>
+		</div>
+		<div ng-show="!showCustomerDetailsDiv"
+			class="panel-body panel-h1 site-search-results-section"
+			uib-collapse="showCustomerDetailsDiv" style="margin-bottom:10px">
+			<div class="col-md-4 col-lg-4">
+				<ul class="list-group width-100">
+					<li class="list-group-item no-border">
+						<p id="environmentLabel" class="basic-detail-edit">{{staticLabels.enviroment_label}}:</p>
+						<p id="environment" class="basic-data-edit">{{editNotificationDetails.environment}}</p>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-4 col-lg-4">
+				<ul class="list-group width-100">
+					<li
+						ng-if="editNotificationDetails.customerSelectionCriteria.type=='productType'"
+						class="list-group-item no-border">
+						<p id="productTypeLabel" class="basic-detail-edit">#{{staticLabels.product_type_label}}:</p>
+						<p id="product-type" class="basic-data-edit">
+							<span
+								ng-if="editNotificationDetails.customerSelectionCriteria.value.length > 1">
+								{{editNotificationDetails.customerSelectionCriteria.value.length}}
+							</span> <span
+								ng-if="editNotificationDetails.customerSelectionCriteria.value.length == 1"
+								ng-repeat="value in editNotificationDetails.customerSelectionCriteria.value">{{value}}</span>
+						<div
+							ng-if="editNotificationDetails.customerSelectionCriteria.value.length > 1">
+							<span class="hover-icon" ng-mouseover="showProductPopover=true;"
+								ng-mouseleave="showProductPopover=false;">...
+								<div class="popover bottom bgPopover"
+									ng-class="{showDetailsPopup:showProductPopover}"
+									ng-show="showProductPopover">
+									<span class="padding-right:10px;"
+										ng-repeat="value in editNotificationDetails.customerSelectionCriteria.value"><div>{{value}}</div>
+									</span>
+								</div>
+							</span>
+						</div>
+						</p>
+					</li>
+					<li
+						ng-if="editNotificationDetails.customerSelectionCriteria.type=='backendGroup'"
+						class="list-group-item no-border">
+						<p id="backend-grpLabel" class="basic-detail-edit">#{{staticLabels.backend_grp_label}}:</p>
+						<p id="backend-grp" class="basic-data-edit">
+							<span
+								ng-if="editNotificationDetails.customerSelectionCriteria.value.length > 1">
+								{{editNotificationDetails.customerSelectionCriteria.value.length}}
+							</span> <span
+								ng-if="editNotificationDetails.customerSelectionCriteria.value.length == 1"
+								ng-repeat="value in editNotificationDetails.customerSelectionCriteria.value">{{value}}</span>
+						<div
+							ng-if="editNotificationDetails.customerSelectionCriteria.value.length > 1">
+							<span class="hover-icon" ng-mouseover="showBgPopover=true;"
+								ng-mouseleave="showBgPopover=false;">...
+								<div class="popover bottom bgPopover"
+									ng-class="{showDetailsPopup:showBgPopover}"
+									ng-show="showBgPopover">
+									<span class="padding-right:10px;"
+										ng-repeat="value in editNotificationDetails.customerSelectionCriteria.value"><div>{{value}}</div>
+									</span>
+								</div>
+							</span>
+						</div>
+						</p>
+					</li>
+					<li
+						ng-if="editNotificationDetails.customerSelectionCriteria.type=='dataCenter'"
+						class="list-group-item no-border">
+						<p id="datacenterLabel" class="basic-detail-edit">#{{staticLabels.datacenter_label}}:</p>
+						<p id="datacenter" class="basic-data-edit">
+							<span
+								ng-if="editNotificationDetails.customerSelectionCriteria.value.length > 1">{{editNotificationDetails.customerSelectionCriteria.value.length}}
+							</span> <span
+								ng-if="editNotificationDetails.customerSelectionCriteria.value.length == 1"
+								ng-repeat="value in editNotificationDetails.customerSelectionCriteria.value">{{value}}</span>
+						<div
+							ng-if="editNotificationDetails.customerSelectionCriteria.value.length > 1">
+							<span class="hover-icon" ng-mouseover="showDCPopover=true;"
+								ng-mouseleave="showDCPopover=false;">...
+								<div class="popover bottom bgPopover"
+									ng-class="{showDetailsPopup:showDCPopover}"
+									ng-show="showDCPopover">
+									<span class="padding-right:10px;"
+										ng-repeat="value in editNotificationDetails.customerSelectionCriteria.value"><div>{{value}}</div>
+									</span>
+								</div>
+							</span>
+						</div>
+						</p>
+					</li>
+					<li
+						ng-if="editNotificationDetails.customerSelectionCriteria.type=='dataBase'"
+						class="list-group-item no-border">
+						<p id="databaseLabel" class="basic-detail-edit">#{{staticLabels.database_label}}:</p>
+						<p id="database" class="basic-data-edit">
+							<span
+								ng-if="editNotificationDetails.customerSelectionCriteria.value.length > 1">{{editNotificationDetails.customerSelectionCriteria.value.length}}
+							</span> <span
+								ng-if="editNotificationDetails.customerSelectionCriteria.value.length == 1"
+								ng-repeat="value in editNotificationDetails.customerSelectionCriteria.value">{{value}}</span>
+						<div
+							ng-if="editNotificationDetails.customerSelectionCriteria.value.length > 1">
+							<span class="hover-icon" ng-mouseover="showDbPopover=true;"
+								ng-mouseleave="showDbPopover=false;">...
+								<div class="popover bottom bgPopover"
+									ng-class="{showDetailsPopup:showDbPopover}"
+									ng-show="showDbPopover">
+									<span class="padding-right:10px;"
+										ng-repeat="value in editNotificationDetails.customerSelectionCriteria.value">
+										<div>{{value}}</div>
+									</span>
+								</div>
+							</span>
+						</div>
+						</p>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-4 col-lg-4">
+				<ul class="list-group width-100">
+					<li class="list-group-item no-border"
+						ng-if="viewNotificationDetails.cobrandInfo.length > 0">
+						<p id="cobrandLabel" class="basic-detail-edit">#{{staticLabels.cobrand_Label}}:</p>
+						<p id="cobrand" class="basic-data-edit">
+							<span ng-if="viewNotificationDetails.cobrandInfo.length > 1">
+								{{viewNotificationDetails.cobrandInfo.length}}</span> <span
+								ng-if="viewNotificationDetails.cobrandInfo.length == 1"
+								ng-repeat="value in viewNotificationDetails.cobrandInfo">{{value.name}}</span>
+						<div ng-if="viewNotificationDetails.cobrandInfo.length > 1">
+							<span class="hover-icon" ng-mouseover="showCobPopover=true;"
+								ng-mouseleave="showCobPopover=false;">...
+								<div class="popover bottom bgPopover"
+									ng-class="{showDetailsPopup:showCobPopover}"
+									ng-show="showCobPopover" style="left: 186px;">
+									<span class="padding-right:10px;"
+										ng-repeat="value in viewNotificationDetails.cobrandInfo"><div>{{value.name}}</div>
+									</span>
+								</div>
+							</span>
+						</div>
+						</p>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div id="updates" class="panel panel-default margin-15">
+		<div class="panel-tab" ng-click="showUpdatesDiv = !showUpdatesDiv"
+			ng-class="{'panel-heading panel-heading-custom ft16': !showUpdatesDiv, 'panel-heading panel-heading-custom1 ft16': showUpdatesDiv}">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !showUpdatesDiv, 'fa-play': showUpdatesDiv}"></i>
+			<span id="sm-results-labelPanel" class="site-search">{{staticLabels.update_label}}</span>
+		</div>
+		<div ng-show="!showUpdatesDiv"
+			class="panel-body panel-h1 site-search-results-section margin-bottom-14"
+			uib-collapse="showUpdatesDiv" style="margin-top: -12px;">
+			<span class="add_button " id="add_update_button"  ng-click="addUpdateBlock($event);"
+				role="button" style="margin-right: 20px; margin-top: -42px">+
+				Add an Update</span>
+			<div class="content">
+				<div style="text-align: center; margin-top: 20px;">
+					<h1 class="fs-title"
+						style="display: inline-block; margin-left: 3%; margin-top: 0px;">
+						<b>{{staticLabels.new_note}}</b>
+					</h1>
+				</div>
+				<ul class="list-group width-100 pull-left">
+					<li class="list-group-item no-border textinput"
+						style="height: auto;"><textarea ng-maxlength="10000" rows="2"
+							id="notification_update_description"
+							ng-model="editNotificationDetails.updates[updatesLength].message"
+							ng-blur="checkChangeOfFields($event,editNotificationDetails.updates[updatesLength].message);checkForNull(editNotificationDetails.updates[updatesLength].message);"
+							autocomplete="off" /> <label
+						for="notification_update_description"
+						ng-class="{inputDataFocus:editNotificationDetails.updates[updatesLength].message != undefined}">{{staticLabels.description_label}}</label>
+						<div style="margin-top: 80px;">
+						<div ng-if="errorOnEmptyUpdate" class="validationerror">
+										{{staticLabels.mandatory_update_error}}
+									</div>	
+							<span class="validationerror"
+								ng-if="errorOnNotificationUpdateDescription">
+								{{staticLabels.description_validation_error}} </span>
+						</div></li>
+				</ul>
+				<div class="col-md-3 col-lg-3" ng-cloak>
+					<ul class="list-group width-100 textinput">
+						<li class="list-group-item no-border"><md-switch
+								ng-model="editNotificationDetails.updates[updatesLength].isInternal" 
+								aria-label="Internal Note" ng-click="event = $event"
+								ng-change="changeValueonToggle(event);">
+							{{staticLabels.internal_note}} </md-switch> <span class="validationerror"
+							ng-if="errorOnNotificationInternalNote && !editNotificationDetails.updates[updatesLength].isInternal">
+								Internal Note is Required</span></li>
+					</ul>
+				</div>
+				<div class="col-md-3 col-lg-3">
+					<ul class="list-group width-100 textinput">
+						<li class="list-group-item no-border"><md-switch
+								ng-model="editNotificationDetails.updates[updatesLength].isResolved"
+								aria-label="Partial Closure" ng-click="event = $event"
+								ng-change="changeValueonToggle(event);">
+							{{staticLabels.partial_close}} </md-switch></li>
+					</ul>
+				</div>
+				<div class="col-md-5 col-lg-5">
+					<ul class="list-group width-100">
+						<li class="list-group-item no-border">
+
+
+							<div
+								class="form-group width-100 pull-left cobrandList checkboxes"
+								style="margin-top: 30px; margin-bottom: 100px">
+								<span>{{staticLabels.cobrand_Label}}</span>
+
+								<div class="checkbox">
+									<div ng-dropdown-multiselect="" tabindex="0" options="partialUpdateDropdown"
+										selected-model="cobUpdateModel" checkboxes="true" id="cobrand_edit_dropdown"
+										extra-settings="cobsettings" events="cobUpdateEvents"></div>
+								</div>
+								<div>
+									<span class="validationerror"
+										ng-show="errorOnNotificationPartialClosure">
+										{{staticLabels.partial_closure_validation_error}} </span>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div ng-show="!showUpdatesDiv">
+				<table class="table table-responsive">
+					<thead id="vn-updates-table-header" class="table-label">
+						<tr class="table-header">
+							<th id="vn-header-date" class="table-header" style="width: 10%;">{{staticLabels.updatedDate_label}}</th>
+							<th id="vn-header-by" class="table-header" style="width: 20%;">{{staticLabels.num_cobrands}}</th>
+							<th id="vn-header-update" class="table-header"
+								style="width: 30%;">{{staticLabels.update_label}}</th>
+							<th id="vn-header-by" class="table-header" style="width: 10%;">{{staticLabels.updatedBy_label}}</th>
+							<th id="vn-header-isInternal" class="table-header"
+								style="width: 10%;">{{staticLabels.isInternal_label}}</th>
+							<th id="vn-header-by" class="table-header" style="width: 10%;">{{staticLabels.partial_closure}}</th>
+						</tr>
+					</thead>
+					<tbody id="vn-updates-table-results" class="table-contents">
+						<tr
+							ng-repeat="data in editNotificationDetails.updates|orderBy:sortKey:reverse"
+							ng-if="data.createdTime!=undefined && data.createdTime!=''">
+							<td id="vn-results-date" style="width: 10%;">{{data.createdTime|dateConverterNotification}}</td>
+							<td id="vn-results-by" style="width: 10%; overflow: unset;">{{data.cobrandInfo.length}}
+								<div ng-if="data.cobrandInfo!=undefined">
+									<span style="position: relative;"
+										ng-init="this.showUpdatesPopover=false;" class="hover-icon"
+										ng-mouseover="this.showUpdatesPopover=true;"
+										ng-mouseleave="this.showUpdatesPopover=false;">...
+										<div style="width: auto" class="popover bottom bgPopover"
+											ng-class="{showDetailsPopup:this.showUpdatesPopover}"
+											ng-show="this.showUpdatesPopover">
+											<span class="padding-right:10px;"
+												ng-repeat="value in data.cobrandInfo"><div>{{value.name}}</div></span>
+									</span>
+								</div>
+							</td>
+							<td id="vn-results-update" style="width: 30%;">{{data.message}}</td>
+							<td id="vn-results-by" style="width: 10%;">{{data.createdBy}}</td>
+							<td id="vn-results-isInternal" style="width: 10%;"><img
+								ng-if="data.isInternal" style="height: 10px;"
+								src="images/icon-tick.svg" /><img style="height: 10px;"
+								ng-if="!data.isInternal" class="center"
+								src="images/icon-close.svg" /></td>
+							<td id="vn-results-by" style="width: 10%;"><img
+								ng-if="data.isResolved" style="height: 10px;"
+								src="images/icon-tick.svg" /><img ng-if="!data.isResolved"
+								style="height: 10px;" src="images/icon-close.svg" /></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div id="upload_attachment" class="row row-detail panel panel-default">
+		<div class="cursor-pointer panel-tab"
+			ng-click="showAttachmentDiv = !showAttachmentDiv">
+			<i class="pull-left fa"
+				ng-class="{'fa-play fa-rotate-90': !showAttachmentDiv, 'fa-play': showAttachmentDiv}"></i>
+			<span id="vn-customer-details-label" class="row-title">{{staticLabels.doc_attachment_label}}</span>
+
+		</div>
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<span class="add_button"
+				ng-click="uploadButtonText != 'Adding' && addAttachment();"
+				role="button" style="margin-right: 0; margin-top: -42px">+
+				Add Attachment</span>
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 panel-tab"
+				ng-show="uploadDiv">
+				<span class="pull-right col-md-4 pad-0" id="editAddFile">
+					<form name="attachment" style="float: right; width: 90%">
+						<input class="pull-left" type="file" ng-model="upload.attachment"
+							name="file" base-sixty-four-input
+							accept="application/msword, .docx, application/vnd.ms-powerpoint,.pptx, application/pdf,.msg, .txt, .xls, .xlsx"
+							maxsize="10500">
+						<button class="pull-left" type="button" name=""
+							ng-click="uploadDoc(upload.attachment)"
+							ng-disabled="attachment.file.$error.accept || attachment.file.$error.maxsize || uploadButtonText == 'Adding'">
+							<span ng-show="uploadButtonText == 'Adding'"><i
+								class="fa fa-circle-o-notch fa-spin"></i></span> {{uploadButtonText}}
+						</button>
+
+						<span class="validationerror pull-left"
+							ng-if="attachment.file.$error.accept"> File Format not
+							Supported. </span> <span class="validationerror pull-left"
+							ng-if="attachment.file.$error.maxsize"> Exceeded Max File
+							Size of 10MB </span>
+					</form>
+				</span>
+			</div>
+		</div>
+		<div ng-show="!showAttachmentDiv" class="boxDetail">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<div class="table-responsive">
+
+					<table class="table tbl">
+						<thead>
+							<tr>
+								<th>{{staticLabels.attachment_id_label}}</th>
+								<th>{{staticLabels.file_label}}</th>
+								<th>{{staticLabels.file_type}}</th>
+								<th>{{staticLabels.isRCA_label}}</th>
+								<th>{{staticLabels.download_label}}</th>
+								<th>{{staticLabels.action_label}}</th>
+							</tr>
+						</thead>
+						<tbody ng-if="viewNotificationDetails.attachments!=undefined">
+							<tr ng-repeat="file in viewNotificationDetails.attachments">
+								<td>{{file.attachmentId}}</td>
+								<td>{{file.name}}</td>
+								<td>{{file.extension}}</td>
+								<td><span ng-if="file.type == 'RCA'">Yes</span><span
+									ng-if="file.type == 'No'">{{file.type}}</span></td>
+								<td><span ng-if="file.attachmentId"
+									style="cursor: pointer;"><span
+										ng-click="downloadFile(file)">Download <i
+											class="fa fa-download" aria-hidden="true"></i></span></span></td>
+								<td><span ng-if="!file.attachmentId"
+									style="margin-left: 10px;" class="fa fa-remove" role="button"
+									type="submit" ng-click="removeAttachment($index);"></span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12" style="margin-top: 20px; float: right;">
+
+		<div class="col-md-2 pull-right pad-r0"
+			ng-if="editNotificationDetails.publishTime==undefined">
+			<a class="btn btn-block btn-success pull-right"
+				ng-disabled="uploadButtonText == 'Adding'"
+				ng-click="showCustomerAlert(editNotificationDetails.updates[updatesLength].isInternal,true,editNotificationDetails.notificationId);uploadButtonText != 'Adding' && popUpOnIsInternal && editNotificationFormDetail(editNotificationDetails.notificationId,true);">
+				{{staticLabels.submit_publish_label}}<i
+				class="fa fa-envelope-o pull-right m-r8 ft-size20"
+				ng-if="!showSpinPublish"></i> <i
+				class="fa fa-circle-o-notch fa-spin pull-right"
+				ng-if="showSpinPublish"></i>
+			</a>
+		</div>
+		<div class="col-md-2 pull-right pad-r0">
+
+			<a class="btn btn-block btn-success pull-right"
+				ng-disabled="uploadButtonText == 'Adding'"
+				ng-click="showCustomerAlert(editNotificationDetails.updates[updatesLength].isInternal,false,editNotificationDetails.notificationId,editNotificationDetails.publishTime);uploadButtonText != 'Adding' && popUpOnIsInternal && editNotificationFormDetail(editNotificationDetails.notificationId,false);">
+				<span ng-if="editNotificationDetails.publishTime==undefined"> {{staticLabels.notification_dashboard_submit_button_text}} </span>
+				<span ng-if="editNotificationDetails.publishTime!=undefined">{{staticLabels.submit_label}} </span> <i
+				class="fa fa-floppy-o pull-right m-r8 ft-size20" ng-if="!showSpin"></i>
+				<i class="fa fa-circle-o-notch fa-spin pull-right" ng-if="showSpin"></i>
+			</a>
+		</div>
+	</div>
+	</div>
+</fieldset>
+<script type="text/javascript">
+	setTimeout(function(){
+	    var frame = document.getElementById("uiTinymce0_ifr");
+		var cntnt = frame.contentWindow.document;
+	    var frameBody = cntnt.getElementById('tinymce');
+		frameBody.style.height= '84px';
+	}, 500);
+</script>

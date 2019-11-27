@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="11px" height="15px" viewBox="0 0 11 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.1 (33804) - http://www.bohemiancoding.com/sketch -->
+    <title>Triangle 1</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Content-Service-Search---Client" transform="translate(-32.000000, -244.000000)" fill="#908D8C">
+            <g id="Group-4" transform="translate(14.000000, 222.000000)">
+                <g id="Group-7" transform="translate(17.972743, 17.000000)">
+                    <path d="M5.39516366,7.66021871 C5.7159311,7.20728073 6.23939574,7.21207867 6.55676531,7.66021871 L12.7968872,16.4715499 C13.1176546,16.9244879 12.9346502,17.2916667 12.3834056,17.2916667 L-0.431476651,17.2916667 C-0.980603644,17.2916667 -1.16232777,16.9196899 -0.844958197,16.4715499 L5.39516366,7.66021871 Z" id="Triangle-1" transform="translate(5.977363, 12.291667) scale(-1, 1) rotate(-90.000000) translate(-5.977363, -12.291667) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

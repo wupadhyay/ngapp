@@ -1,0 +1,358 @@
+<div id="communicationView" data-ng-init="initCommunicationView()" style="overflow: hidden;">
+<div isCobrand class="col-xs-12 col-sm-12 col-md-12 col-lg-12" class="pos-col-comm">
+  <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 pad-l0">
+    <input ng-model="formSearch.searchBox" type="text" class="width-100 notiSearch commSearch" ng-keypress="checkIfEnterKeyPressed($event,formSearch)" ng-change="checkIfSearchCleared(formSearch)" placeholder="Search all Communications" onclick="ga('send','pageview','/communicationSearch')" />
+  </div>
+  <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 pad-l0">  
+    <select class="env-dropdown" ng-change="filterEnv(filter.environment); resetCollapse()"
+        ng-model="filter.environment" onclick=" ga('send','pageview','/communicationEnvironment')">
+        <option id="{{option.id}}" ng-repeat="option in environments" value="{{option.name}}">{{option.name}}
+        </option>
+    </select>
+  </div>
+  <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 pad-r0">
+      <md-switch md-no-ink ng-model="filter.showClosedCommunications" class="margin-0 switch-txt" 
+          aria-label="Show Closed" ng-click="event = $event"
+          ng-change="showCloseToggle(event); resetCollapse()" onclick=" ga('send','pageview','/communicationShowClosed')" >
+      {{staticLabels.show_closed}} </md-switch>
+  </div>
+  <div id="expand_all" class="col-xs-2 col-sm-2 col-md-2 col-lg-2 pad-r0">
+    <a href="" ng-click="collapseAll()" onclick=" ga('send','pageview','/communicationCollapseAll')">
+      <span ng-if="isAllCollapsed">
+          <i class="fa fa-plus-circle" style="font-size:18px"></i>
+          <span class="subTitle subsBold toggleLink">{{staticLabels.expand_all}} </span>
+      </span> 
+      <span ng-if="!isAllCollapsed">  
+          <i class="fa fa-minus-circle" style="font-size:18px"></i>
+          <span class="subTitle subsBold toggleLink ">{{staticLabels.collapse_all}} </span>
+      </span> 
+    </a>
+  </div>
+</div>
+<div isYodlee class="col-xs-12 col-sm-12 col-md-12 col-lg-12" class="pos-col-comm">
+    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 pad-l0">
+      <input ng-model="formSearch.searchBox" type="text" class="width-100 notiSearch commSearch" ng-keypress="checkIfEnterKeyPressed($event,formSearch)" ng-change="checkIfSearchCleared(formSearch)" placeholder="Search all Communications" onclick="ga('send','pageview','/communicationSearch')" />
+    </div>
+
+    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 pad-l0">  
+      <select class="env-dropdown" ng-change="filterEnv(filter.environment); resetCollapse()"
+          ng-model="filter.environment" onclick=" ga('send','pageview','/communicationEnvironment')">
+          <option id="{{option.id}}" ng-repeat="option in environments" value="{{option.name}}">{{option.name}}
+          </option>
+      </select>
+    </div>
+    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 pad-l0">
+        <md-autocomplete class="normalAuto commViewCob" md-selected-item-change="changeCobSearch(filter.cobrandSelected)"   md-selected-item="filter.cobrandSelected" md-search-text="searchText" 
+         md-items="item in getCobMatches(searchText)" md-item-text="item.display" placeholder="Search cobrands" md-no-cache="true">
+            <md-item-template>
+                <span> {{item.display}}</span>
+            </md-item-template>
+            <md-not-found>
+                No matches found.
+            </md-not-found>
+        </md-autocomplete>
+    </div>
+    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 pad-r0">
+        <md-switch md-no-ink ng-model="filter.showClosedCommunications" class="margin-0 switch-txt" 
+            aria-label="Show Closed" ng-click="event = $event"
+            ng-change="showCloseToggle(event); resetCollapse()" onclick=" ga('send','pageview','/communicationShowClosed')" >
+        {{staticLabels.show_closed}} </md-switch>
+    </div>
+    <div id="expand_all" class="col-xs-2 col-sm-2 col-md-2 col-lg-2 pad-r0">
+      <a href="" ng-click="collapseAll()" onclick=" ga('send','pageview','/communicationCollapseAll')">
+        <span ng-if="isAllCollapsed">
+            <i class="fa fa-plus-circle" style="font-size:18px"></i>
+            <span class="subTitle subsBold toggleLink">{{staticLabels.expand_all}} </span>
+        </span> 
+        <span ng-if="!isAllCollapsed">  
+            <i class="fa fa-minus-circle" style="font-size:18px"></i>
+            <span class="subTitle subsBold toggleLink ">{{staticLabels.collapse_all}} </span>
+        </span> 
+      </a>
+    </div>
+  </div>
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+  <div id="notification-label-errorPanel"
+        ng-show="labelPropertyErrorMsg!=null" class="panel-body error">
+        {{labelPropertyErrorMsg}}</div>
+  <div id="noti-loadingPanel" align="center" ng-show="isBusy && notificationSearchErrorMsg ==null">
+    <img alt="Loading" class="margin-top-10" src="images/spinner.gif" style="width: 48px; height:48px; margin:auto" />
+  </div>
+  <div class="constrained commScroll">
+    <div id="commContent" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" infinite-scroll="loadMoreCommunications()" infinite-scroll-container='".constrained"' infinite-scroll-distance="1" infinite-scroll-parent="true">
+      <div class="panel-body error" ng-if="showNoDataLabel()&&!isBusy">{{searchErrorMessage}}</div>
+      <div ng-if="filteredUpCommingNotifications.length>0&&showUpcomingMaintenance">
+        <div class ="subTitle monthName " href="/#UpcommingDiv" ng-click="event = $event;handlePanelClick(event)" data-toggle="collapse"> 
+            <i class="more-less more-less-month glyphicon glyphicon-minus"></i>       
+            Upcoming Maintenances
+        </div>
+        <div id="UpcommingDiv" class="panel-collapse collapse in monthsGroupCollapse"> 
+          <div ng-init="counterUpcoming=$index" ng-repeat="(key, value) in filteredUpCommingNotifications | groupBy: 'startTimeModified'">
+            <div class="subTitle subsBold"> {{key|dateAsString}}</div>
+            <div class="panel panel-default commPanel" ng-repeat="notification in value">   
+                <div ng-href="/#upComming_{{counterUpcoming}}_{{$index}}" data-toggle="collapse" 
+                    ng-click="event = $event;handlePanelClick(event,isClicked);isClicked =!isClicked;"  class="panel-heading notificationUpcoming" >
+                    <div class="panel-title display-table">
+                      <div class="accordion-toggle display-table-cell">
+                      <i class="more-less more-less-date glyphicon glyphicon-minus"></i>
+                      <span class="titleText display-table-row subsBold" style="width:73%">
+                            {{notification.notificationId}} | {{notification.title}}
+    </span>
+    
+    <span class="display-table-row pull-right text-right" style="width:23%">
+      <span class="titleText"> 
+          {{staticLabels.start_time_label}}:
+        {{notification.startTime|localDateConverter|datetimeformatter:true}}
+      </span>
+                        <span class="ft14" style="display: block" ng-if="getDuration(notification.endTime,notification.startTime)!=null">
+                           {{staticLabels.refresh_trend_Label}}
+                          {{getDuration(notification.endTime,notification.startTime)}}
+                          
+     </span> 
+
+  </span> 
+                     
+                        
+                    <span class="subTitle display-table-row margin-0" ng-show = "notification.notificationType=='MAINTENANCE'" style="width:70%">
+                           <span>
+                                {{notification.environment}} |
+                             </span>   
+                             <span ng-if="notification.serviceDisruption.downtime!=null">     
+                                {{staticLabels.comm_downtime_label}}: {{notification.serviceDisruption.downtime}} |
+                             </span>
+                            <span> 
+                                {{staticLabels.impact_label}}: {{notification.impact}}
+                            </span> 
+                        </span>
+                    </div>
+                    </div>
+                </div>
+                <div id="upComming_{{counterUpcoming}}_{{$index}}" class="panel-collapse inner collapse in dateCollapse">
+                        <div class="panel-body updateBorder">
+                            <div class="row">
+                                  <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">{{staticLabels.description}}:</div>
+                                   <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10"> 
+                                        <div id="description">
+                                        <span class="text-justify" style="width: 97%; display: block; color:#152934"
+                                            ng-bind-html="notification.description"></span>
+                                        <span ng-repeat="attachment in notification.attachments" class="attachmentComm" >
+                                                <span ng-if="attachment.type!='RCA'" >
+                                                    <span ng-click="downloadFile(attachment)" style ="display: block;"class="iconImg" ng-class="getAttachmentIcon(attachment)"></span>
+                                                      <span class="subTitle updateTimestamp tooltipComm margin-0">
+                                                            {{staticLabels.communication_dashboard_details}}
+                                                        <span class="tooltiptextComm">
+                                                                {{attachment.name}}.{{attachment.extension}}
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                        </span>           
+                                        </div>
+                                  </div>
+                            </div>
+                            <div class="row m-t10">
+                                    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">{{staticLabels.startTime_label}}:</div>
+                                    <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">{{notification.startTime|localDateConverter|datetimeformatter}}</div>
+                              </div>
+
+                              <div class="row m-t10">
+                                    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">{{staticLabels.endTime_label}}:</div>
+                                    <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">{{notification.endTime| localDateConverter|datetimeformatter}}</div>
+                              </div>
+                             
+                              <div class="row m-t10">
+                                    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">{{staticLabels.service_impacted}}:</div>
+                                    <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">{{notification.serviceProductAffected}}</div>
+                              </div>
+                        </div>
+                       <div ng-if ="notification.updates" class="panel-body">
+                          <div ng-init="updateCount=$index" ng-repeat="update in notification.updates" ng-class="{updateBorder:$index!=notification.updates.length-1}" >
+                              <div class="row" ng-class="{'m-t10': $index != 0}">
+                                  <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">
+                                      <span>[{{update.status|titleCase}}]</span>
+                                  </div>
+                                  <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                                  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pad-0 text-justify">
+                                  <span>{{update.message}}
+                                  	<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 pad-r0" style="float:right;">
+                                          <div ng-repeat="attachment in update.attachments" class="attachmentComm">
+                                                  <div ng-click="downloadFile(attachment)" class="iconImg" ng-class="getAttachmentIcon(attachment)"></div>
+                                                     <div class="subTitle updateTimestamp tooltipComm margin-0">
+                                                          {{staticLabels.communication_dashboard_details}}
+                                                      <span class="tooltiptextComm">
+                                                              {{attachment.name}}.{{attachment.extension}}
+                                                      </span>
+                                                  </div>
+                                              </div>
+                                         </div>
+                              		</span>
+                                <span class="subTitle updateTimestamp ft12 margin-0">
+                                            {{staticLabels.updated_on_label}}: {{update.createdTime|localDateConverter |datetimeformatter}}
+                                      </span> 
+                                    </div>
+                                                                        
+                                   </div> 
+                            </div>  
+                         </div> 
+                          </div> 
+                      </div> 
+                </div>    
+           </div> <!--here outer loop-->
+        </div> 
+    </div>  
+    
+     <div ng-if ="monthsGroup.length>0" class="subTitle monthName style="cursor:none"">
+             <span ng-if="filter.notificationType==null"> 
+                 {{sideLists[0].label}}
+             </span>    
+             
+      </div>   
+
+     
+    <div ng-init="counterMonth=$index" ng-repeat="months in monthsGroup" class="myInner">
+        <div class ="subTitle monthName" href="/#month_group_{{$index}}" ng-click="event = $event;handlePanelClick(event)" data-toggle="collapse"> 
+            <i class="more-less more-less-month glyphicon glyphicon-minus"></i>       
+            {{months|monthDisplay}}
+        </div>
+        <div id="month_group_{{$index}}" class="panel-collapse collapse monthsGroupCollapse in">
+            <div ng-init="counterDate=$index" ng-repeat="dateGroup in notificationsToFilter() | MonthsFilter:months | filter:dateGroups" class="panel-group" id="accordion_{{counterDate}}">
+                <div class="subTitle subsBold text-uppercase">{{dateGroup.startTimeModified|dateAsString}}</div>
+                    <div class="panel panel-default commPanel" ng-repeat="notification in filteredCommunications 
+                        | filter:{startTimeModified: dateGroup.startTimeModified}">
+                        <div ng-href="/#collap_{{counterMonth}}_{{counterDate}}_{{$index}}" data-toggle="collapse" data-parent="accordion_{{counter}}"
+                            ng-click="event = $event;handlePanelClick(event,isClicked);isClicked =!isClicked;"  class="panel-heading" ng-class="{'notificationIncident':notification.notificationType==='INCIDENT',
+                          'notificationMain':notification.notificationType=='MAINTENANCE','closed-incident':notification.status==='RESOLVED'||notification.status==='INVALID',
+                          'closed-maintenance':notification.status==='CLOSED'||notification.status==='CANCEL'}">
+                            <div class="panel-title display-table">
+                              <div class="accordion-toggle display-table-cell" 
+                               >
+                              <i class="more-less more-less-date glyphicon glyphicon-minus"  ng-class="{'glyphicon-minus' : !isAllCollapsed, 'glyphicon-plus' : isAllCollapsed}"></i>
+                              <span class="titleText display-table-row subsBold" style="width:73%">
+                                    {{notification.notificationId}} | {{notification.title}}
+                              </span>
+                              <span class="titleText pull-right display-table-row text-right" style="width:23%">
+                                <span ng-if="notification.status!='CLOSED'&&notification.status!='CANCEL'&&notification.status!='INVALID'&&notification.status!='RESOLVED'&&isLastNDays(notification.created,1)" class="badge">new</span>
+                                  {{notification.status}}
+                                  <span class="subTitle ft14 display-block margin-0" ng-if="$state.current.name=='communicationDashboard.communication'" >
+                                    <span ng-if="notification.notificationType == 'MAINTENANCE'">{{staticLabels.maintenance_label}}</span> 
+								    <span ng-if="notification.notificationType == 'INCIDENT'">{{staticLabels.incident_label}}</span>
+								</span>
+                               </span> 
+                                 
+                              
+                                <span class="subTitle display-table-row margin-0" ng-show = "notification.notificationType=='INCIDENT'" style="width:70%">
+                                    {{notification.environment}} | {{notification.incident.priority}} | {{staticLabels.impact_label}}: {{notification.impact}}
+                                </span>
+
+                                <span class="subTitle display-table-row margin-0" ng-show = "notification.notificationType=='MAINTENANCE'" style="width:70%">
+                                    <span>
+                                        {{notification.environment}} |
+                                    </span>   
+                                    <span ng-if="notification.serviceDisruption.downtime!=null">     
+                                        {{staticLabels.comm_downtime_label}}: {{notification.serviceDisruption.downtime}} |
+                                    </span>
+                                    <span> 
+                                        {{staticLabels.impact_label}}: {{notification.impact}}
+                                    </span> 
+                                </span>
+                            </div>
+                            </div>
+                        </div>  <!--  end title panel -->
+                        <div id="collap_{{counterMonth}}_{{counterDate}}_{{$index}}" class="panel-collapse inner collapse in dateCollapse" >
+                            <div class="panel-body">
+                                <div ng-if="notification.description" class="row">
+                                    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">{{staticLabels.description}}:</div>
+                                        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10"> 
+                                            <div id="description">
+                                            <span class="text-justify" style="width: 97%; display: block;color: #152934"
+                                                ng-bind-html="notification.description"></span>
+                                    
+                                             <span ng-repeat="attachment in notification.attachments" class="attachmentComm" >
+                                                    <span ng-if="attachment.type!='RCA'" >
+                                                        <span ng-click="downloadFile(attachment)" style ="display: block;"class="iconImg" ng-class="getAttachmentIcon(attachment)"></span>
+                                                          <span class="subTitle updateTimestamp tooltipComm margin-0">
+                                                                {{staticLabels.communication_dashboard_details}}
+                                                            <span class="tooltiptextComm">
+                                                                    {{attachment.name}}.{{attachment.extension}}
+                                                            </span>
+                                                        </span>
+                                                    </span>
+                                              </span>       
+                                            </div>
+                                      </div>
+                                </div>
+                                <div ng-if="notification.startTime" class="row m-t10">
+                                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">{{staticLabels.startTime_label}}:</div>
+                                        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">{{notification.startTime| localDateConverter |datetimeformatter}}</div>
+                                  </div>
+
+                                  <div class="row m-t10" ng-if="notification.endTime">
+                                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">{{staticLabels.endTime_label}}:</div>
+                                        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">{{notification.endTime| localDateConverter |datetimeformatter}}</div>
+                                  </div>
+
+                                  <div class="row m-t10" ng-if="notification.serviceDisruption.downtime&&notification.notificationType=='INCIDENT'">
+                                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">{{staticLabels.comm_downtime_label}}:</div>
+                                        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10"> {{notification.serviceDisruption.type}} [{{notification.serviceDisruption.downtime}}]  </div>
+                                  </div>
+                                  <div class="row m-t10" ng-if="notification.notificationType=='INCIDENT' &&  notification.incident.nextUpdatePeriod != undefined">
+                                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">{{staticLabels.next_update_label}}:</div>
+                                         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10"> {{notification.incident.nextUpdatePeriod}} </div>
+                                  </div>
+                                  <div class="row m-t10" ng-if="notification.serviceProductAffected">
+                                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">{{staticLabels.service_impacted}}:</div>
+                                        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">{{notification.serviceProductAffected}}</div>
+                                  </div>
+                                  </div>
+                                  
+          <div ng-if ="notification.updates" class="panel-body">
+            <div class="UpdateRuler"></div>
+              <div ng-init="updateCount=$index" ng-repeat="update in notification.updates" ng-class="{updateBorder:$index!=notification.updates.length-1}" >
+                <div class="row" ng-class="{'m-t10': $index != 0}">
+                  <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 item-label">
+                    <span>[{{update.status|titleCase}}]</span>
+                  </div>
+                  <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 pad-0">
+	        		<span>{{update.message}}</span>
+	            	<span class="subTitle updateTimestamp ft12 margin-0">
+	                      {{staticLabels.updated_on_label}}: {{update.createdTime|localDateConverter |datetimeformatter}}
+	                </span> 
+                </div>
+                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 pad-r0" style="float:right;">
+                    <div ng-repeat="attachment in update.attachments" class="attachmentComm">
+                        <div ng-click="downloadFile(attachment)" class="iconImg" ng-class="getAttachmentIcon(attachment)"></div>
+                           <div class="subTitle updateTimestamp tooltipComm margin-0">
+                              {{staticLabels.communication_dashboard_details}}
+                                                                    <span class="tooltiptextComm">
+                                                                            {{attachment.name}}.{{attachment.extension}}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        
+                                                        <div ng-repeat="attachment in notification.attachments" class="attachmentComm" style="margin-right: 15px">
+                                                            <div ng-if="attachment.type=='RCA'&& updateCount==0" >
+                                                                <div ng-click="downloadFile(attachment)" class="iconImg" ng-class="getAttachmentIcon(attachment)"></div>
+                          <div class="subTitle updateTimestamp tooltipComm margin-0">
+                                                                        {{staticLabels.communication_dashboard_rca}}
+                                                                    <span class="tooltiptextComm">
+                                                                            {{attachment.name}}.{{attachment.extension}}
+                                                                    </span>
+                                                                </div>
+                                                               </div>
+                                                            </div>  
+                                                       </div>                                   
+                  </div>  
+              </div>  
+             </div> 
+              </div> 
+                            </div>
+                          </div> <!--  end body panel -->
+                        </div>      
+                </div>
+            </div>
+      <div id="scrollTop" ng-click="backToTop()"><i class="fa fa-angle-up" onclick="ga('send','pageview','/communicationTOP')"></i>TOP</div>
+    </div>
+  </div>
+</div>
+</div>
+
