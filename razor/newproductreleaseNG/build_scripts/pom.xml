@@ -31,7 +31,7 @@
 	<spring_mongodb.version>1.2.4.RELEASE</spring_mongodb.version>
 	<spring.version>3.2.0.RELEASE</spring.version>
 	<jackson.version>2.5.0</jackson.version>
-	<log4j.version>2.1</log4j.version>
+	<log4j.version>2.13.3</log4j.version>
 	<servlet.version>2.4</servlet.version>
   </properties>
 
